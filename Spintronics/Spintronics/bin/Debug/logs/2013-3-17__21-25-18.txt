@@ -1,0 +1,2 @@
+3/17/2013 9:25:18 PM: Created log file
+3/17/2013 9:25:23 PM: ->->-> CMD:0x01 PL:0 P:0x XOR:0x00

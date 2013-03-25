@@ -1,0 +1,7 @@
+3/1/2013 11:11:39 PM: Created log file
+3/1/2013 11:13:11 PM: <-<-<- New packet
+3/1/2013 11:13:11 PM: <-<-<- Command:           0x80
+3/1/2013 11:13:11 PM: <-<-<- Payload Length:    0x0
+3/1/2013 11:13:11 PM: <-<-<- Payload:          
+3/1/2013 11:13:11 PM: <-<-<- XOR:               0x0
+3/1/2013 11:13:11 PM: Received a start acknowledge packet
