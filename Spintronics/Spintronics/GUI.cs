@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SpintronicsGUI
 {
@@ -89,7 +90,16 @@ namespace SpintronicsGUI
 
 			for (int i = 0; i < chart1.Series.Count; i++)
 			{
-				chart1.Series[i].Points.AddXY(0, 0);
+				foreach (TabPage t in this.tabControl1.Controls)
+				{
+					foreach (Chart c in t.Controls)
+					{
+						c.Series[i].Points.AddXY(0, 0);
+					}
+				}
+				//chart1.Series[i].Points.AddXY(0, 0);
+				//chart2.Series[i].Points.AddXY(0, 0);
+				//chart3.Series[i].Points.AddXY(0, 0);
 			}
 
 			/*
@@ -134,6 +144,8 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 				chart1.Series[sensorId - 1].Points.AddY(wheatstonef1A);
+				chart2.Series[sensorId - 1].Points.AddY(wheatstonef1P);
+				chart3.Series[sensorId - 1].Points.AddY(wheatstonef2A);
 				//chart1.Series[sensorId - 1].Points.AddXY(globalTime, wheatstonef1A);
 				//if (globalTime >= 10)
 				//	this.chart1.ChartAreas[0].AxisX.Maximum = 25;
@@ -220,7 +232,13 @@ namespace SpintronicsGUI
 		private void sensor_Click(object sender, EventArgs e)
 		{
 			string resultString = Regex.Match(((CheckBox)sender).Name, @"\d+").Value;
-			chart1.Series[System.Convert.ToInt32(resultString) - 1].Enabled = ((CheckBox)sender).Checked;
+			foreach (TabPage t in this.tabControl1.Controls)
+			{
+				foreach (Chart c in t.Controls)
+				{
+					c.Series[System.Convert.ToInt32(resultString) - 1].Enabled = ((CheckBox)sender).Checked;
+				}
+			}
 		}
 
 		private void selectAllButton_Click(object sender, EventArgs e)
