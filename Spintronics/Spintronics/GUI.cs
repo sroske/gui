@@ -97,9 +97,6 @@ namespace SpintronicsGUI
 						c.Series[i].Points.AddXY(0, 0);
 					}
 				}
-				//chart1.Series[i].Points.AddXY(0, 0);
-				//chart2.Series[i].Points.AddXY(0, 0);
-				//chart3.Series[i].Points.AddXY(0, 0);
 			}
 
 			/*
@@ -147,8 +144,6 @@ namespace SpintronicsGUI
 				chart2.Series[sensorId - 1].Points.AddY(wheatstonef1P);
 				chart3.Series[sensorId - 1].Points.AddY(wheatstonef2A);
 				//chart1.Series[sensorId - 1].Points.AddXY(globalTime, wheatstonef1A);
-				//if (globalTime >= 10)
-				//	this.chart1.ChartAreas[0].AxisX.Maximum = 25;
 				if (sensorId >= chart1.Series.Count)
 					globalTime++;
 			} catch (IndexOutOfRangeException) {
@@ -320,7 +315,16 @@ namespace SpintronicsGUI
 
 		private void timeTareButton_Click(object sender, EventArgs e)
 		{
-			this.chart1.ChartAreas[0].AxisX.Minimum = globalTime;
+			for (int i = 0; i < chart1.Series.Count; i++)
+			{
+				foreach (TabPage t in this.tabControl1.Controls)
+				{
+					foreach (Chart c in t.Controls)
+					{
+						c.ChartAreas[0].AxisX.Minimum = globalTime;
+					}
+				}
+			}
 		}
 
 		private void printPacket(Packet packet, PacketCommDirection direction)
