@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace SpintronicsGUI
 {
@@ -218,7 +219,31 @@ namespace SpintronicsGUI
 
 		private void sensor_Click(object sender, EventArgs e)
 		{
-			chart1.Series[System.Convert.ToInt32(((CheckBox)sender).Name) - 1].Enabled = ((CheckBox)sender).Checked;
+			string resultString = Regex.Match(((CheckBox)sender).Name, @"\d+").Value;
+			chart1.Series[System.Convert.ToInt32(resultString) - 1].Enabled = ((CheckBox)sender).Checked;
+		}
+
+		private void selectAllButton_Click(object sender, EventArgs e)
+		{
+			foreach(Control c in this.groupBox1.Controls)
+			{
+				if(c is CheckBox)
+					((CheckBox)c).Checked = true;
+			}
+		}
+
+		private void invertSelectionButton_Click(object sender, EventArgs e)
+		{
+			foreach (Control c in this.groupBox1.Controls)
+			{
+				if (c is CheckBox)
+				{
+					if (((CheckBox)c).Checked)
+						((CheckBox)c).Checked = false;
+					else
+						((CheckBox)c).Checked = true;
+				}
+			}
 		}
 
 		private void stopRun(object sender, EventArgs e)

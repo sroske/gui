@@ -24,8 +24,6 @@ namespace SpintronicsGUI
 			base.Dispose(disposing);
 		}
 
-		#region Windows Form Designer generated code
-
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -69,6 +67,10 @@ namespace SpintronicsGUI
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.selectAllButton = new System.Windows.Forms.Button();
+			this.sensor29 = new System.Windows.Forms.CheckBox();
+			this.sensor28 = new System.Windows.Forms.CheckBox();
+			this.sensor27 = new System.Windows.Forms.CheckBox();
 			this.sensor26 = new System.Windows.Forms.CheckBox();
 			this.sensorsLabel7 = new System.Windows.Forms.Label();
 			this.sensor25 = new System.Windows.Forms.CheckBox();
@@ -108,9 +110,6 @@ namespace SpintronicsGUI
 			this.sensorsLabelE = new System.Windows.Forms.Label();
 			this.sensorsLabelA = new System.Windows.Forms.Label();
 			this.sensor1 = new System.Windows.Forms.CheckBox();
-			this.sensor29 = new System.Windows.Forms.CheckBox();
-			this.sensor28 = new System.Windows.Forms.CheckBox();
-			this.sensor27 = new System.Windows.Forms.CheckBox();
 			this.startRunButton = new System.Windows.Forms.Button();
 			this.f1Amplitude = new System.Windows.Forms.TextBox();
 			this.f1AmplitudeLabel = new System.Windows.Forms.Label();
@@ -125,6 +124,7 @@ namespace SpintronicsGUI
 			this.measurementPeriodLabel = new System.Windows.Forms.Label();
 			this.measurementPeriod = new System.Windows.Forms.TextBox();
 			this.stopRunButton = new System.Windows.Forms.Button();
+			this.invertSelectionButton = new System.Windows.Forms.Button();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
@@ -163,6 +163,8 @@ namespace SpintronicsGUI
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.invertSelectionButton);
+			this.groupBox1.Controls.Add(this.selectAllButton);
 			this.groupBox1.Controls.Add(this.sensor29);
 			this.groupBox1.Controls.Add(this.sensor28);
 			this.groupBox1.Controls.Add(this.sensor27);
@@ -207,10 +209,56 @@ namespace SpintronicsGUI
 			this.groupBox1.Controls.Add(this.sensor1);
 			this.groupBox1.Location = new System.Drawing.Point(13, 41);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(185, 204);
+			this.groupBox1.Size = new System.Drawing.Size(185, 296);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Sensors";
+			// 
+			// selectAllButton
+			// 
+			this.selectAllButton.Location = new System.Drawing.Point(10, 207);
+			this.selectAllButton.Name = "selectAllButton";
+			this.selectAllButton.Size = new System.Drawing.Size(101, 21);
+			this.selectAllButton.TabIndex = 41;
+			this.selectAllButton.Text = "Select All";
+			this.selectAllButton.UseVisualStyleBackColor = true;
+			this.selectAllButton.Click += new System.EventHandler(this.selectAllButton_Click);
+			// 
+			// sensor29
+			// 
+			this.sensor29.AutoSize = true;
+			this.sensor29.Checked = true;
+			this.sensor29.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.sensor29.Location = new System.Drawing.Point(98, 173);
+			this.sensor29.Name = "sensor29";
+			this.sensor29.Size = new System.Drawing.Size(15, 14);
+			this.sensor29.TabIndex = 40;
+			this.sensor29.UseVisualStyleBackColor = true;
+			this.sensor29.CheckedChanged += new System.EventHandler(this.sensor_Click);
+			// 
+			// sensor28
+			// 
+			this.sensor28.AutoSize = true;
+			this.sensor28.Checked = true;
+			this.sensor28.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.sensor28.Location = new System.Drawing.Point(77, 173);
+			this.sensor28.Name = "sensor28";
+			this.sensor28.Size = new System.Drawing.Size(15, 14);
+			this.sensor28.TabIndex = 39;
+			this.sensor28.UseVisualStyleBackColor = true;
+			this.sensor28.CheckedChanged += new System.EventHandler(this.sensor_Click);
+			// 
+			// sensor27
+			// 
+			this.sensor27.AutoSize = true;
+			this.sensor27.Checked = true;
+			this.sensor27.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.sensor27.Location = new System.Drawing.Point(57, 173);
+			this.sensor27.Name = "sensor27";
+			this.sensor27.Size = new System.Drawing.Size(15, 14);
+			this.sensor27.TabIndex = 38;
+			this.sensor27.UseVisualStyleBackColor = true;
+			this.sensor27.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor26
 			// 
@@ -218,11 +266,11 @@ namespace SpintronicsGUI
 			this.sensor26.Checked = true;
 			this.sensor26.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor26.Location = new System.Drawing.Point(37, 173);
-			this.sensor26.Name = "26";
+			this.sensor26.Name = "sensor26";
 			this.sensor26.Size = new System.Drawing.Size(15, 14);
 			this.sensor26.TabIndex = 37;
 			this.sensor26.UseVisualStyleBackColor = true;
-			this.sensor26.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor26.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensorsLabel7
 			// 
@@ -239,11 +287,11 @@ namespace SpintronicsGUI
 			this.sensor25.Checked = true;
 			this.sensor25.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor25.Location = new System.Drawing.Point(98, 153);
-			this.sensor25.Name = "25";
+			this.sensor25.Name = "sensor25";
 			this.sensor25.Size = new System.Drawing.Size(15, 14);
 			this.sensor25.TabIndex = 36;
 			this.sensor25.UseVisualStyleBackColor = true;
-			this.sensor25.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor25.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor24
 			// 
@@ -251,11 +299,11 @@ namespace SpintronicsGUI
 			this.sensor24.Checked = true;
 			this.sensor24.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor24.Location = new System.Drawing.Point(77, 153);
-			this.sensor24.Name = "24";
+			this.sensor24.Name = "sensor24";
 			this.sensor24.Size = new System.Drawing.Size(15, 14);
 			this.sensor24.TabIndex = 35;
 			this.sensor24.UseVisualStyleBackColor = true;
-			this.sensor24.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor24.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor23
 			// 
@@ -263,11 +311,11 @@ namespace SpintronicsGUI
 			this.sensor23.Checked = true;
 			this.sensor23.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor23.Location = new System.Drawing.Point(57, 153);
-			this.sensor23.Name = "23";
+			this.sensor23.Name = "sensor23";
 			this.sensor23.Size = new System.Drawing.Size(15, 14);
 			this.sensor23.TabIndex = 34;
 			this.sensor23.UseVisualStyleBackColor = true;
-			this.sensor23.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor23.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensorsLabel6
 			// 
@@ -284,11 +332,11 @@ namespace SpintronicsGUI
 			this.sensor22.Checked = true;
 			this.sensor22.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor22.Location = new System.Drawing.Point(37, 153);
-			this.sensor22.Name = "22";
+			this.sensor22.Name = "sensor22";
 			this.sensor22.Size = new System.Drawing.Size(15, 14);
 			this.sensor22.TabIndex = 33;
 			this.sensor22.UseVisualStyleBackColor = true;
-			this.sensor22.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor22.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor21
 			// 
@@ -296,11 +344,11 @@ namespace SpintronicsGUI
 			this.sensor21.Checked = true;
 			this.sensor21.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor21.Location = new System.Drawing.Point(98, 133);
-			this.sensor21.Name = "21";
+			this.sensor21.Name = "sensor21";
 			this.sensor21.Size = new System.Drawing.Size(15, 14);
 			this.sensor21.TabIndex = 32;
 			this.sensor21.UseVisualStyleBackColor = true;
-			this.sensor21.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor21.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor20
 			// 
@@ -308,11 +356,11 @@ namespace SpintronicsGUI
 			this.sensor20.Checked = true;
 			this.sensor20.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor20.Location = new System.Drawing.Point(77, 133);
-			this.sensor20.Name = "20";
+			this.sensor20.Name = "sensor20";
 			this.sensor20.Size = new System.Drawing.Size(15, 14);
 			this.sensor20.TabIndex = 31;
 			this.sensor20.UseVisualStyleBackColor = true;
-			this.sensor20.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor20.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor19
 			// 
@@ -320,11 +368,11 @@ namespace SpintronicsGUI
 			this.sensor19.Checked = true;
 			this.sensor19.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor19.Location = new System.Drawing.Point(57, 133);
-			this.sensor19.Name = "19";
+			this.sensor19.Name = "sensor19";
 			this.sensor19.Size = new System.Drawing.Size(15, 14);
 			this.sensor19.TabIndex = 30;
 			this.sensor19.UseVisualStyleBackColor = true;
-			this.sensor19.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor19.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor18
 			// 
@@ -332,11 +380,11 @@ namespace SpintronicsGUI
 			this.sensor18.Checked = true;
 			this.sensor18.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor18.Location = new System.Drawing.Point(37, 133);
-			this.sensor18.Name = "18";
+			this.sensor18.Name = "sensor18";
 			this.sensor18.Size = new System.Drawing.Size(15, 14);
 			this.sensor18.TabIndex = 29;
 			this.sensor18.UseVisualStyleBackColor = true;
-			this.sensor18.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor18.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor17
 			// 
@@ -344,33 +392,35 @@ namespace SpintronicsGUI
 			this.sensor17.Checked = true;
 			this.sensor17.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor17.Location = new System.Drawing.Point(98, 113);
-			this.sensor17.Name = "17";
+			this.sensor17.Name = "sensor17";
 			this.sensor17.Size = new System.Drawing.Size(15, 14);
 			this.sensor17.TabIndex = 28;
 			this.sensor17.UseVisualStyleBackColor = true;
-			this.sensor17.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor17.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor16
 			// 
 			this.sensor16.AutoSize = true;
 			this.sensor16.Checked = true;
+			this.sensor16.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor16.Location = new System.Drawing.Point(77, 113);
-			this.sensor16.Name = "16";
+			this.sensor16.Name = "sensor16";
 			this.sensor16.Size = new System.Drawing.Size(15, 14);
 			this.sensor16.TabIndex = 27;
 			this.sensor16.UseVisualStyleBackColor = true;
-			this.sensor16.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor16.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor15
 			// 
 			this.sensor15.AutoSize = true;
 			this.sensor15.Checked = true;
+			this.sensor15.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor15.Location = new System.Drawing.Point(57, 113);
-			this.sensor15.Name = "15";
+			this.sensor15.Name = "sensor15";
 			this.sensor15.Size = new System.Drawing.Size(15, 14);
 			this.sensor15.TabIndex = 26;
 			this.sensor15.UseVisualStyleBackColor = true;
-			this.sensor15.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor15.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor14
 			// 
@@ -378,11 +428,11 @@ namespace SpintronicsGUI
 			this.sensor14.Checked = true;
 			this.sensor14.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor14.Location = new System.Drawing.Point(37, 113);
-			this.sensor14.Name = "14";
+			this.sensor14.Name = "sensor14";
 			this.sensor14.Size = new System.Drawing.Size(15, 14);
 			this.sensor14.TabIndex = 25;
 			this.sensor14.UseVisualStyleBackColor = true;
-			this.sensor14.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor14.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor13
 			// 
@@ -390,11 +440,11 @@ namespace SpintronicsGUI
 			this.sensor13.Checked = true;
 			this.sensor13.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor13.Location = new System.Drawing.Point(98, 93);
-			this.sensor13.Name = "13";
+			this.sensor13.Name = "sensor13";
 			this.sensor13.Size = new System.Drawing.Size(15, 14);
 			this.sensor13.TabIndex = 24;
 			this.sensor13.UseVisualStyleBackColor = true;
-			this.sensor13.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor13.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor12
 			// 
@@ -402,11 +452,11 @@ namespace SpintronicsGUI
 			this.sensor12.Checked = true;
 			this.sensor12.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor12.Location = new System.Drawing.Point(77, 93);
-			this.sensor12.Name = "12";
+			this.sensor12.Name = "sensor12";
 			this.sensor12.Size = new System.Drawing.Size(15, 14);
 			this.sensor12.TabIndex = 23;
 			this.sensor12.UseVisualStyleBackColor = true;
-			this.sensor12.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor12.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor11
 			// 
@@ -414,11 +464,11 @@ namespace SpintronicsGUI
 			this.sensor11.Checked = true;
 			this.sensor11.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor11.Location = new System.Drawing.Point(57, 93);
-			this.sensor11.Name = "11";
+			this.sensor11.Name = "sensor11";
 			this.sensor11.Size = new System.Drawing.Size(15, 14);
 			this.sensor11.TabIndex = 22;
 			this.sensor11.UseVisualStyleBackColor = true;
-			this.sensor11.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor11.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor10
 			// 
@@ -426,11 +476,11 @@ namespace SpintronicsGUI
 			this.sensor10.Checked = true;
 			this.sensor10.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor10.Location = new System.Drawing.Point(37, 93);
-			this.sensor10.Name = "10";
+			this.sensor10.Name = "sensor10";
 			this.sensor10.Size = new System.Drawing.Size(15, 14);
 			this.sensor10.TabIndex = 21;
 			this.sensor10.UseVisualStyleBackColor = true;
-			this.sensor10.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor10.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor9
 			// 
@@ -438,11 +488,11 @@ namespace SpintronicsGUI
 			this.sensor9.Checked = true;
 			this.sensor9.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor9.Location = new System.Drawing.Point(98, 73);
-			this.sensor9.Name = "9";
+			this.sensor9.Name = "sensor9";
 			this.sensor9.Size = new System.Drawing.Size(15, 14);
 			this.sensor9.TabIndex = 20;
 			this.sensor9.UseVisualStyleBackColor = true;
-			this.sensor9.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor9.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor8
 			// 
@@ -450,11 +500,11 @@ namespace SpintronicsGUI
 			this.sensor8.Checked = true;
 			this.sensor8.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor8.Location = new System.Drawing.Point(77, 73);
-			this.sensor8.Name = "8";
+			this.sensor8.Name = "sensor8";
 			this.sensor8.Size = new System.Drawing.Size(15, 14);
 			this.sensor8.TabIndex = 19;
 			this.sensor8.UseVisualStyleBackColor = true;
-			this.sensor8.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor8.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor7
 			// 
@@ -462,11 +512,11 @@ namespace SpintronicsGUI
 			this.sensor7.Checked = true;
 			this.sensor7.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor7.Location = new System.Drawing.Point(57, 73);
-			this.sensor7.Name = "7";
+			this.sensor7.Name = "sensor7";
 			this.sensor7.Size = new System.Drawing.Size(15, 14);
 			this.sensor7.TabIndex = 18;
 			this.sensor7.UseVisualStyleBackColor = true;
-			this.sensor7.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor7.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor6
 			// 
@@ -474,11 +524,11 @@ namespace SpintronicsGUI
 			this.sensor6.Checked = true;
 			this.sensor6.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor6.Location = new System.Drawing.Point(37, 73);
-			this.sensor6.Name = "6";
+			this.sensor6.Name = "sensor6";
 			this.sensor6.Size = new System.Drawing.Size(15, 14);
 			this.sensor6.TabIndex = 17;
 			this.sensor6.UseVisualStyleBackColor = true;
-			this.sensor6.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor6.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor5
 			// 
@@ -486,11 +536,11 @@ namespace SpintronicsGUI
 			this.sensor5.Checked = true;
 			this.sensor5.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor5.Location = new System.Drawing.Point(118, 53);
-			this.sensor5.Name = "5";
+			this.sensor5.Name = "sensor5";
 			this.sensor5.Size = new System.Drawing.Size(15, 14);
 			this.sensor5.TabIndex = 16;
 			this.sensor5.UseVisualStyleBackColor = true;
-			this.sensor5.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor5.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor4
 			// 
@@ -498,11 +548,11 @@ namespace SpintronicsGUI
 			this.sensor4.Checked = true;
 			this.sensor4.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor4.Location = new System.Drawing.Point(98, 53);
-			this.sensor4.Name = "4";
+			this.sensor4.Name = "sensor4";
 			this.sensor4.Size = new System.Drawing.Size(15, 14);
 			this.sensor4.TabIndex = 15;
 			this.sensor4.UseVisualStyleBackColor = true;
-			this.sensor4.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor4.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensor3
 			// 
@@ -510,11 +560,11 @@ namespace SpintronicsGUI
 			this.sensor3.Checked = true;
 			this.sensor3.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor3.Location = new System.Drawing.Point(77, 53);
-			this.sensor3.Name = "3";
+			this.sensor3.Name = "sensor3";
 			this.sensor3.Size = new System.Drawing.Size(15, 14);
 			this.sensor3.TabIndex = 14;
 			this.sensor3.UseVisualStyleBackColor = true;
-			this.sensor3.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor3.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensorsLabelF
 			// 
@@ -531,11 +581,11 @@ namespace SpintronicsGUI
 			this.sensor2.Checked = true;
 			this.sensor2.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor2.Location = new System.Drawing.Point(57, 53);
-			this.sensor2.Name = "2";
+			this.sensor2.Name = "sensor2";
 			this.sensor2.Size = new System.Drawing.Size(15, 14);
 			this.sensor2.TabIndex = 11;
 			this.sensor2.UseVisualStyleBackColor = true;
-			this.sensor2.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor2.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// sensorsLabel5
 			// 
@@ -633,47 +683,11 @@ namespace SpintronicsGUI
 			this.sensor1.Checked = true;
 			this.sensor1.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.sensor1.Location = new System.Drawing.Point(37, 53);
-			this.sensor1.Name = "1";
+			this.sensor1.Name = "sensor1";
 			this.sensor1.Size = new System.Drawing.Size(15, 14);
 			this.sensor1.TabIndex = 0;
 			this.sensor1.UseVisualStyleBackColor = true;
-			this.sensor1.Click += new System.EventHandler(this.sensor_Click);
-			// 
-			// sensor29
-			// 
-			this.sensor29.AutoSize = true;
-			this.sensor29.Checked = true;
-			this.sensor29.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.sensor29.Location = new System.Drawing.Point(98, 173);
-			this.sensor29.Name = "29";
-			this.sensor29.Size = new System.Drawing.Size(15, 14);
-			this.sensor29.TabIndex = 40;
-			this.sensor29.UseVisualStyleBackColor = true;
-			this.sensor29.Click += new System.EventHandler(this.sensor_Click);
-			// 
-			// sensor28
-			// 
-			this.sensor28.AutoSize = true;
-			this.sensor28.Checked = true;
-			this.sensor28.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.sensor28.Location = new System.Drawing.Point(77, 173);
-			this.sensor28.Name = "28";
-			this.sensor28.Size = new System.Drawing.Size(15, 14);
-			this.sensor28.TabIndex = 39;
-			this.sensor28.UseVisualStyleBackColor = true;
-			this.sensor28.Click += new System.EventHandler(this.sensor_Click);
-			// 
-			// sensor27
-			// 
-			this.sensor27.AutoSize = true;
-			this.sensor27.Checked = true;
-			this.sensor27.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.sensor27.Location = new System.Drawing.Point(57, 173);
-			this.sensor27.Name = "27";
-			this.sensor27.Size = new System.Drawing.Size(15, 14);
-			this.sensor27.TabIndex = 38;
-			this.sensor27.UseVisualStyleBackColor = true;
-			this.sensor27.Click += new System.EventHandler(this.sensor_Click);
+			this.sensor1.CheckedChanged += new System.EventHandler(this.sensor_Click);
 			// 
 			// startRunButton
 			// 
@@ -687,7 +701,7 @@ namespace SpintronicsGUI
 			// 
 			// f1Amplitude
 			// 
-			this.f1Amplitude.Location = new System.Drawing.Point(23, 279);
+			this.f1Amplitude.Location = new System.Drawing.Point(23, 407);
 			this.f1Amplitude.Name = "f1Amplitude";
 			this.f1Amplitude.Size = new System.Drawing.Size(100, 20);
 			this.f1Amplitude.TabIndex = 0;
@@ -695,7 +709,7 @@ namespace SpintronicsGUI
 			// f1AmplitudeLabel
 			// 
 			this.f1AmplitudeLabel.AutoSize = true;
-			this.f1AmplitudeLabel.Location = new System.Drawing.Point(20, 263);
+			this.f1AmplitudeLabel.Location = new System.Drawing.Point(20, 391);
 			this.f1AmplitudeLabel.Name = "f1AmplitudeLabel";
 			this.f1AmplitudeLabel.Size = new System.Drawing.Size(114, 13);
 			this.f1AmplitudeLabel.TabIndex = 6;
@@ -704,7 +718,7 @@ namespace SpintronicsGUI
 			// f2AmplitudeLabel
 			// 
 			this.f2AmplitudeLabel.AutoSize = true;
-			this.f2AmplitudeLabel.Location = new System.Drawing.Point(20, 302);
+			this.f2AmplitudeLabel.Location = new System.Drawing.Point(20, 430);
 			this.f2AmplitudeLabel.Name = "f2AmplitudeLabel";
 			this.f2AmplitudeLabel.Size = new System.Drawing.Size(73, 13);
 			this.f2AmplitudeLabel.TabIndex = 7;
@@ -712,7 +726,7 @@ namespace SpintronicsGUI
 			// 
 			// f2Amplitude
 			// 
-			this.f2Amplitude.Location = new System.Drawing.Point(23, 318);
+			this.f2Amplitude.Location = new System.Drawing.Point(23, 446);
 			this.f2Amplitude.Name = "f2Amplitude";
 			this.f2Amplitude.Size = new System.Drawing.Size(100, 20);
 			this.f2Amplitude.TabIndex = 0;
@@ -889,7 +903,7 @@ namespace SpintronicsGUI
 			// f1FrequencyLabel
 			// 
 			this.f1FrequencyLabel.AutoSize = true;
-			this.f1FrequencyLabel.Location = new System.Drawing.Point(20, 341);
+			this.f1FrequencyLabel.Location = new System.Drawing.Point(20, 469);
 			this.f1FrequencyLabel.Name = "f1FrequencyLabel";
 			this.f1FrequencyLabel.Size = new System.Drawing.Size(118, 13);
 			this.f1FrequencyLabel.TabIndex = 11;
@@ -897,7 +911,7 @@ namespace SpintronicsGUI
 			// 
 			// f1Frequency
 			// 
-			this.f1Frequency.Location = new System.Drawing.Point(23, 357);
+			this.f1Frequency.Location = new System.Drawing.Point(23, 485);
 			this.f1Frequency.Name = "f1Frequency";
 			this.f1Frequency.Size = new System.Drawing.Size(100, 20);
 			this.f1Frequency.TabIndex = 0;
@@ -905,7 +919,7 @@ namespace SpintronicsGUI
 			// f2FrequencyLabel
 			// 
 			this.f2FrequencyLabel.AutoSize = true;
-			this.f2FrequencyLabel.Location = new System.Drawing.Point(20, 380);
+			this.f2FrequencyLabel.Location = new System.Drawing.Point(20, 508);
 			this.f2FrequencyLabel.Name = "f2FrequencyLabel";
 			this.f2FrequencyLabel.Size = new System.Drawing.Size(77, 13);
 			this.f2FrequencyLabel.TabIndex = 13;
@@ -913,7 +927,7 @@ namespace SpintronicsGUI
 			// 
 			// f2Frequency
 			// 
-			this.f2Frequency.Location = new System.Drawing.Point(23, 396);
+			this.f2Frequency.Location = new System.Drawing.Point(23, 524);
 			this.f2Frequency.Name = "f2Frequency";
 			this.f2Frequency.Size = new System.Drawing.Size(100, 20);
 			this.f2Frequency.TabIndex = 0;
@@ -921,7 +935,7 @@ namespace SpintronicsGUI
 			// measurementPeriodLabel
 			// 
 			this.measurementPeriodLabel.AutoSize = true;
-			this.measurementPeriodLabel.Location = new System.Drawing.Point(20, 419);
+			this.measurementPeriodLabel.Location = new System.Drawing.Point(20, 547);
 			this.measurementPeriodLabel.Name = "measurementPeriodLabel";
 			this.measurementPeriodLabel.Size = new System.Drawing.Size(104, 13);
 			this.measurementPeriodLabel.TabIndex = 15;
@@ -929,7 +943,7 @@ namespace SpintronicsGUI
 			// 
 			// measurementPeriod
 			// 
-			this.measurementPeriod.Location = new System.Drawing.Point(23, 435);
+			this.measurementPeriod.Location = new System.Drawing.Point(23, 563);
 			this.measurementPeriod.Name = "measurementPeriod";
 			this.measurementPeriod.Size = new System.Drawing.Size(100, 20);
 			this.measurementPeriod.TabIndex = 0;
@@ -944,34 +958,37 @@ namespace SpintronicsGUI
 			this.stopRunButton.UseVisualStyleBackColor = true;
 			this.stopRunButton.Click += new System.EventHandler(this.stopRun);
 			// 
+			// invertSelectionButton
+			// 
+			this.invertSelectionButton.Location = new System.Drawing.Point(10, 235);
+			this.invertSelectionButton.Name = "invertSelectionButton";
+			this.invertSelectionButton.Size = new System.Drawing.Size(101, 23);
+			this.invertSelectionButton.TabIndex = 42;
+			this.invertSelectionButton.Text = "Invert";
+			this.invertSelectionButton.UseVisualStyleBackColor = true;
+			this.invertSelectionButton.Click += new System.EventHandler(invertSelectionButton_Click);
+			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(963, 514);
+			this.ClientSize = new System.Drawing.Size(963, 595);
+			this.Controls.Add(this.startRunButton);
 			this.Controls.Add(this.stopRunButton);
+			this.Controls.Add(this.f1Amplitude);
+			this.Controls.Add(this.f2Amplitude);
+			this.Controls.Add(this.f1Frequency);
+			this.Controls.Add(this.f2Frequency);
 			this.Controls.Add(this.measurementPeriod);
 			this.Controls.Add(this.measurementPeriodLabel);
-			this.Controls.Add(this.f2Frequency);
 			this.Controls.Add(this.f2FrequencyLabel);
-			this.Controls.Add(this.f1Frequency);
 			this.Controls.Add(this.f1FrequencyLabel);
 			this.Controls.Add(this.sensorKeyLabel);
 			this.Controls.Add(this.chart1);
-			this.Controls.Add(this.f2Amplitude);
 			this.Controls.Add(this.f2AmplitudeLabel);
 			this.Controls.Add(this.f1AmplitudeLabel);
-			this.Controls.Add(this.f1Amplitude);
-			this.Controls.Add(this.startRunButton);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.menuStrip1);
-			this.Controls.SetChildIndex(this.f1Amplitude, 0);
-			this.Controls.SetChildIndex(this.f2Amplitude, 1);
-			this.Controls.SetChildIndex(this.f1Frequency, 2);
-			this.Controls.SetChildIndex(this.f2Frequency, 3);
-			this.Controls.SetChildIndex(this.measurementPeriod, 4);
-			this.Controls.SetChildIndex(this.startRunButton, 0);
-			this.Controls.SetChildIndex(this.stopRunButton, 1);
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "GUI";
 			this.Text = "Spintronics";
@@ -984,8 +1001,6 @@ namespace SpintronicsGUI
 			this.PerformLayout();
 
 		}
-
-		#endregion
 
 		//private System.Windows.Forms.ComboBox comboBox;
 		public System.Windows.Forms.MenuStrip menuStrip1;
@@ -1049,6 +1064,8 @@ namespace SpintronicsGUI
 		private System.Windows.Forms.Button stopRunButton;
 		private System.Windows.Forms.Label sensorsLabel6;
 		private System.Windows.Forms.Label sensorsLabel7;
+		private System.Windows.Forms.Button selectAllButton;
+		private System.Windows.Forms.Button invertSelectionButton;
 	}
 }
 
