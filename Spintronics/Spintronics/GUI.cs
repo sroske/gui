@@ -135,8 +135,8 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 				chart1.Series[sensorId - 1].Points.AddY(wheatstonef1A);
 				//chart1.Series[sensorId - 1].Points.AddXY(globalTime, wheatstonef1A);
-				if (globalTime >= 10)
-					this.chart1.ChartAreas[0].AxisX.Maximum = 25;
+				//if (globalTime >= 10)
+				//	this.chart1.ChartAreas[0].AxisX.Maximum = 25;
 				if (sensorId >= chart1.Series.Count)
 					globalTime++;
 			} catch (IndexOutOfRangeException) {
@@ -298,6 +298,11 @@ namespace SpintronicsGUI
 			} catch (System.OverflowException) {
 				MessageBox.Show("Please enter a valid number in the range X to X for all fields");
 			}
+		}
+
+		private void timeTareButton_Click(object sender, EventArgs e)
+		{
+			this.chart1.ChartAreas[0].AxisX.Minimum = globalTime;
 		}
 
 		private void printPacket(Packet packet, PacketCommDirection direction)
