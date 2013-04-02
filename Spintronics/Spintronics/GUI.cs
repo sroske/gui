@@ -19,6 +19,12 @@ namespace SpintronicsGUI
 		Out
 	}
 
+	enum PinAssignment
+	{
+		A,
+		B
+	}
+
 	public partial class GUI : Form
 	{
 		SerialPort serialPort = null;
@@ -28,6 +34,7 @@ namespace SpintronicsGUI
 		TextWriter logFile = null;
 		TextWriter dataLogFile = null;
 		bool printLogText = true;
+		PinAssignment pins = PinAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
 
@@ -227,12 +234,17 @@ namespace SpintronicsGUI
 
 		private void sensor_Click(object sender, EventArgs e)
 		{
-			string resultString = Regex.Match(((CheckBox)sender).Name, @"\d+").Value;
+			string number;
+			if(pins == PinAssignment.A)
+				number = ((CheckBox)sender).Name.Substring(1, 2);
+			else
+				number = ((CheckBox)sender).Name.Substring(4, 2);
+			//string resultString = Regex.Match(((CheckBox)sender).Name, @"\d+").Value;
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
 				foreach (Chart c in t.Controls)
 				{
-					c.Series[System.Convert.ToInt32(resultString) - 1].Enabled = ((CheckBox)sender).Checked;
+					c.Series[System.Convert.ToInt32(number) - 1].Enabled = ((CheckBox)sender).Checked;
 				}
 			}
 		}
@@ -256,6 +268,38 @@ namespace SpintronicsGUI
 						((CheckBox)c).Checked = false;
 					else
 						((CheckBox)c).Checked = true;
+				}
+			}
+		}
+
+		private void radioButton_Click(object sender, EventArgs e)
+		{
+			if(sender.Equals(this.radioButtonA))
+			{
+				this.radioButtonA.Checked = true;
+				this.radioButtonB.Checked = false;
+				this.pins = PinAssignment.A;
+			}
+			else
+			{
+				this.radioButtonA.Checked = false;
+				this.radioButtonB.Checked = true;
+				this.pins = PinAssignment.B;
+			}
+			foreach (Control c in this.groupBox1.Controls)
+			{
+				if (c is CheckBox)
+				{
+					if (((CheckBox)c).Checked)
+					{
+						((CheckBox)c).Checked = false;
+						((CheckBox)c).Checked = true;
+					}
+					else
+					{
+						((CheckBox)c).Checked = true;
+						((CheckBox)c).Checked = false;
+					}
 				}
 			}
 		}
