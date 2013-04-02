@@ -19,7 +19,7 @@ namespace SpintronicsGUI
 		SerialPort serialPort;
 		MicrocontrollerState state;
 		byte errorSent = 0xFF;
-		byte sensor = 0x20;
+		byte sensor = 0x00;
 		int dataSpeed, sensorCount;
 
 		public Microcontroller(SerialPort port, int speed = 1000, int count = 30)
@@ -141,8 +141,10 @@ namespace SpintronicsGUI
 		private Packet createDataPacket()
 		{
 			sensor++;
-			if (sensor >= (sensorCount + 1))
+			if (sensor > sensorCount)
 				sensor = 1;
+			if (sensor == 16)
+				sensor++;
 
 			float[] data = new float[10];
 			Random random = new Random();

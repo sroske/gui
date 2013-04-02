@@ -95,17 +95,6 @@ namespace SpintronicsGUI
 			*/
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
-			for (int i = 0; i < chart1.Series.Count; i++)
-			{
-				foreach (TabPage t in this.tabControl1.Controls)
-				{
-					foreach (Chart c in t.Controls)
-					{
-						c.Series[i].Points.AddXY(0, 0);
-					}
-				}
-			}
-
 			/*
 			 * Initialize COM ports
 			*/
@@ -148,17 +137,74 @@ namespace SpintronicsGUI
 				float wheatstonef1Pf2P = System.BitConverter.ToSingle(packet.payload, 29);
 				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
-				chart1.Series[sensorId - 1].Points.AddY(wheatstonef1A);
-				chart2.Series[sensorId - 1].Points.AddY(wheatstonef1P);
-				chart3.Series[sensorId - 1].Points.AddY(wheatstonef2A);
-				//chart1.Series[sensorId - 1].Points.AddXY(globalTime, wheatstonef1A);
+
+				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
+				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
+				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
+
 				if (sensorId >= chart1.Series.Count)
 					globalTime++;
 			} catch (IndexOutOfRangeException) {
 				
 			} catch (ArgumentOutOfRangeException) {
 
+			} catch (NullReferenceException) {
+
 			}
+		}
+
+		private double getAddTime(int pin)
+		{
+			double time;
+			if (pins == PinAssignment.A)
+			{
+				switch (pin)
+				{
+					case 18: case 20: case 22: case 24: case 26: case 28: case 30:
+						time = ((double)globalTime) + 0.0;
+						break;
+					case 17: case 19: case 21: case 23: case 25: case 27: case 29:
+						time = ((double)globalTime) + 0.2;
+						break;
+					case 15: case 13: case 11: case 9: case 6: case 4: case 2:
+						time = ((double)globalTime) + 0.4;
+						break;
+					case 14: case 12: case 10: case 8: case 5: case 3: case 1:
+						time = ((double)globalTime) + 0.6;
+						break;
+					case 7:
+						time = ((double)globalTime) + 0.8;
+						break;
+					default:
+						time = (double)globalTime;
+						break;
+				}
+			}
+			else
+			{
+				switch (pin)
+				{
+					case 1: case 3: case 5: case 8: case 10: case 12: case 14:
+						time = ((double)globalTime) + 0.0;
+						break;
+					case 2: case 4: case 6: case 9: case 11: case 13: case 15:
+						time = ((double)globalTime) + 0.2;
+						break;
+					case 29: case 27: case 25: case 23: case 21: case 19: case 17:
+						time = ((double)globalTime) + 0.4;
+						break;
+					case 30: case 28: case 26: case 24: case 22: case 20: case 18:
+						time = ((double)globalTime) + 0.6;
+						break;
+					case 7:
+						time = ((double)globalTime) + 0.8;
+						break;
+					default:
+						time = (double)globalTime;
+						break;
+				}
+			}
+			return time;
 		}
 
 
@@ -234,17 +280,18 @@ namespace SpintronicsGUI
 
 		private void sensor_Click(object sender, EventArgs e)
 		{
-			string number;
+			int number;
 			if(pins == PinAssignment.A)
-				number = ((CheckBox)sender).Name.Substring(1, 2);
+				number = System.Convert.ToInt32(((CheckBox)sender).Name.Substring(1, 2));
 			else
-				number = ((CheckBox)sender).Name.Substring(4, 2);
-			//string resultString = Regex.Match(((CheckBox)sender).Name, @"\d+").Value;
+				number = System.Convert.ToInt32(((CheckBox)sender).Name.Substring(4, 2));
+
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
-				foreach (Chart c in t.Controls)
+				foreach (Control c in t.Controls)
 				{
-					c.Series[System.Convert.ToInt32(number) - 1].Enabled = ((CheckBox)sender).Checked;
+					if(c is Chart)
+						((Chart)c).Series.FindByName(System.Convert.ToString(number)).Enabled = ((CheckBox)sender).Checked;
 				}
 			}
 		}
@@ -332,6 +379,21 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please enter a value for all fields");
 				return;
 			}
+			foreach (TabPage t in this.tabControl1.Controls)
+			{
+				foreach (Control c in t.Controls)
+				{
+					if (c is Chart)
+					{
+						foreach (Series s in ((Chart)c).Series)
+						{
+							s.Points.Clear();
+							s.Points.AddXY(0, 0);
+						}
+					}
+				}
+			}
+			this.globalTime = 1;
 			try {
 				float[] data = new float[5];
 				byte[] payload = new byte[20];
@@ -364,9 +426,10 @@ namespace SpintronicsGUI
 			{
 				foreach (TabPage t in this.tabControl1.Controls)
 				{
-					foreach (Chart c in t.Controls)
+					foreach (Control c in t.Controls)
 					{
-						c.ChartAreas[0].AxisX.Minimum = globalTime;
+						if(c is Chart)
+							((Chart)c).ChartAreas[0].AxisX.Minimum = globalTime;
 					}
 				}
 			}
