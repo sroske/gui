@@ -33,7 +33,7 @@ namespace SpintronicsGUI
 
 		int globalTime = 1;
 
-		public GUI()
+		public GUI(string comPort)
 		{
 			InitializeComponent();
 
@@ -102,6 +102,7 @@ namespace SpintronicsGUI
 			/*
 			 * Initialize COM ports
 			*/
+			//serialPort = new SerialPort(comPort, 115200);
 			serialPort = new SerialPort("COM5", 115200);
 			debugSerial = new SerialPort("COM6", 115200);
 			serialPort.ReadTimeout = 200;

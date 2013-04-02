@@ -62,6 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComSelector.Designer.cs">
+      <DependentUpon>ComSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Microcontroller.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="GUI.cs">
@@ -73,6 +79,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolHandler.cs" />
+    <EmbeddedResource Include="ComSelector.resx">
+      <DependentUpon>ComSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI.resx">
       <DependentUpon>GUI.cs</DependentUpon>
     </EmbeddedResource>

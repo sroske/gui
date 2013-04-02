@@ -7,3 +7,13 @@ D:\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Releas
 D:\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Release\Spintronics.pdb
 D:\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.exe
 D:\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.pdb
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Release\Spintronics.exe
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Release\Spintronics.pdb
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\ResolveAssemblyReference.cache
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\SpintronicsGUI.ComSelector.resources
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\SpintronicsGUI.GUI.resources
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\SpintronicsGUI.Properties.Resources.resources
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\GenerateResource.read.1.tlog
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\GenerateResource.write.1.tlog
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.exe
+D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.pdb

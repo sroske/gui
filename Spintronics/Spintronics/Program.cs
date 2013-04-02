@@ -17,8 +17,14 @@ namespace SpintronicsGUI
 			Application.SetCompatibleTextRenderingDefault(false);
 			//try
 			//{
-				GUI gui = new GUI();
-				Application.Run(gui);
+				ComSelector selector = new ComSelector();
+				Application.Run(selector);
+				string comPort = selector.GetPort();
+				if (comPort != null)
+				{
+					GUI gui = new GUI(comPort);
+					Application.Run(gui);
+				}
 			//} catch(Exception)
 			//{
 			//}
