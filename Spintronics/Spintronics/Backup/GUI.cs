@@ -38,7 +38,7 @@ namespace SpintronicsGUI
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
 
-		int globalTime = 0;
+		int globalTime = 1;
 
 		public GUI(string comPort)
 		{
@@ -385,16 +385,15 @@ namespace SpintronicsGUI
 				{
 					if (c is Chart)
 					{
-						((Chart)c).ChartAreas[0].AxisX.Minimum = globalTime;
 						foreach (Series s in ((Chart)c).Series)
 						{
 							s.Points.Clear();
-							s.Points.AddXY(globalTime, 0);
+							s.Points.AddXY(0, 0);
 						}
 					}
 				}
 			}
-			globalTime++;
+			this.globalTime = 1;
 			try {
 				float[] data = new float[5];
 				byte[] payload = new byte[20];
@@ -403,6 +402,11 @@ namespace SpintronicsGUI
 				data[2] = float.Parse(this.f1Frequency.Text);
 				data[3] = float.Parse(this.f2Frequency.Text);
 				data[4] = float.Parse(this.measurementPeriod.Text);
+				//Array.Copy(BitConverter.GetBytes(f1A), 0, payload, 0, 4);
+				//Array.Copy(BitConverter.GetBytes(f2A), 0, payload, 4, 4);
+				//Array.Copy(BitConverter.GetBytes(f1F), 0, payload, 8, 4);
+				//Array.Copy(BitConverter.GetBytes(f2F), 0, payload, 12, 4);
+				//Array.Copy(BitConverter.GetBytes(period), 0, payload, 16, 4);
 				Buffer.BlockCopy(data, 0, payload, 0, payload.Length);
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(startPacket, PacketCommDirection.Out);
@@ -418,12 +422,15 @@ namespace SpintronicsGUI
 
 		private void timeTareButton_Click(object sender, EventArgs e)
 		{
-			foreach (TabPage t in this.tabControl1.Controls)
+			for (int i = 0; i < chart1.Series.Count; i++)
 			{
-				foreach (Control c in t.Controls)
+				foreach (TabPage t in this.tabControl1.Controls)
 				{
-					if(c is Chart)
-						((Chart)c).ChartAreas[0].AxisX.Minimum = globalTime;
+					foreach (Control c in t.Controls)
+					{
+						if(c is Chart)
+							((Chart)c).ChartAreas[0].AxisX.Minimum = globalTime;
+					}
 				}
 			}
 		}

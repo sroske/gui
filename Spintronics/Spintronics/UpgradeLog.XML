@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Spintronics">
+</Property><Property Name="Solution File" Value="D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Spintronics.sln">
+</Property><Property Name="User Options File" Value="D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Spintronics.suo">
+</Property><Property Name="Date" Value="Friday, April 05, 2013">
+</Property><Property Name="Time" Value="17:35 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="Spintronics.sln" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Spintronics.sln">
+</Event><Event ErrorLevel="0" Project="" Source="Spintronics.suo" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Spintronics.suo">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Spintronics.csproj" Description="Project file successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Spintronics.csproj">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Spintronics.csproj.user" Description="Project user file successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Spintronics.csproj.user">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="ComSelector.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\ComSelector.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="ComSelector.Designer.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\ComSelector.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Microcontroller.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Microcontroller.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Packet.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Packet.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="GUI.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\GUI.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="GUI.Designer.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\GUI.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Program.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Program.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="ProtocolHandler.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\ProtocolHandler.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Properties\Resources.Designer.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Properties\Resources.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Properties\Settings.Designer.cs" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Properties\Settings.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Properties\Settings.settings" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Properties\Settings.settings">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="ComSelector.resx" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\ComSelector.resx">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="GUI.resx" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\GUI.resx">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Properties\Resources.resx" Description="File successfully backed up as D:\Dropbox\Documents\School\Senior Design Project\Software\GUI\Spintronics\Spintronics\Backup\Properties\Resources.resx">
+</Event><Event ErrorLevel="0" Project="Spintronics" Source="Spintronics.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Spintronics" Source="Spintronics.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="Spintronics.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="Spintronics.sln" Description="Converted">
+</Event></UpgradeLog>

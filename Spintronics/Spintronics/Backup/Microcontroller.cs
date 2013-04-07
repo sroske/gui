@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace SpintronicsGUI
 {
@@ -37,7 +36,6 @@ namespace SpintronicsGUI
 			Packet packet = null;
 			try
 			{
-				System.Threading.Thread.Sleep(1000);
 				byte startOfFrame = (byte)serialPort.ReadByte();
 				if (startOfFrame != 0xFE)
 				{

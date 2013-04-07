@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spintronics", "Spintronics.csproj", "{E1A2190C-81D1-4B27-8B88-BADE8D3F1E82}"
 EndProject
 Global
