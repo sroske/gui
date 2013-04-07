@@ -37,6 +37,8 @@ namespace SpintronicsGUI
 		PinAssignment pins = PinAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
+		double[][] zeroOffsets = null;
+		int[] references = { 1, 2, 7, 29, 30 };
 
 		int globalTime = 0;
 
@@ -122,6 +124,11 @@ namespace SpintronicsGUI
 			}
 		}
 
+		private void GUI_Shown(object sender, EventArgs e)
+		{
+			this.radioButtonA.PerformClick();
+		}
+
 		private void addNewDataPointMethod(Packet packet)
 		{
 			try
@@ -138,10 +145,30 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 
+				// Write all to log files
+				if (this.amplitudeTareCheckbox.Checked)
+				{
+					if (zeroOffsets != null)
+					{
+						wheatstonef1A -= (float)zeroOffsets[0][sensorId - 1];
+						wheatstonef1P -= (float)zeroOffsets[1][sensorId - 1];
+						wheatstonef2A -= (float)zeroOffsets[2][sensorId - 1];
+					}
+				}
+
+				if (this.referenceTareCheckbox.Checked)
+				{
+					wheatstonef1A -= (float)getReferenceAverage(0);
+					wheatstonef1P -= (float)getReferenceAverage(1);
+					wheatstonef2A -= (float)getReferenceAverage(2);
+				}
+
 				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
 				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
+				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
+				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 
 				if (sensorId >= chart1.Series.Count)
 					globalTime++;
@@ -206,6 +233,128 @@ namespace SpintronicsGUI
 				}
 			}
 			return time;
+		}
+
+		private double getReferenceAverage(int tabPage)
+		{
+			double total = 0;
+			int count = 0;
+			Chart chart;
+
+			if (tabPage == 1)
+			{
+				chart = this.chart1;
+			} else if (tabPage == 2) {
+				chart = this.chart2;
+			} else if (tabPage == 3) {
+				chart = this.chart3;
+			} else {
+				return 0;
+			}
+
+			for (int i = 0; i < 5; i++)
+			{
+				foreach (Control c in this.groupBox1.Controls)
+				{
+					if (c is CheckBox)
+					{
+						if (getPinNumber(((CheckBox)c).Name) == references[i])
+						{
+							try {
+								total += chart.Series.FindByName(System.Convert.ToString(references[i])).Points.Last().YValues[0];
+								count++;
+							} catch (ArgumentNullException) {
+								MessageBox.Show("Argument was null in getReferenceAverage");
+							}
+						}
+					}
+				}
+			}
+
+			if (count > 0)
+				return (total / count);
+			else
+				return 0;
+		}
+
+		void setPinColor(int pin)
+		{
+			if (pins == PinAssignment.A)
+			{
+				foreach (TabPage t in this.tabControl1.Controls)
+				{
+					foreach (Control c in t.Controls)
+					{
+						if (c is Chart)
+						{
+							switch (pin)
+							{
+								case 18: case 17: case 15: case 14:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+									break;
+								case 20: case 19: case 13: case 12:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+									break;
+								case 22: case 21: case 11: case 10:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+									break;
+								case 24: case 23: case 9: case 8:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+									break;
+								case 26: case 25: case 6: case 5:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+									break;
+								case 28: case 27: case 4: case 3:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+									break;
+								case 30: case 29: case 2: case 1:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				foreach (TabPage t in this.tabControl1.Controls)
+				{
+					foreach (Control c in t.Controls)
+					{
+						if (c is Chart)
+						{
+							switch (pin)
+							{
+								case 1: case 2:  case 29: case 30:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+									break;
+								case 3: case 4: case 27: case 28:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+									break;
+								case 5: case 6: case 25: case 26:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+									break;
+								case 8: case 9: case 23: case 24:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+									break;
+								case 10: case 11: case 21: case 22:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+									break;
+								case 12: case 13: case 19: case 20:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+									break;
+								case 14: case 15: case 17: case 18:
+									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				}
+			}
 		}
 
 
@@ -279,22 +428,29 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private void sensor_Click(object sender, EventArgs e)
+		private void sensor_CheckedChanged(object sender, EventArgs e)
 		{
-			int number;
-			if(pins == PinAssignment.A)
-				number = System.Convert.ToInt32(((CheckBox)sender).Name.Substring(1, 2));
-			else
-				number = System.Convert.ToInt32(((CheckBox)sender).Name.Substring(4, 2));
+			int number = getPinNumber(((CheckBox)sender).Name);
 
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
 				foreach (Control c in t.Controls)
 				{
-					if(c is Chart)
+					if (c is Chart)
+					{
 						((Chart)c).Series.FindByName(System.Convert.ToString(number)).Enabled = ((CheckBox)sender).Checked;
+						setPinColor(number);
+					}
 				}
 			}
+		}
+
+		private int getPinNumber(string name)
+		{
+			if (pins == PinAssignment.A)
+				return System.Convert.ToInt32(name.Substring(1, 2));
+			else
+				return System.Convert.ToInt32(name.Substring(4, 2));
 		}
 
 		private void selectAllButton_Click(object sender, EventArgs e)
@@ -349,6 +505,37 @@ namespace SpintronicsGUI
 						((CheckBox)c).Checked = false;
 					}
 				}
+			}
+		}
+
+		private void amplitudeTareButton_Click(object sender, EventArgs e)
+		{
+			if (zeroOffsets == null)
+			{
+				zeroOffsets = new double[3][];
+				for(int i = 0; i < 3; i++)
+					zeroOffsets[i] = new double[30];
+			}
+			int tab = 0;
+			foreach (TabPage t in this.tabControl1.Controls)
+			{
+				foreach (Control c in t.Controls)
+				{
+					if (c is Chart)
+					{
+						foreach (Series s in ((Chart)c).Series)
+						{
+							try {
+								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = s.Points.Last().YValues[0];
+							} catch (ArgumentNullException) {
+								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = 0;
+							} catch (InvalidOperationException) {
+								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = 0;
+							}
+						}
+					}
+				}
+				tab++;
 			}
 		}
 
