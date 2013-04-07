@@ -139,6 +139,7 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 
 				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
+				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
 				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
 
