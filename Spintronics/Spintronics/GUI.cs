@@ -380,6 +380,7 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please enter a value for all fields");
 				return;
 			}
+			globalTime = 0;
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
 				foreach (Control c in t.Controls)

@@ -37,7 +37,7 @@ namespace SpintronicsGUI
 			Packet packet = null;
 			try
 			{
-				System.Threading.Thread.Sleep(1000);
+				System.Threading.Thread.Sleep(100);
 				byte startOfFrame = (byte)serialPort.ReadByte();
 				if (startOfFrame != 0xFE)
 				{
