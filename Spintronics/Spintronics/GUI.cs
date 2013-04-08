@@ -256,8 +256,11 @@ namespace SpintronicsGUI
 						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
 						{
 							try {
-								total += chart.Series.FindByName(System.Convert.ToString(referenceSensors[i])).Points.Last().YValues[0];
-								count++;
+								if (((CheckBox)c).Enabled)
+								{
+									total += chart.Series.FindByName(System.Convert.ToString(referenceSensors[i])).Points.Last().YValues[0];
+									count++;
+								}
 							} catch (ArgumentNullException) {
 								MessageBox.Show("Argument was null in getReferenceAverage");
 							}
@@ -440,6 +443,23 @@ namespace SpintronicsGUI
 			}
 		}
 
+		private void referenceTareCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				foreach (Control c in this.groupBox1.Controls)
+				{
+					if (c is CheckBox)
+					{
+						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
+						{
+							((CheckBox)c).Enabled = !this.referenceTareCheckbox.Checked;
+						}
+					}
+				}
+			}
+		}
+
 		private int getPinNumber(string name)
 		{
 			if (pins == PinAssignment.A)
@@ -489,15 +509,22 @@ namespace SpintronicsGUI
 			{
 				if (c is CheckBox)
 				{
-					if (((CheckBox)c).Checked)
+					int i;
+					for (i = 0; i < 5; i++)
 					{
-						((CheckBox)c).Checked = false;
-						((CheckBox)c).Checked = true;
+						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
+						{
+							((CheckBox)c).Enabled = !this.referenceTareCheckbox.Checked;
+							((CheckBox)c).Checked = !((CheckBox)c).Checked;
+							((CheckBox)c).Checked = !((CheckBox)c).Checked;
+							break;
+						}
 					}
-					else
+					if (i >= 5)
 					{
-						((CheckBox)c).Checked = true;
-						((CheckBox)c).Checked = false;
+						((CheckBox)c).Enabled = true;
+						((CheckBox)c).Checked = !((CheckBox)c).Checked;
+						((CheckBox)c).Checked = !((CheckBox)c).Checked;
 					}
 				}
 			}

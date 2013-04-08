@@ -2139,6 +2139,7 @@ namespace SpintronicsGUI
 			this.referenceTareCheckbox.TabIndex = 45;
 			this.referenceTareCheckbox.Text = "Subtract Reference";
 			this.referenceTareCheckbox.UseVisualStyleBackColor = true;
+			this.referenceTareCheckbox.CheckedChanged += new System.EventHandler(referenceTareCheckbox_CheckedChanged);
 			// 
 			// amplitudeTareButton
 			// 
