@@ -460,6 +460,19 @@ namespace SpintronicsGUI
 			}
 		}
 
+		private void amplitudeTareCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (this.amplitudeTareCheckbox.Checked)
+			{
+				this.referenceTareCheckbox.Enabled = true;
+			}
+			else
+			{
+				this.referenceTareCheckbox.Checked = false;
+				this.referenceTareCheckbox.Enabled = false;
+			}
+		}
+
 		private int getPinNumber(string name)
 		{
 			if (pins == PinAssignment.A)
