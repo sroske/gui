@@ -22,6 +22,7 @@ namespace SpintronicsGUI
 		byte errorSent = 0xFF;
 		byte sensor = 0x00;
 		int dataSpeed, sensorCount;
+		double[] baseData = { 0.0, 0.4, 0.8, 1.2, 1.6, 2.0 };
 
 		public Microcontroller(SerialPort port, int speed = 1000, int count = 30)
 		{
@@ -148,11 +149,42 @@ namespace SpintronicsGUI
 			if (sensor == 16)
 				sensor++;
 
+			int baseSensor;
+			if (sensor <= 5)
+			{
+				baseSensor = 0;
+			}
+			else if (sensor <= 10)
+			{
+				baseSensor = 1;
+			}
+			else if (sensor <= 15)
+			{
+				baseSensor = 2;
+			}
+			else if (sensor <= 20)
+			{
+				baseSensor = 3;
+			}
+			else if (sensor <= 25)
+			{
+				baseSensor = 4;
+			}
+			else if (sensor <= 30)
+			{
+				baseSensor = 5;
+			}
+			else
+			{
+				baseSensor = 0;
+			}
+
 			float[] data = new float[10];
 			Random random = new Random();
 			for(int i = 0; i < 10; i++)
 			{
-				data[i] = (float)(random.NextDouble());
+				data[i] = (float)baseData[baseSensor];
+				data[i] += (float)(random.NextDouble() % 0.2);
 			}
 			/*data[0] = 1.0F;
 			data[1] = 1.0F;

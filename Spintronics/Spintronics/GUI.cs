@@ -85,7 +85,9 @@ namespace SpintronicsGUI
 				logFileName += DateTime.Now.Second;
 				logFileName += ".txt";
 				dataLogFile = new StreamWriter(logFileName);
-				writeToFile(dataLogFile, "Created data log file");
+				writeToFile(logFile, "Created data log file");
+				initDataFile(dataLogFile);
+				writeToFile(logFile, "Initialized data log file");
 			} catch (Exception) {
 				DialogResult messageBoxResult = MessageBox.Show("Unable to create file for recording data. Continue?", "Error", MessageBoxButtons.YesNo);
 				if (messageBoxResult != DialogResult.Yes)
@@ -147,6 +149,7 @@ namespace SpintronicsGUI
 
 				rawChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
 				rawChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				logData(dataLogFile, sensorId, wheatstonef1A);
 				rawChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
 				rawChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 				rawChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
@@ -630,6 +633,53 @@ namespace SpintronicsGUI
 				if (addNewLine)
 					Console.Write("\n");
 			}
+		}
+
+		private void initDataFile(TextWriter file)
+		{
+			for (int i = 1; i <= 30; i++)
+			{
+				file.Write("Sensor   " + i + "\t");
+			}
+			file.Write("\n");
+		}
+
+		static int currentSensor = 1;
+		private void logData(TextWriter file, int sensor, double data)
+		{
+			if (sensor != currentSensor)
+				return;
+
+			string dataString = System.Convert.ToString(data);
+			if(sensor >= 10)
+			{
+				try {
+					dataString = dataString.Substring(0, 11);
+				} catch (ArgumentOutOfRangeException) {
+					dataString = dataString.PadRight(11, '0');
+				}
+			} else {
+				try {
+					dataString = dataString.Substring(0, 10);
+				} catch (ArgumentOutOfRangeException) {
+					dataString = dataString.PadRight(10, '0');
+				}
+			}
+
+			file.Write(dataString + "\t");
+			currentSensor++;
+			if (currentSensor == 16)
+			{
+				file.Write("0.000000000" + "\t");
+				currentSensor++;
+			}
+			else
+			if (currentSensor > 30)
+			{
+				currentSensor = 1;
+				file.Write("\n");
+			}
+			file.Flush();
 		}
 	}
 }
