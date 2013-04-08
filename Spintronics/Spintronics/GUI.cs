@@ -37,10 +37,10 @@ namespace SpintronicsGUI
 		PinAssignment pins = PinAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
-		double[][] zeroOffsets = null;
-		int[] references = { 1, 2, 7, 29, 30 };
-
 		int globalTime = 0;
+		int tareIndex = 0;
+		int[] referenceSensors = { 1, 2, 7, 29, 30 };
+
 
 		public GUI(string comPort)
 		{
@@ -145,32 +145,36 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 
+				rawChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
+				rawChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				rawChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
+				rawChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				rawChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
+				rawChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+
 				// Write all to log files
 				if (this.amplitudeTareCheckbox.Checked)
 				{
-					if (zeroOffsets != null)
-					{
-						wheatstonef1A -= (float)zeroOffsets[0][sensorId - 1];
-						wheatstonef1P -= (float)zeroOffsets[1][sensorId - 1];
-						wheatstonef2A -= (float)zeroOffsets[2][sensorId - 1];
-					}
+					wheatstonef1A -= (float)rawChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.ElementAt(tareIndex).YValues[0];
+					wheatstonef1P -= (float)rawChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.ElementAt(tareIndex).YValues[0];
+					wheatstonef2A -= (float)rawChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.ElementAt(tareIndex).YValues[0];
 				}
 
 				if (this.referenceTareCheckbox.Checked)
 				{
-					wheatstonef1A -= (float)getReferenceAverage(0);
-					wheatstonef1P -= (float)getReferenceAverage(1);
-					wheatstonef2A -= (float)getReferenceAverage(2);
+					wheatstonef1A -= (float)getReferenceAverage(this.rawChart1);
+					wheatstonef1P -= (float)getReferenceAverage(this.rawChart2);
+					wheatstonef2A -= (float)getReferenceAverage(this.rawChart3);
 				}
 
-				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
-				chart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
-				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
-				chart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
-				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
-				chart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				adjustedChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1A);
+				adjustedChart1.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				adjustedChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef1P);
+				adjustedChart2.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
+				adjustedChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.AddXY(getAddTime(sensorId), wheatstonef2A);
+				adjustedChart3.Series.FindByName(System.Convert.ToString(sensorId)).Points.Last().MarkerStyle = MarkerStyle.Circle;
 
-				if (sensorId >= chart1.Series.Count)
+				if (sensorId >= adjustedChart1.Series.Count)
 					globalTime++;
 			} catch (IndexOutOfRangeException) {
 				
@@ -235,22 +239,10 @@ namespace SpintronicsGUI
 			return time;
 		}
 
-		private double getReferenceAverage(int tabPage)
+		private double getReferenceAverage(Chart chart)
 		{
 			double total = 0;
 			int count = 0;
-			Chart chart;
-
-			if (tabPage == 1)
-			{
-				chart = this.chart1;
-			} else if (tabPage == 2) {
-				chart = this.chart2;
-			} else if (tabPage == 3) {
-				chart = this.chart3;
-			} else {
-				return 0;
-			}
 
 			for (int i = 0; i < 5; i++)
 			{
@@ -258,10 +250,10 @@ namespace SpintronicsGUI
 				{
 					if (c is CheckBox)
 					{
-						if (getPinNumber(((CheckBox)c).Name) == references[i])
+						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
 						{
 							try {
-								total += chart.Series.FindByName(System.Convert.ToString(references[i])).Points.Last().YValues[0];
+								total += chart.Series.FindByName(System.Convert.ToString(referenceSensors[i])).Points.Last().YValues[0];
 								count++;
 							} catch (ArgumentNullException) {
 								MessageBox.Show("Argument was null in getReferenceAverage");
@@ -409,7 +401,7 @@ namespace SpintronicsGUI
 						writeToFile(logFile, "Received an unknown packet");
 						break;
 				}
-				int retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.chart1);
+				int retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.adjustedChart1);
 				if(retval == (int)ProtocolDirective.AddData)
 					if (InvokeRequired)
 						this.Invoke(this.myDelegate, packet);
@@ -510,33 +502,7 @@ namespace SpintronicsGUI
 
 		private void amplitudeTareButton_Click(object sender, EventArgs e)
 		{
-			if (zeroOffsets == null)
-			{
-				zeroOffsets = new double[3][];
-				for(int i = 0; i < 3; i++)
-					zeroOffsets[i] = new double[30];
-			}
-			int tab = 0;
-			foreach (TabPage t in this.tabControl1.Controls)
-			{
-				foreach (Control c in t.Controls)
-				{
-					if (c is Chart)
-					{
-						foreach (Series s in ((Chart)c).Series)
-						{
-							try {
-								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = s.Points.Last().YValues[0];
-							} catch (ArgumentNullException) {
-								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = 0;
-							} catch (InvalidOperationException) {
-								zeroOffsets[tab][System.Convert.ToInt32((s.Name)) - 1] = 0;
-							}
-						}
-					}
-				}
-				tab++;
-			}
+			tareIndex = globalTime;
 		}
 
 		private void stopRun(object sender, EventArgs e)
@@ -568,6 +534,7 @@ namespace SpintronicsGUI
 				return;
 			}
 			globalTime = 0;
+			tareIndex = 0;
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
 				foreach (Control c in t.Controls)
