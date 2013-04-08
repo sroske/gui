@@ -453,6 +453,8 @@ namespace SpintronicsGUI
 					{
 						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
 						{
+							if(this.referenceTareCheckbox.Checked)
+								((CheckBox)c).Checked = false;
 							((CheckBox)c).Enabled = !this.referenceTareCheckbox.Checked;
 						}
 					}
@@ -527,15 +529,17 @@ namespace SpintronicsGUI
 					{
 						if (getPinNumber(((CheckBox)c).Name) == referenceSensors[i])
 						{
+							if (this.referenceTareCheckbox.Checked)
+								((CheckBox)c).Checked = false;
 							((CheckBox)c).Enabled = !this.referenceTareCheckbox.Checked;
-							((CheckBox)c).Checked = !((CheckBox)c).Checked;
-							((CheckBox)c).Checked = !((CheckBox)c).Checked;
+							((CheckBox)c).BackColor = Color.Blue;
 							break;
 						}
 					}
 					if (i >= 5)
 					{
 						((CheckBox)c).Enabled = true;
+						((CheckBox)c).BackColor = default(Color);
 						((CheckBox)c).Checked = !((CheckBox)c).Checked;
 						((CheckBox)c).Checked = !((CheckBox)c).Checked;
 					}
