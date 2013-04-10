@@ -93,6 +93,7 @@ namespace SpintronicsGUI
 						Packet stopReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Stop));
 						writePacket(stopReplyPacket);
 						state = MicrocontrollerState.Idle;
+						sensor = 0x00;
 					}
 					break;
 
