@@ -32,7 +32,9 @@ namespace SpintronicsGUI
 		ProtocolHandler protocolHandler = new ProtocolHandler();
 		Microcontroller microcontroller;
 		TextWriter logFile = null;
-		TextWriter dataLogFile = null;
+		TextWriter dataLogFile1 = null;
+		TextWriter dataLogFile2 = null;
+		TextWriter dataLogFile3 = null;
 		bool printLogText = true;
 		PinAssignment pinAssignment = PinAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
@@ -77,18 +79,22 @@ namespace SpintronicsGUI
 			try
 			{
 				System.IO.Directory.CreateDirectory("./data");
-				string logFileName = "./data/";
-				logFileName += DateTime.Now.Year + "-";
-				logFileName += DateTime.Now.Month + "-";
-				logFileName += DateTime.Now.Day + "__";
-				logFileName += DateTime.Now.Hour + ".";
-				logFileName += DateTime.Now.Minute + ".";
-				logFileName += DateTime.Now.Second;
-				logFileName += ".txt";
-				dataLogFile = new StreamWriter(logFileName);
-				writeToFile(logFile, "Created data log file");
-				initDataFile(dataLogFile);
-				writeToFile(logFile, "Initialized data log file");
+				string logFileNameBase = "./data/";
+				logFileNameBase += DateTime.Now.Year + "-";
+				logFileNameBase += DateTime.Now.Month + "-";
+				logFileNameBase += DateTime.Now.Day + "__";
+				logFileNameBase += DateTime.Now.Hour + ".";
+				logFileNameBase += DateTime.Now.Minute + ".";
+				logFileNameBase += DateTime.Now.Second + "__";
+				string logFileNameExtension = ".txt";
+				dataLogFile1 = new StreamWriter(logFileNameBase + "wheatstonef1A" + logFileNameExtension);
+				dataLogFile2 = new StreamWriter(logFileNameBase + "wheatstonef1P" + logFileNameExtension);
+				dataLogFile3 = new StreamWriter(logFileNameBase + "wheatstonef2A" + logFileNameExtension);
+				writeToFile(logFile, "Created data log files");
+				initDataFile(dataLogFile1);
+				initDataFile(dataLogFile2);
+				initDataFile(dataLogFile3);
+				writeToFile(logFile, "Initialized data log files");
 			} catch (Exception) {
 				DialogResult messageBoxResult = MessageBox.Show("Unable to create file for recording data. Continue?", "Error", MessageBoxButtons.YesNo);
 				if (messageBoxResult != DialogResult.Yes)
@@ -151,9 +157,11 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 
 				rawChart1.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1A);
-				logData(dataLogFile, sensorId, wheatstonef1A);
+				logData(dataLogFile1, sensorId, wheatstonef1A);
 				rawChart2.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1P);
+				logData(dataLogFile2, sensorId, wheatstonef1P);
 				rawChart3.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef2A);
+				logData(dataLogFile3, sensorId, wheatstonef2A);
 
 				// Write all to log files
 				if (this.amplitudeTareCheckbox.Checked)
@@ -282,6 +290,9 @@ namespace SpintronicsGUI
 				return 0;												// return 0. This will sidestep potential dividing-by-0 exceptions when all reference sensors are disabled.
 		}
 
+		/*
+		 * This is used to do a flush of the current data in the visible charts and a total recalculation of all to-be-displayed data points
+		 */
 		private void recalculateData()
 		{
 			if (recalculate != 1)
@@ -297,8 +308,8 @@ namespace SpintronicsGUI
 						{
 							try {
 								s.Points.Clear();
-								s.Points.AddXY(tareIndex, 0);
-								for(int i = (tareIndex + 1); i <= globalCycle; i++)
+								//s.Points.AddXY(tareIndex, 0);
+								for(int i = tareIndex; i <= globalCycle; i++)
 								{
 									int sensorId = System.Convert.ToInt32(((Series)s).Name);
 									Chart chart;
@@ -650,8 +661,8 @@ namespace SpintronicsGUI
 				return;
 			}
 			globalCycle = 0;
-			//visibleCycle = 0;
 			tareIndex = 0;
+			this.tareIndexTextbox.Text = "0";
 			foreach (TabPage t in this.tabControl1.Controls)
 			{
 				foreach (Control c in t.Controls)
@@ -765,6 +776,9 @@ namespace SpintronicsGUI
 			recalculateData();
 		}
 
+		/*
+		 * This handles a user entering a new Tare Index into the text box manually
+		 */
 		private void tareIndexTextbox_TextEntered(object sender, EventArgs e)
 		{
 			if (e is KeyEventArgs)
@@ -800,6 +814,9 @@ namespace SpintronicsGUI
 			}
 		}
 
+		/*
+		 * This pritns out GUI-microcontroller packets
+		 */
 		private void printPacket(Packet packet, PacketCommDirection direction)
 		{
 			string directionString;
@@ -818,6 +835,9 @@ namespace SpintronicsGUI
 			writeToFile(logFile, " XOR:0x{0:X2}", packet.Xor, dateTimeStamp: false);
 		}
 
+		/*
+		 * This writes a text string to a file (for logging)
+		 */
 		private void writeToFile(TextWriter file, string text, object arg0 = null, bool addNewLine = true, bool dateTimeStamp = true)
 		{
 			if (file != null)
@@ -848,6 +868,9 @@ namespace SpintronicsGUI
 			}
 		}
 
+		/*
+		 * This initializes a data file by printing out the sensor name headers at the top of the file
+		 */
 		private void initDataFile(TextWriter file)
 		{
 			for (int i = 1; i <= 30; i++)
@@ -855,8 +878,12 @@ namespace SpintronicsGUI
 				file.Write("Sensor   " + i + "\t");
 			}
 			file.Write("\n");
+			file.Flush();
 		}
 
+		/*
+		 * This adds data to the data log file
+		 */
 		static int currentSensor = 1;
 		private void logData(TextWriter file, int sensor, double data)
 		{
@@ -886,7 +913,6 @@ namespace SpintronicsGUI
 				file.Write("0.000000000" + "\t");
 				currentSensor++;
 			}
-			else
 			if (currentSensor > 30)
 			{
 				currentSensor = 1;
