@@ -38,8 +38,8 @@ namespace SpintronicsGUI
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
 		int globalCycle = 0;
-		//int visibleCycle = 0;
 		int tareIndex = 0;
+		int recalculate = 1;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 
 
@@ -129,7 +129,9 @@ namespace SpintronicsGUI
 
 		private void GUI_Shown(object sender, EventArgs e)
 		{
+			recalculate = 0;
 			this.radioButtonA.PerformClick();
+			recalculate = 1;
 		}
 
 		private void addNewDataPointMethod(Packet packet)
@@ -282,6 +284,8 @@ namespace SpintronicsGUI
 
 		private void recalculateData()
 		{
+			if (recalculate != 1)
+				return;
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
@@ -428,8 +432,15 @@ namespace SpintronicsGUI
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
-						c.Series.FindByName(System.Convert.ToString(number)).Enabled = ((CheckBox)sender).Checked;
-						setPinColor(number);
+					c.Series[number - 1].Enabled = ((CheckBox)sender).Checked;
+					setPinColor(number);
+				}
+			}
+			for (int i = 0; i < 5; i++)
+			{
+				if (number == referenceSensors[i])
+				{
+					recalculateData();
 				}
 			}
 		}
@@ -441,59 +452,35 @@ namespace SpintronicsGUI
 		{
 			if (pinAssignment == PinAssignment.A)
 			{
-				foreach (TabPage t in this.tabControl1.Controls)
+				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 				{
-					foreach (Control c in t.Controls)
+					foreach (Chart c in t.Controls.OfType<Chart>())
 					{
-						if (c is Chart)
+						switch (pin)
 						{
-							switch (pin)
-							{
-								case 18:
-								case 17:
-								case 15:
-								case 14:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
-									break;
-								case 20:
-								case 19:
-								case 13:
-								case 12:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
-									break;
-								case 22:
-								case 21:
-								case 11:
-								case 10:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
-									break;
-								case 24:
-								case 23:
-								case 9:
-								case 8:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
-									break;
-								case 26:
-								case 25:
-								case 6:
-								case 5:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
-									break;
-								case 28:
-								case 27:
-								case 4:
-								case 3:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
-									break;
-								case 30:
-								case 29:
-								case 2:
-								case 1:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
-									break;
-								default:
-									break;
-							}
+							case 18: case 17: case 15: case 14:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+								break;
+							case 20: case 19: case 13: case 12:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+								break;
+							case 22: case 21: case 11: case 10:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+								break;
+							case 24: case 23: case 9: case 8:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+								break;
+							case 26: case 25: case 6: case 5:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+								break;
+							case 28: case 27: case 4: case 3:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+								break;
+							case 30: case 29: case 2: case 1:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+								break;
+							default:
+								break;
 						}
 					}
 				}
@@ -502,57 +489,33 @@ namespace SpintronicsGUI
 			{
 				foreach (TabPage t in this.tabControl1.Controls)
 				{
-					foreach (Control c in t.Controls)
+					foreach (Chart c in t.Controls.OfType<Chart>())
 					{
-						if (c is Chart)
+						switch (pin)
 						{
-							switch (pin)
-							{
-								case 1:
-								case 2:
-								case 29:
-								case 30:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
-									break;
-								case 3:
-								case 4:
-								case 27:
-								case 28:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
-									break;
-								case 5:
-								case 6:
-								case 25:
-								case 26:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
-									break;
-								case 8:
-								case 9:
-								case 23:
-								case 24:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
-									break;
-								case 10:
-								case 11:
-								case 21:
-								case 22:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
-									break;
-								case 12:
-								case 13:
-								case 19:
-								case 20:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
-									break;
-								case 14:
-								case 15:
-								case 17:
-								case 18:
-									((Chart)c).Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
-									break;
-								default:
-									break;
-							}
+							case 1: case 2: case 29: case 30:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+								break;
+							case 3: case 4: case 27: case 28:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+								break;
+							case 5: case 6: case 25: case 26:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+								break;
+							case 8: case 9: case 23: case 24:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+								break;
+							case 10: case 11: case 21: case 22:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+								break;
+							case 12: case 13: case 19: case 20:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+								break;
+							case 14: case 15: case 17: case 18:
+								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+								break;
+							default:
+								break;
 						}
 					}
 				}
@@ -564,9 +527,35 @@ namespace SpintronicsGUI
 		 */
 		private void selectAllButton_Click(object sender, EventArgs e)
 		{
+			int count = 0;
+			recalculate = 0;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
-				c.Checked = true;
+				int i;
+				for (i = 0; i < 5; i++)
+				{
+					if (getPinNumber(c.Name) == referenceSensors[i])
+					{
+						count++;
+						if (!c.Checked)
+						{
+							if (count == 5)
+								recalculate = 1;
+							c.Checked = true;
+						}
+						else
+						{
+							if (count == 5)
+							{
+								recalculate = 1;
+								recalculateData();
+							}
+						}
+						break;
+					}
+				}
+				if (i >= 5)
+					c.Checked = true;
 			}
 		}
 
@@ -575,12 +564,26 @@ namespace SpintronicsGUI
 		 */
 		private void invertSelectionButton_Click(object sender, EventArgs e)
 		{
+			int count = 0;
+			recalculate = 0;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
-				if (c.Checked)
-					c.Checked = false;
-				else
-					c.Checked = true;
+				int i;
+				for (i = 0; i < 5; i++)
+				{
+					if (getPinNumber(c.Name) == referenceSensors[i])
+					{
+						count++;
+						if (count == 5)
+							recalculate = 1;
+						c.Checked = !c.Checked;
+						break;
+					}
+				}
+				if (i >= 5)
+				{
+					c.Checked = !c.Checked;
+				}
 			}
 		}
 
@@ -601,6 +604,8 @@ namespace SpintronicsGUI
 				this.radioButtonB.Checked = true;
 				this.pinAssignment = PinAssignment.B;
 			}
+			int count = 0;
+			recalculate = 0;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
 				int i;
@@ -608,23 +613,25 @@ namespace SpintronicsGUI
 				{
 					if (getPinNumber(c.Name) == referenceSensors[i])
 					{
-						//if (this.referenceTareCheckbox.Checked)
-						//	c.Checked = false;
-						//c.Enabled = !this.referenceTareCheckbox.Checked;
+						count++;
 						c.BackColor = Color.Blue;
 						c.Checked = !c.Checked;
+						if (count == 5)
+						{
+							recalculate = 1;
+						}
 						c.Checked = !c.Checked;
 						break;
 					}
 				}
 				if (i >= 5)
 				{
-					//c.Enabled = true;
 					c.BackColor = default(Color);
 					c.Checked = !c.Checked;
 					c.Checked = !c.Checked;
 				}
 			}
+			recalculate = 1;
 		}
 
 		/*
@@ -738,13 +745,16 @@ namespace SpintronicsGUI
 			if (this.amplitudeTareCheckbox.Checked)			// If the amplitude-tare check box is checked,
 			{
 				this.referenceTareCheckbox.Enabled = true;	// enable the reference-tare check box.
+				recalculateData();
 			}
 			else									// Otherwise,
 			{
-				this.referenceTareCheckbox.Checked = false;	// uncheck the reference-tare check box,
 				this.referenceTareCheckbox.Enabled = false;	// and disable it.
+				if (this.referenceTareCheckbox.Checked)
+					this.referenceTareCheckbox.Checked = false;	// uncheck the reference-tare check box,
+				else
+					recalculateData();
 			}
-			recalculateData();
 		}
 
 		/*
@@ -752,18 +762,6 @@ namespace SpintronicsGUI
 		 */
 		private void referenceTareCheckbox_CheckedChanged(object sender, EventArgs e)
 		{
-			/*for (int i = 0; i < 5; i++)
-			{
-				foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
-				{
-					if (getPinNumber(c.Name) == referenceSensors[i])		// For each sensor check box,
-					{
-						//if(this.referenceTareCheckbox.Checked)					// if the reference tare check box is checked,
-						//	c.Checked = false;					// disable showing the data.
-						c.Enabled = !this.referenceTareCheckbox.Checked;	// Set the enable state of the check box to the opposite of the reference tare check box
-					}
-				}
-			}*/
 			recalculateData();
 		}
 
@@ -781,7 +779,7 @@ namespace SpintronicsGUI
 					MessageBox.Show("You cannot set the tare index to a previous cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
 				}
-				else if (System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle)
+				else if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
 				{
 					MessageBox.Show("You cannot set the tare index to a value greater than or equal to the current cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
