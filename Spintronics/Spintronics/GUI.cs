@@ -612,6 +612,8 @@ namespace SpintronicsGUI
 						//	c.Checked = false;
 						//c.Enabled = !this.referenceTareCheckbox.Checked;
 						c.BackColor = Color.Blue;
+						c.Checked = !c.Checked;
+						c.Checked = !c.Checked;
 						break;
 					}
 				}
@@ -723,8 +725,7 @@ namespace SpintronicsGUI
 			}*/
 			//visibleCycle = globalCycle - 1;
 			//tareIndex = visibleCycle;
-			tareIndex = globalCycle - 1;
-			this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
+			this.tareIndexTextbox.Text = System.Convert.ToString(globalCycle - 1);
 			this.tareIndexTextbox.Focus();
 			this.timeTareButton.Focus();
 		}
@@ -743,6 +744,7 @@ namespace SpintronicsGUI
 				this.referenceTareCheckbox.Checked = false;	// uncheck the reference-tare check box,
 				this.referenceTareCheckbox.Enabled = false;	// and disable it.
 			}
+			recalculateData();
 		}
 
 		/*
@@ -762,6 +764,7 @@ namespace SpintronicsGUI
 					}
 				}
 			}*/
+			recalculateData();
 		}
 
 		private void tareIndexTextbox_TextEntered(object sender, EventArgs e)
@@ -783,7 +786,7 @@ namespace SpintronicsGUI
 					MessageBox.Show("You cannot set the tare index to a value greater than or equal to the current cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
 				}
-				else
+				else if (System.Convert.ToInt32(this.tareIndexTextbox.Text) != tareIndex)
 				{
 					tareIndex = System.Convert.ToInt32(this.tareIndexTextbox.Text);
 					recalculateData();
