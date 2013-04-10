@@ -788,12 +788,12 @@ namespace SpintronicsGUI
 			}
 			try
 			{
-				if (System.Convert.ToInt32(this.tareIndexTextbox.Text) < tareIndex)
+				/*if (System.Convert.ToInt32(this.tareIndexTextbox.Text) < tareIndex)
 				{
 					MessageBox.Show("You cannot set the tare index to a previous cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
 				}
-				else if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
+				else */if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
 				{
 					MessageBox.Show("You cannot set the tare index to a value greater than or equal to the current cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
