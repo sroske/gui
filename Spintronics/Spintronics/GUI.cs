@@ -42,6 +42,7 @@ namespace SpintronicsGUI
 		int globalCycle = 0;
 		int tareIndex = 0;
 		int recalculate = 1;
+		int cycleSensorCount = 0;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 
 
@@ -156,35 +157,44 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
 
-				rawChart1.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1A);
+				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);
+				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);
+				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);
 				logData(dataLogFile1, sensorId, wheatstonef1A);
-				rawChart2.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1P);
 				logData(dataLogFile2, sensorId, wheatstonef1P);
-				rawChart3.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef2A);
 				logData(dataLogFile3, sensorId, wheatstonef2A);
 
 				// Write all to log files
-				if (this.amplitudeTareCheckbox.Checked)
-				{
-					wheatstonef1A -= (float)rawChart1.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
-					wheatstonef1P -= (float)rawChart2.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
-					wheatstonef2A -= (float)rawChart3.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 
-					if (this.referenceTareCheckbox.Checked)
+				if (globalCycle > 1)
+				{
+					wheatstonef1A = (float)rawChart1.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+					wheatstonef1P = (float)rawChart2.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+					wheatstonef2A = (float)rawChart3.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+
+					if (this.amplitudeTareCheckbox.Checked)
 					{
-						wheatstonef1A -= (float)getReferenceAverage(this.rawChart1);
-						wheatstonef1P -= (float)getReferenceAverage(this.rawChart2);
-						wheatstonef2A -= (float)getReferenceAverage(this.rawChart3);
+						wheatstonef1A -= (float)rawChart1.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+						wheatstonef1P -= (float)rawChart2.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+						wheatstonef2A -= (float)rawChart3.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+
+						if (this.referenceTareCheckbox.Checked)
+						{
+							wheatstonef1A -= (float)getReferenceAverage(this.rawChart1, (globalCycle - 1));
+							wheatstonef1P -= (float)getReferenceAverage(this.rawChart2, (globalCycle - 1));
+							wheatstonef2A -= (float)getReferenceAverage(this.rawChart3, (globalCycle - 1));
+						}
 					}
+
+					adjustedChart1.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1A);
+					adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					adjustedChart2.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1P);
+					adjustedChart2.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					adjustedChart3.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef2A);
+					adjustedChart3.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
 				}
 
-				adjustedChart1.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1A);
-				adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
-				adjustedChart2.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef1P);
-				adjustedChart2.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
-				adjustedChart3.Series[sensorId - 1].Points.AddXY(getAddTime(sensorId), wheatstonef2A);
-				adjustedChart3.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
-
+				cycleSensorCount = sensorId;
 				if (sensorId >= adjustedChart1.Series.Count)
 					globalCycle++;
 			} catch (IndexOutOfRangeException) {
@@ -201,29 +211,22 @@ namespace SpintronicsGUI
 		 */
 		private double getAddTime(int pin)
 		{
-			double time;
 			if (pinAssignment == PinAssignment.A)
 			{
 				switch (pin)
 				{
 					case 18: case 20: case 22: case 24: case 26: case 28: case 30:
-						time = ((double)globalCycle) + 0.0;
-						break;
+						return 0.0;
 					case 17: case 19: case 21: case 23: case 25: case 27: case 29:
-						time = ((double)globalCycle) + 0.2;
-						break;
+						return 0.2;
 					case 15: case 13: case 11: case 9: case 6: case 4: case 2:
-						time = ((double)globalCycle) + 0.4;
-						break;
+						return 0.4;
 					case 14: case 12: case 10: case 8: case 5: case 3: case 1:
-						time = ((double)globalCycle) + 0.6;
-						break;
+						return 0.6;
 					case 7:
-						time = ((double)globalCycle) + 0.8;
-						break;
+						return 0.8;
 					default:
-						time = (double)globalCycle;
-						break;
+						return 0.0;
 				}
 			}
 			else
@@ -231,32 +234,25 @@ namespace SpintronicsGUI
 				switch (pin)
 				{
 					case 1: case 3: case 5: case 8: case 10: case 12: case 14:
-						time = ((double)globalCycle) + 0.0;
-						break;
+						return 0.0;
 					case 2: case 4: case 6: case 9: case 11: case 13: case 15:
-						time = ((double)globalCycle) + 0.2;
-						break;
+						return 0.2;
 					case 29: case 27: case 25: case 23: case 21: case 19: case 17:
-						time = ((double)globalCycle) + 0.4;
-						break;
+						return 0.4;
 					case 30: case 28: case 26: case 24: case 22: case 20: case 18:
-						time = ((double)globalCycle) + 0.6;
-						break;
+						return 0.6;
 					case 7:
-						time = ((double)globalCycle) + 0.8;
-						break;
+						return 0.8;
 					default:
-						time = (double)globalCycle;
-						break;
+						return 0.0;
 				}
 			}
-			return time;
 		}
 
 		/*
 		 * This is used to get the average value of the reference sensors (most recent values)
 		 */
-		private double getReferenceAverage(Chart chart)
+		private double getReferenceAverage(Chart chart, int cycle)
 		{
 			double total = 0;
 			int count = 0;
@@ -270,15 +266,15 @@ namespace SpintronicsGUI
 						try {
 							if (c.Checked)								// and the sensor is enabled,
 							{
-								double difference = chart.Series[referenceSensors[i] - 1].Points.Last().YValues[0];
+								double difference = chart.Series[referenceSensors[i] - 1].Points.ElementAt(cycle).YValues[0];
 								difference -= chart.Series[referenceSensors[i] - 1].Points.ElementAt(tareIndex).YValues[0];
 								total += difference;
 								count++;								// add it to our running total and increment the count.
 							}
-						}
-						catch (ArgumentNullException)
-						{					// Catch any potential null arguments in our array accessing (Series[referenceSensors[i] - 1])
-							MessageBox.Show("Argument was null in getReferenceAverage");
+						} catch (ArgumentNullException) {// Catch any potential null arguments in our array accessing (Series[referenceSensors[i] - 1])
+
+						} catch (ArgumentOutOfRangeException) {
+
 						}
 					}
 				}
@@ -308,9 +304,13 @@ namespace SpintronicsGUI
 						{
 							try {
 								s.Points.Clear();
-								//s.Points.AddXY(tareIndex, 0);
-								for(int i = tareIndex; i <= globalCycle; i++)
+								for(int i = tareIndex; i < globalCycle; i++)
 								{
+									if (globalCycle != 1)
+									{
+										if ((i == (globalCycle - 1)) && (System.Convert.ToInt32(s.Name) > cycleSensorCount))
+											continue;
+									}
 									int sensorId = System.Convert.ToInt32(((Series)s).Name);
 									Chart chart;
 									if(c.Name.Contains("1")) {
@@ -329,12 +329,11 @@ namespace SpintronicsGUI
 
 										if (this.referenceTareCheckbox.Checked)
 										{
-											value -= (float)getReferenceAverage(chart);
+											value -= (float)getReferenceAverage(chart, i);
 										}
 									}
 
 									double time = getAddTime(sensorId);
-									time -= globalCycle;
 									time += (double)i;
 									s.Points.AddXY(time, value);
 									s.Points.Last().MarkerStyle = MarkerStyle.Circle;
@@ -663,18 +662,16 @@ namespace SpintronicsGUI
 			globalCycle = 0;
 			tareIndex = 0;
 			this.tareIndexTextbox.Text = "0";
-			foreach (TabPage t in this.tabControl1.Controls)
+			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
-				foreach (Control c in t.Controls)
+				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
-					if (c is Chart)
+					c.ChartAreas[0].AxisX.Minimum = globalCycle;
+					foreach (Series s in c.Series)
 					{
-						((Chart)c).ChartAreas[0].AxisX.Minimum = globalCycle;
-						foreach (Series s in ((Chart)c).Series)
-						{
-							s.Points.Clear();
-							s.Points.AddXY(globalCycle, 0);
-						}
+						s.Points.Clear();
+						s.Points.AddXY(globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
+						s.Points.Last().MarkerStyle = MarkerStyle.Circle;
 					}
 				}
 			}
@@ -788,12 +785,7 @@ namespace SpintronicsGUI
 			}
 			try
 			{
-				/*if (System.Convert.ToInt32(this.tareIndexTextbox.Text) < tareIndex)
-				{
-					MessageBox.Show("You cannot set the tare index to a previous cycle");
-					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
-				}
-				else */if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
+				if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
 				{
 					MessageBox.Show("You cannot set the tare index to a value greater than or equal to the current cycle");
 					this.tareIndexTextbox.Text = System.Convert.ToString(tareIndex);
