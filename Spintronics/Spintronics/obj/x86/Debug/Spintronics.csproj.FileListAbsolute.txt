@@ -20,3 +20,15 @@ D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Preferences.resources
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.InputTextForm.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.exe
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.pdb
+C:\git\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe
+C:\git\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.pdb
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.ComSelector.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.GUI.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.InputTextForm.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Preferences.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Properties.Resources.resources
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog

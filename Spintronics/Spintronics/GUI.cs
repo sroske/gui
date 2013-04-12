@@ -19,7 +19,7 @@ namespace SpintronicsGUI
 		Out
 	}
 
-	enum PinAssignment
+	enum SensorAssignment
 	{
 		A,
 		B
@@ -38,7 +38,7 @@ namespace SpintronicsGUI
 		TextWriter dataLogFile3 = null;
 		bool printLogText = true;
 		bool running = false;
-		PinAssignment pinAssignment = PinAssignment.A;
+		SensorAssignment sensorAssignment = SensorAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
 		int globalCycle = 0;
@@ -187,11 +187,11 @@ namespace SpintronicsGUI
 		/*
 		 * This will get the time which the data should be added (globalTime plus an appropriate offset for the pin)
 		 */
-		private double getAddTime(int pin)
+		private double getAddTime(int sensor)
 		{
-			if (pinAssignment == PinAssignment.A)
+			if (sensorAssignment == SensorAssignment.A)
 			{
-				switch (pin)
+				switch (sensor)
 				{
 					case 18: case 20: case 22: case 24: case 26: case 28: case 30:
 						return 0.0;
@@ -209,7 +209,7 @@ namespace SpintronicsGUI
 			}
 			else
 			{
-				switch (pin)
+				switch (sensor)
 				{
 					case 1: case 3: case 5: case 8: case 10: case 12: case 14:
 						return 0.0;
@@ -239,7 +239,7 @@ namespace SpintronicsGUI
 			{
 				foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 				{
-					if (getPinNumber(c.Name) == referenceSensors[i])				// if the sensor is a reference sensor,
+					if (getSensorNumber(c.Name) == referenceSensors[i])				// if the sensor is a reference sensor,
 					{
 						try {
 							if (c.Checked)								// and the sensor is enabled,
@@ -403,9 +403,9 @@ namespace SpintronicsGUI
 		/*
 		 * This returns the pin number of each sensor check box according to the current pin assignment
 		 */
-		private int getPinNumber(string name)
+		private int getSensorNumber(string name)
 		{
-			if (pinAssignment == PinAssignment.A)
+			if (sensorAssignment == SensorAssignment.A)
 				return System.Convert.ToInt32(name.Substring(1, 2));
 			else
 				return System.Convert.ToInt32(name.Substring(4, 2));
@@ -416,14 +416,15 @@ namespace SpintronicsGUI
 		 */
 		private void sensor_CheckedChanged(object sender, EventArgs e)
 		{
-			int number = getPinNumber(((CheckBox)sender).Name);
+			int number = getSensorNumber(((CheckBox)sender).Name);
 
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
 					c.Series[number - 1].Enabled = ((CheckBox)sender).Checked;
-					setPinColor(number);
+					setSensorColor(number);
+					setLegendText(number);
 				}
 			}
 			for (int i = 0; i < 5; i++)
@@ -435,39 +436,133 @@ namespace SpintronicsGUI
 			}
 		}
 
-		/*
-		 * This sets the color of each sensor according to the current pin assignment
-		 */
-		private void setPinColor(int pin)
+		private void setLegendText(int sensor)
 		{
-			if (pinAssignment == PinAssignment.A)
+			if (sensorAssignment == SensorAssignment.A)
 			{
 				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 				{
 					foreach (Chart c in t.Controls.OfType<Chart>())
 					{
-						switch (pin)
+						string name;
+						switch (sensor)
+						{
+							case 1: name = "1-7D"; break;
+							case 2: name = "2-7C"; break;
+							case 3: name = "3-6D"; break;
+							case 4: name = "4-6C"; break;
+							case 5: name = "5-5D"; break;
+							case 6: name = "6-5C"; break;
+							case 7: name = "7-1E"; break;
+							case 8: name = "8-4D"; break;
+							case 9: name = "9-4C"; break;
+							case 10: name = "10-3D"; break;
+							case 11: name = "11-3C"; break;
+							case 12: name = "12-2D"; break;
+							case 13: name = "13-2C"; break;
+							case 14: name = "14-1D"; break;
+							case 15: name = "15-1C"; break;
+							case 16: name = "16"; break;
+							case 17: name = "17-1B"; break;
+							case 18: name = "18-1A"; break;
+							case 19: name = "19-2B"; break;
+							case 20: name = "20-2A"; break;
+							case 21: name = "21-3B"; break;
+							case 22: name = "22-3A"; break;
+							case 23: name = "23-4B"; break;
+							case 24: name = "24-4A"; break;
+							case 25: name = "25-5B"; break;
+							case 26: name = "26-5A"; break;
+							case 27: name = "27-6B"; break;
+							case 28: name = "28-6A"; break;
+							case 29: name = "29-7B"; break;
+							case 30: name = "30-7A"; break;
+							default: name = ""; break;
+						}
+						c.Series.FindByName(System.Convert.ToString(sensor)).LegendText = name;
+					}
+				}
+			}
+			else
+			{
+				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+				{
+					foreach (Chart c in t.Controls.OfType<Chart>())
+					{
+						string name;
+						switch (sensor)
+						{
+							case 1: name = "1-1A"; break;
+							case 2: name = "2-1B"; break;
+							case 3: name = "3-2A"; break;
+							case 4: name = "4-2B"; break;
+							case 5: name = "5-3A"; break;
+							case 6: name = "6-3B"; break;
+							case 7: name = "7-1E"; break;
+							case 8: name = "8-4A"; break;
+							case 9: name = "9-4B"; break;
+							case 10: name = "10-5A"; break;
+							case 11: name = "11-5B"; break;
+							case 12: name = "12-6A"; break;
+							case 13: name = "13-6B"; break;
+							case 14: name = "14-7A"; break;
+							case 15: name = "15-7B"; break;
+							case 16: name = "16"; break;
+							case 17: name = "17-7C"; break;
+							case 18: name = "18-7D"; break;
+							case 19: name = "19-6C"; break;
+							case 20: name = "20-6D"; break;
+							case 21: name = "21-5C"; break;
+							case 22: name = "22-5D"; break;
+							case 23: name = "23-4C"; break;
+							case 24: name = "24-4D"; break;
+							case 25: name = "25-3C"; break;
+							case 26: name = "26-3D"; break;
+							case 27: name = "27-2C"; break;
+							case 28: name = "28-2D"; break;
+							case 29: name = "29-1C"; break;
+							case 30: name = "30-1D"; break;
+							default: name = ""; break;
+						}
+						c.Series.FindByName(System.Convert.ToString(sensor)).LegendText = name;
+					}
+				}
+			}
+		}
+
+		/*
+		 * This sets the color of each sensor according to the current pin assignment
+		 */
+		private void setSensorColor(int sensor)
+		{
+			if (sensorAssignment == SensorAssignment.A)
+			{
+				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+				{
+					foreach (Chart c in t.Controls.OfType<Chart>())
+					{
+						switch (sensor)
 						{
 							case 18: case 17: case 15: case 14:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
 								break;
 							case 20: case 19: case 13: case 12:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
 								break;
 							case 22: case 21: case 11: case 10:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
 								break;
 							case 24: case 23: case 9: case 8:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
 								break;
 							case 26: case 25: case 6: case 5:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
 								break;
 							case 28: case 27: case 4: case 3:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
 								break;
 							case 30: case 29: case 2: case 1:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
 								break;
 							default:
 								break;
@@ -477,32 +572,32 @@ namespace SpintronicsGUI
 			}
 			else
 			{
-				foreach (TabPage t in this.tabControl1.Controls)
+				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 				{
 					foreach (Chart c in t.Controls.OfType<Chart>())
 					{
-						switch (pin)
+						switch (sensor)
 						{
 							case 1: case 2: case 29: case 30:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x1B, 0x9E, 0x77);
 								break;
 							case 3: case 4: case 27: case 28:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xD9, 0x5F, 0x02);
 								break;
 							case 5: case 6: case 25: case 26:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x75, 0x70, 0xB3);
 								break;
 							case 8: case 9: case 23: case 24:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xE7, 0x29, 0x8A);
 								break;
 							case 10: case 11: case 21: case 22:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0x66, 0xA6, 0x1E);
 								break;
 							case 12: case 13: case 19: case 20:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xE6, 0xAB, 0x02);
 								break;
 							case 14: case 15: case 17: case 18:
-								c.Series.FindByName(System.Convert.ToString(pin)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
+								c.Series.FindByName(System.Convert.ToString(sensor)).Color = Color.FromArgb(0xA6, 0x76, 0x1D);
 								break;
 							default:
 								break;
@@ -524,7 +619,7 @@ namespace SpintronicsGUI
 				int i;
 				for (i = 0; i < 5; i++)
 				{
-					if (getPinNumber(c.Name) == referenceSensors[i])
+					if (getSensorNumber(c.Name) == referenceSensors[i])
 					{
 						count++;
 						if (!c.Checked)
@@ -561,7 +656,7 @@ namespace SpintronicsGUI
 				int i;
 				for (i = 0; i < 5; i++)
 				{
-					if (getPinNumber(c.Name) == referenceSensors[i])
+					if (getSensorNumber(c.Name) == referenceSensors[i])
 					{
 						count++;
 						if (count == 5)
@@ -586,13 +681,13 @@ namespace SpintronicsGUI
 			{
 				this.radioButtonA.Checked = true;
 				this.radioButtonB.Checked = false;
-				this.pinAssignment = PinAssignment.A;
+				this.sensorAssignment = SensorAssignment.A;
 			}
 			else
 			{
 				this.radioButtonA.Checked = false;
 				this.radioButtonB.Checked = true;
-				this.pinAssignment = PinAssignment.B;
+				this.sensorAssignment = SensorAssignment.B;
 			}
 			int count = 0;
 			recalculate = 0;
@@ -601,7 +696,7 @@ namespace SpintronicsGUI
 				int i;
 				for (i = 0; i < 5; i++)
 				{
-					if (getPinNumber(c.Name) == referenceSensors[i])
+					if (getSensorNumber(c.Name) == referenceSensors[i])
 					{
 						count++;
 						c.BackColor = Color.Blue;

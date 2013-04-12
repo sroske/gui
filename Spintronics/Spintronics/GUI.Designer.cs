@@ -231,6 +231,8 @@ namespace SpintronicsGUI
 			System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -307,8 +309,6 @@ namespace SpintronicsGUI
 			this.referenceTareCheckbox = new System.Windows.Forms.CheckBox();
 			this.tareIndexTextbox = new System.Windows.Forms.TextBox();
 			this.tareIndexLabel = new System.Windows.Forms.Label();
-			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -326,9 +326,9 @@ namespace SpintronicsGUI
 			// menuStrip1
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.helpToolStripMenuItem});
+			this.fileToolStripMenuItem,
+			this.editToolStripMenuItem,
+			this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
 			this.menuStrip1.Size = new System.Drawing.Size(1086, 24);
@@ -338,21 +338,36 @@ namespace SpintronicsGUI
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+			this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
 			this.fileToolStripMenuItem.Text = "&File";
+			// 
+			// editToolStripMenuItem
+			// 
+			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.preferencesToolStripMenuItem});
+			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+			this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+			this.editToolStripMenuItem.Text = "Edit";
+			// 
+			// preferencesToolStripMenuItem
+			// 
+			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
+			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+			this.preferencesToolStripMenuItem.Text = "Preferences";
+			this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+			this.aboutToolStripMenuItem});
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+			this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
 			this.helpToolStripMenuItem.Text = "&Help";
 			// 
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			// 
 			// groupBox1
@@ -955,9 +970,9 @@ namespace SpintronicsGUI
 			// 
 			// adjustedChart1
 			// 
-			this.adjustedChart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.adjustedChart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea1.Name = "ChartArea1";
 			this.adjustedChart1.ChartAreas.Add(chartArea1);
 			legend1.Name = "Legend1";
@@ -1203,9 +1218,9 @@ namespace SpintronicsGUI
 			// 
 			// tabControl1
 			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
@@ -1231,9 +1246,9 @@ namespace SpintronicsGUI
 			// 
 			// rawChart1
 			// 
-			this.rawChart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.rawChart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea2.Name = "ChartArea1";
 			this.rawChart1.ChartAreas.Add(chartArea2);
 			this.rawChart1.Enabled = false;
@@ -1405,9 +1420,9 @@ namespace SpintronicsGUI
 			// 
 			// rawChart2
 			// 
-			this.rawChart2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.rawChart2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea3.Name = "ChartArea1";
 			this.rawChart2.ChartAreas.Add(chartArea3);
 			this.rawChart2.Enabled = false;
@@ -1579,9 +1594,9 @@ namespace SpintronicsGUI
 			// 
 			// rawChart3
 			// 
-			this.rawChart3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.rawChart3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea4.Name = "ChartArea1";
 			this.rawChart3.ChartAreas.Add(chartArea4);
 			this.rawChart3.Enabled = false;
@@ -1764,9 +1779,9 @@ namespace SpintronicsGUI
 			// 
 			// adjustedChart2
 			// 
-			this.adjustedChart2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.adjustedChart2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea5.Name = "ChartArea1";
 			this.adjustedChart2.ChartAreas.Add(chartArea5);
 			legend5.Name = "Legend1";
@@ -1944,9 +1959,9 @@ namespace SpintronicsGUI
 			// 
 			// adjustedChart3
 			// 
-			this.adjustedChart3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
+			this.adjustedChart3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			chartArea6.Name = "ChartArea1";
 			this.adjustedChart3.ChartAreas.Add(chartArea6);
 			legend6.Name = "Legend1";
@@ -2170,21 +2185,6 @@ namespace SpintronicsGUI
 			this.tareIndexLabel.Size = new System.Drawing.Size(58, 13);
 			this.tareIndexLabel.TabIndex = 47;
 			this.tareIndexLabel.Text = "Tare Index";
-			// 
-			// editToolStripMenuItem
-			// 
-			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.preferencesToolStripMenuItem});
-			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-			this.editToolStripMenuItem.Text = "Edit";
-			// 
-			// preferencesToolStripMenuItem
-			// 
-			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.preferencesToolStripMenuItem.Text = "Preferences";
-			this.preferencesToolStripMenuItem.Click += new System.EventHandler(preferencesToolStripMenuItem_Click);
 			// 
 			// GUI
 			// 
