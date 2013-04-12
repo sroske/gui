@@ -268,7 +268,6 @@ namespace SpintronicsGUI
 			this.s07_07 = new System.Windows.Forms.CheckBox();
 			this.s14_30 = new System.Windows.Forms.CheckBox();
 			this.s15_29 = new System.Windows.Forms.CheckBox();
-			this.sensorsLabelF = new System.Windows.Forms.Label();
 			this.s17_02 = new System.Windows.Forms.CheckBox();
 			this.sensorsLabel5 = new System.Windows.Forms.Label();
 			this.sensorsLabel4 = new System.Windows.Forms.Label();
@@ -406,7 +405,6 @@ namespace SpintronicsGUI
 			this.groupBox1.Controls.Add(this.s07_07);
 			this.groupBox1.Controls.Add(this.s14_30);
 			this.groupBox1.Controls.Add(this.s15_29);
-			this.groupBox1.Controls.Add(this.sensorsLabelF);
 			this.groupBox1.Controls.Add(this.s17_02);
 			this.groupBox1.Controls.Add(this.sensorsLabel5);
 			this.groupBox1.Controls.Add(this.sensorsLabel4);
@@ -799,15 +797,6 @@ namespace SpintronicsGUI
 			this.s15_29.TabIndex = 14;
 			this.s15_29.UseVisualStyleBackColor = true;
 			this.s15_29.CheckedChanged += new System.EventHandler(this.sensor_CheckedChanged);
-			// 
-			// sensorsLabelF
-			// 
-			this.sensorsLabelF.AutoSize = true;
-			this.sensorsLabelF.Location = new System.Drawing.Point(140, 27);
-			this.sensorsLabelF.Name = "sensorsLabelF";
-			this.sensorsLabelF.Size = new System.Drawing.Size(13, 13);
-			this.sensorsLabelF.TabIndex = 12;
-			this.sensorsLabelF.Text = "F";
 			// 
 			// s17_02
 			// 
@@ -2268,7 +2257,6 @@ namespace SpintronicsGUI
 		private System.Windows.Forms.Label sensorsLabelC;
 		private System.Windows.Forms.Label sensorsLabelD;
 		private System.Windows.Forms.Label sensorsLabelE;
-		private System.Windows.Forms.Label sensorsLabelF;
 		private System.Windows.Forms.Label sensorsLabel1;
 		private System.Windows.Forms.Label sensorsLabel2;
 		private System.Windows.Forms.Label sensorsLabel3;

@@ -45,6 +45,9 @@ namespace SpintronicsGUI
 		int tareIndex = 0;
 		int recalculate = 1;
 		int cycleSensorCount = 0;
+		private int currentSensor1 = 1;
+		private int currentSensor2 = 1;
+		private int currentSensor3 = 1;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 		int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 						 24, 25, 26, 27, 28, 29, 30};
@@ -138,9 +141,9 @@ namespace SpintronicsGUI
 				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);
 				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);
 				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);
-				logData(dataLogFile1, sensorId, wheatstonef1A);
-				logData(dataLogFile2, sensorId, wheatstonef1P);
-				logData(dataLogFile3, sensorId, wheatstonef2A);
+				currentSensor1 = logData(dataLogFile1, sensorId, currentSensor1, wheatstonef1A);
+				currentSensor2 = logData(dataLogFile2, sensorId, currentSensor2, wheatstonef1P);
+				currentSensor3 = logData(dataLogFile3, sensorId, currentSensor3, wheatstonef2A);
 
 				// Write all to log files
 
@@ -450,6 +453,9 @@ namespace SpintronicsGUI
 			}
 		}
 
+		/*
+		 * This sets the charts' legend text for each sensor according to its position in the array (1-7, A-E)
+		 */
 		private void setLegendText(int sensor)
 		{
 			if (sensorAssignment == SensorAssignment.A)
@@ -827,16 +833,7 @@ namespace SpintronicsGUI
 		{
 			if (globalCycle == 0)
 				return;
-			/*foreach (TabPage t in this.tabControl1.Controls)
-			{
-				foreach (Control c in t.Controls)
-				{
-					if (c is Chart)
-						((Chart)c).ChartAreas[0].AxisX.Minimum = globalCycle;
-				}
-			}*/
-			//visibleCycle = globalCycle - 1;
-			//tareIndex = visibleCycle;
+
 			this.tareIndexTextbox.Text = System.Convert.ToString(globalCycle - 1);
 			this.tareIndexTextbox.Focus();
 			this.timeTareButton.Focus();
@@ -999,11 +996,26 @@ namespace SpintronicsGUI
 		/*
 		 * This adds data to the data log file
 		 */
-		static int currentSensor = 1;
-		private void logData(TextWriter file, int sensor, double data)
+		private int logData(TextWriter file, int sensor, int counter, double data)
 		{
-			if (sensor != currentSensor)
-				return;
+			if (sensor != counter)
+			{
+				for (; sensor != counter; counter++)
+				{
+					if (counter > 30)
+					{
+						counter = 0;
+						file.Write("\n");
+					}
+					else
+					{
+						if (sensor >= 10)
+							file.Write("X.XXXXXXXXX" + "\t");
+						else
+							file.Write("X.XXXXXXXX" + "\t");
+					}
+				}
+			}
 
 			string dataString = System.Convert.ToString(data);
 			if(sensor >= 10)
@@ -1022,20 +1034,24 @@ namespace SpintronicsGUI
 			}
 
 			file.Write(dataString + "\t");
-			currentSensor++;
-			if (currentSensor == 16)
+			counter++;
+			if (counter == 16)
 			{
 				file.Write("0.000000000" + "\t");
-				currentSensor++;
+				counter++;
 			}
-			if (currentSensor > 30)
+			if (counter > 30)
 			{
-				currentSensor = 1;
+				counter = 1;
 				file.Write("\n");
 			}
 			file.Flush();
+			return counter;
 		}
 
+		/*
+		 * This opens a Preferences window and saves the values entered
+		 */
 		private void preferencesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (this.running == false)
