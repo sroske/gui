@@ -32,6 +32,7 @@ namespace SpintronicsGUI
 		ProtocolHandler protocolHandler = new ProtocolHandler();
 		Microcontroller microcontroller;
 		TextWriter logFile = null;
+		string dataLogFileDirectory = "data";
 		TextWriter dataLogFile1 = null;
 		TextWriter dataLogFile2 = null;
 		TextWriter dataLogFile3 = null;
@@ -54,9 +55,8 @@ namespace SpintronicsGUI
 
 			/* 
 			 * Try to create logs folder and log file
-			*/
-			try
-			{
+			 */
+			try {
 				System.IO.Directory.CreateDirectory("./logs");
 				string logFileName = "./logs/";
 				logFileName += DateTime.Now.Year + "-";
@@ -78,40 +78,17 @@ namespace SpintronicsGUI
 			 * If unsuccessful, prompt user and let them
 			 * Decide if the want to keep going without
 			 * logging data to a text file.
-			*/
-			try
-			{
-				System.IO.Directory.CreateDirectory("./data");
-				string logFileNameBase = "./data/";
-				logFileNameBase += DateTime.Now.Year + "-";
-				logFileNameBase += DateTime.Now.Month + "-";
-				logFileNameBase += DateTime.Now.Day + "__";
-				logFileNameBase += DateTime.Now.Hour + ".";
-				logFileNameBase += DateTime.Now.Minute + ".";
-				logFileNameBase += DateTime.Now.Second + "__";
-				string logFileNameExtension = ".txt";
-				dataLogFile1 = new StreamWriter(logFileNameBase + "wheatstonef1A" + logFileNameExtension);
-				dataLogFile2 = new StreamWriter(logFileNameBase + "wheatstonef1P" + logFileNameExtension);
-				dataLogFile3 = new StreamWriter(logFileNameBase + "wheatstonef2A" + logFileNameExtension);
-				writeToFile(logFile, "Created data log files");
-				initDataFile(dataLogFile1);
-				initDataFile(dataLogFile2);
-				initDataFile(dataLogFile3);
-				writeToFile(logFile, "Initialized data log files");
-			} catch (Exception) {
-				DialogResult messageBoxResult = MessageBox.Show("Unable to create file for recording data. Continue?", "Error", MessageBoxButtons.YesNo);
-				if (messageBoxResult != DialogResult.Yes)
-					throw new Exception();
-			}
+			 */
+			createDataLogFiles();
 
 			/*
 			 * Initialize delegate for adding new data to the graph (this is because of stupid threading stuff; just nod and move on)
-			*/
+			 */
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
 			/*
 			 * Initialize COM ports
-			*/
+			 */
 			//serialPort = new SerialPort(comPort, 115200);
 			serialPort = new SerialPort("COM5", 115200);
 			debugSerial = new SerialPort("COM6", 115200);
@@ -120,9 +97,8 @@ namespace SpintronicsGUI
 
 			/*
 			 * Open COM ports 
-			*/
-			try
-			{
+			 */
+			try {
 				serialPort.Open();
 				debugSerial.Open();
 				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);
@@ -875,14 +851,40 @@ namespace SpintronicsGUI
 		/*
 		 * This initializes a data file by printing out the sensor name headers at the top of the file
 		 */
-		private void initDataFile(TextWriter file)
+		private void createDataLogFiles()
 		{
-			for (int i = 1; i <= 30; i++)
-			{
-				file.Write("Sensor   " + i + "\t");
+			try {
+				System.IO.Directory.CreateDirectory("./" + dataLogFileDirectory);
+				string logFileNameBase = "./" + dataLogFileDirectory + "/";
+				logFileNameBase += DateTime.Now.Year + "-";
+				logFileNameBase += DateTime.Now.Month + "-";
+				logFileNameBase += DateTime.Now.Day + "__";
+				logFileNameBase += DateTime.Now.Hour + ".";
+				logFileNameBase += DateTime.Now.Minute + ".";
+				logFileNameBase += DateTime.Now.Second + "__";
+				string logFileNameExtension = ".txt";
+				dataLogFile1 = new StreamWriter(logFileNameBase + "wheatstonef1A" + logFileNameExtension);
+				dataLogFile2 = new StreamWriter(logFileNameBase + "wheatstonef1P" + logFileNameExtension);
+				dataLogFile3 = new StreamWriter(logFileNameBase + "wheatstonef2A" + logFileNameExtension);
+				writeToFile(logFile, "Created data log files");
+				for (int i = 1; i <= 30; i++)
+				{
+					dataLogFile1.Write("Sensor   " + i + "\t");
+					dataLogFile2.Write("Sensor   " + i + "\t");
+					dataLogFile3.Write("Sensor   " + i + "\t");
+				}
+				dataLogFile1.Write("\n");
+				dataLogFile2.Write("\n");
+				dataLogFile3.Write("\n");
+				dataLogFile1.Flush();
+				dataLogFile2.Flush();
+				dataLogFile3.Flush();
+				writeToFile(logFile, "Initialized data log files");
+			} catch (Exception) {
+				DialogResult messageBoxResult = MessageBox.Show("Unable to create file for recording data. Continue?", "Error", MessageBoxButtons.YesNo);
+				if (messageBoxResult != DialogResult.Yes)
+					throw new Exception();
 			}
-			file.Write("\n");
-			file.Flush();
 		}
 
 		/*
@@ -929,17 +931,18 @@ namespace SpintronicsGUI
 		{
 			if (this.running == false)
 			{
-				Preferences preferenceWindow = new Preferences(sensorMultiplexerValues);
+				Preferences preferenceWindow = new Preferences(sensorMultiplexerValues, dataLogFileDirectory);
 				var dialogResult = preferenceWindow.ShowDialog();
 				if (dialogResult.Equals(DialogResult.OK))
 				{
-					sensorMultiplexerValues = preferenceWindow.getPreferences();
+					sensorMultiplexerValues = preferenceWindow.getAssignments();
+					dataLogFileDirectory = preferenceWindow.getFolder();
+					createDataLogFiles();
 				}
 			}
 			else
 			{
-				MessageBox.Show("Please stop the run before attempting\n" +
-						    "to adjust the sensor configurations");
+				MessageBox.Show("Please stop the run before attempting to adjust configurations");
 			}
 		}
 	}

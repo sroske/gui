@@ -30,8 +30,8 @@ namespace SpintronicsGUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.button1 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
+			this.doneButton = new System.Windows.Forms.Button();
+			this.cancelButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.textBox30 = new System.Windows.Forms.TextBox();
@@ -66,29 +66,39 @@ namespace SpintronicsGUI
 			this.textBox01 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.currentDirectoryLabel = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.refreshFoldersButton = new System.Windows.Forms.Button();
+			this.addFolderButton = new System.Windows.Forms.Button();
+			this.chooseFolderButton = new System.Windows.Forms.Button();
+			this.deleteFolderButton = new System.Windows.Forms.Button();
+			this.listBox1 = new System.Windows.Forms.ListBox();
+			this.saveAssignmentsButton = new System.Windows.Forms.Button();
+			this.cancelPinAssignmentsButton = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
+			this.tabPage2.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// button1
+			// doneButton
 			// 
-			this.button1.Location = new System.Drawing.Point(149, 271);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 0;
-			this.button1.Text = "Save";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new EventHandler(button1_Click);
+			this.doneButton.Location = new System.Drawing.Point(149, 271);
+			this.doneButton.Name = "doneButton";
+			this.doneButton.Size = new System.Drawing.Size(75, 23);
+			this.doneButton.TabIndex = 0;
+			this.doneButton.Text = "Done";
+			this.doneButton.UseVisualStyleBackColor = true;
+			this.doneButton.Click += new System.EventHandler(this.doneButton_Click);
 			// 
-			// button2
+			// cancelButton
 			// 
-			this.button2.Location = new System.Drawing.Point(230, 271);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 23);
-			this.button2.TabIndex = 1;
-			this.button2.Text = "Cancel";
-			this.button2.UseVisualStyleBackColor = true;
-			this.button2.Click += new EventHandler(button2_Click);
+			this.cancelButton.Location = new System.Drawing.Point(230, 271);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Size = new System.Drawing.Size(75, 23);
+			this.cancelButton.TabIndex = 1;
+			this.cancelButton.Text = "Cancel";
+			this.cancelButton.UseVisualStyleBackColor = true;
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
 			// tabControl1
 			// 
@@ -102,6 +112,8 @@ namespace SpintronicsGUI
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.cancelPinAssignmentsButton);
+			this.tabPage1.Controls.Add(this.saveAssignmentsButton);
 			this.tabPage1.Controls.Add(this.textBox30);
 			this.tabPage1.Controls.Add(this.textBox29);
 			this.tabPage1.Controls.Add(this.textBox28);
@@ -362,13 +374,105 @@ namespace SpintronicsGUI
 			// 
 			// tabPage2
 			// 
+			this.tabPage2.Controls.Add(this.currentDirectoryLabel);
+			this.tabPage2.Controls.Add(this.label2);
+			this.tabPage2.Controls.Add(this.refreshFoldersButton);
+			this.tabPage2.Controls.Add(this.addFolderButton);
+			this.tabPage2.Controls.Add(this.chooseFolderButton);
+			this.tabPage2.Controls.Add(this.deleteFolderButton);
+			this.tabPage2.Controls.Add(this.listBox1);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage2.Size = new System.Drawing.Size(419, 227);
 			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "tabPage2";
+			this.tabPage2.Text = "Data Logs Folder";
 			this.tabPage2.UseVisualStyleBackColor = true;
+			// 
+			// currentDirectoryLabel
+			// 
+			this.currentDirectoryLabel.AutoSize = true;
+			this.currentDirectoryLabel.Location = new System.Drawing.Point(318, 32);
+			this.currentDirectoryLabel.Name = "currentDirectoryLabel";
+			this.currentDirectoryLabel.Size = new System.Drawing.Size(0, 13);
+			this.currentDirectoryLabel.TabIndex = 6;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(304, 15);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(89, 13);
+			this.label2.TabIndex = 5;
+			this.label2.Text = "Current Directory:";
+			// 
+			// refreshFoldersButton
+			// 
+			this.refreshFoldersButton.Location = new System.Drawing.Point(213, 6);
+			this.refreshFoldersButton.Name = "refreshFoldersButton";
+			this.refreshFoldersButton.Size = new System.Drawing.Size(75, 23);
+			this.refreshFoldersButton.TabIndex = 4;
+			this.refreshFoldersButton.Text = "Refresh";
+			this.refreshFoldersButton.UseVisualStyleBackColor = true;
+			this.refreshFoldersButton.Click += new System.EventHandler(this.refreshFoldersButton_Click);
+			// 
+			// addFolderButton
+			// 
+			this.addFolderButton.Location = new System.Drawing.Point(213, 64);
+			this.addFolderButton.Name = "addFolderButton";
+			this.addFolderButton.Size = new System.Drawing.Size(75, 23);
+			this.addFolderButton.TabIndex = 3;
+			this.addFolderButton.Text = "Add Folder";
+			this.addFolderButton.UseVisualStyleBackColor = true;
+			this.addFolderButton.Click += new System.EventHandler(this.addFolderButton_Click);
+			// 
+			// chooseFolderButton
+			// 
+			this.chooseFolderButton.Location = new System.Drawing.Point(213, 35);
+			this.chooseFolderButton.Name = "chooseFolderButton";
+			this.chooseFolderButton.Size = new System.Drawing.Size(75, 23);
+			this.chooseFolderButton.TabIndex = 2;
+			this.chooseFolderButton.Text = "Choose";
+			this.chooseFolderButton.UseVisualStyleBackColor = true;
+			this.chooseFolderButton.Click += new System.EventHandler(this.chooseFolderButton_Click);
+			// 
+			// deleteFolderButton
+			// 
+			this.deleteFolderButton.Location = new System.Drawing.Point(213, 93);
+			this.deleteFolderButton.Name = "deleteFolderButton";
+			this.deleteFolderButton.Size = new System.Drawing.Size(75, 23);
+			this.deleteFolderButton.TabIndex = 1;
+			this.deleteFolderButton.Text = "Delete";
+			this.deleteFolderButton.UseVisualStyleBackColor = true;
+			this.deleteFolderButton.Click += new System.EventHandler(this.deleteFolderButton_Click);
+			// 
+			// listBox1
+			// 
+			this.listBox1.FormattingEnabled = true;
+			this.listBox1.Location = new System.Drawing.Point(35, 6);
+			this.listBox1.Name = "listBox1";
+			this.listBox1.Size = new System.Drawing.Size(172, 186);
+			this.listBox1.TabIndex = 0;
+			// 
+			// saveAssignmentsButton
+			// 
+			this.saveAssignmentsButton.Location = new System.Drawing.Point(33, 184);
+			this.saveAssignmentsButton.Name = "saveAssignmentsButton";
+			this.saveAssignmentsButton.Size = new System.Drawing.Size(75, 23);
+			this.saveAssignmentsButton.TabIndex = 31;
+			this.saveAssignmentsButton.Text = "Save";
+			this.saveAssignmentsButton.UseVisualStyleBackColor = true;
+			this.saveAssignmentsButton.Click += new EventHandler(saveAssignmentsButton_Click);
+			// 
+			// cancelPinAssignmentsButton
+			// 
+			this.cancelPinAssignmentsButton.Location = new System.Drawing.Point(115, 184);
+			this.cancelPinAssignmentsButton.Name = "cancelPinAssignmentsButton";
+			this.cancelPinAssignmentsButton.Size = new System.Drawing.Size(75, 23);
+			this.cancelPinAssignmentsButton.TabIndex = 32;
+			this.cancelPinAssignmentsButton.Text = "Cancel";
+			this.cancelPinAssignmentsButton.UseVisualStyleBackColor = true;
+			this.cancelPinAssignmentsButton.Click += new EventHandler(cancelPinAssignmentsButton_Click);
 			// 
 			// Preferences
 			// 
@@ -376,21 +480,23 @@ namespace SpintronicsGUI
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(452, 306);
 			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.button2);
-			this.Controls.Add(this.button1);
+			this.Controls.Add(this.cancelButton);
+			this.Controls.Add(this.doneButton);
 			this.Name = "Preferences";
 			this.Text = "Preferences";
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
+			this.tabPage2.ResumeLayout(false);
+			this.tabPage2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.Button doneButton;
+		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TextBox textBox30;
@@ -425,5 +531,14 @@ namespace SpintronicsGUI
 		private System.Windows.Forms.TextBox textBox01;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TabPage tabPage2;
+		private Button addFolderButton;
+		private Button chooseFolderButton;
+		private Button deleteFolderButton;
+		private ListBox listBox1;
+		private Button refreshFoldersButton;
+		private Label currentDirectoryLabel;
+		private Label label2;
+		private Button cancelPinAssignmentsButton;
+		private Button saveAssignmentsButton;
 	}
 }

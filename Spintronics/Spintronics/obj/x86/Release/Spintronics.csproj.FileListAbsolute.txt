@@ -19,3 +19,4 @@ D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\GenerateResource.write.1.tlog
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.exe
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.pdb
+D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\SpintronicsGUI.InputTextForm.resources

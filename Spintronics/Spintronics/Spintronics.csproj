@@ -68,6 +68,12 @@
     <Compile Include="ComSelector.Designer.cs">
       <DependentUpon>ComSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputTextForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputTextForm.Designer.cs">
+      <DependentUpon>InputTextForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Microcontroller.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="GUI.cs">
@@ -90,6 +96,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI.resx">
       <DependentUpon>GUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputTextForm.resx">
+      <DependentUpon>InputTextForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>
