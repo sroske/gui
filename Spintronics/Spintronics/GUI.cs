@@ -36,6 +36,7 @@ namespace SpintronicsGUI
 		TextWriter dataLogFile2 = null;
 		TextWriter dataLogFile3 = null;
 		bool printLogText = true;
+		bool running = false;
 		PinAssignment pinAssignment = PinAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
@@ -44,7 +45,8 @@ namespace SpintronicsGUI
 		int recalculate = 1;
 		int cycleSensorCount = 0;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
-
+		int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+						 24, 25, 26, 27, 28, 29, 30};
 
 		public GUI(string comPort)
 		{
@@ -401,10 +403,12 @@ namespace SpintronicsGUI
 						writeToFile(logFile, "Received an unknown packet");
 						break;
 				}
+
 				int retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.adjustedChart1);
-				if(retval == (int)ProtocolDirective.AddData)
+				if(retval == (int)ProtocolDirective.AddData && this.running)
 					if (InvokeRequired)
 						this.Invoke(this.myDelegate, packet);
+
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Argument Null Exception in GUI, most likely thrown by ProtocolHandler");
 			} catch (InvalidOperationException) {
@@ -659,9 +663,17 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please enter a value for all fields");
 				return;
 			}
+
+			if (this.running == true)
+			{
+				MessageBox.Show("Please stop the current run before starting a new one");
+				return;
+			}
+
 			globalCycle = 0;
 			tareIndex = 0;
 			this.tareIndexTextbox.Text = "0";
+
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
@@ -688,6 +700,7 @@ namespace SpintronicsGUI
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(startPacket, PacketCommDirection.Out);
 				protocolHandler.HandlePacket(startPacket, serialPort);
+				this.running = true;
 			} catch (System.ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
 			} catch (System.FormatException) {
@@ -702,23 +715,22 @@ namespace SpintronicsGUI
 		 */
 		private void stopRun(object sender, EventArgs e)
 		{
-			try
+			if (this.running == false)
 			{
+				MessageBox.Show("There is not currently a run in progress");
+				return;
+			}
+			try {
 				byte[] payload = new byte[20];
 				Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
 				printPacket(stopPacket, PacketCommDirection.Out);
 				protocolHandler.HandlePacket(stopPacket, serialPort);
-			}
-			catch (System.ArgumentNullException)
-			{
+				this.running = false;
+			} catch (System.ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
-			}
-			catch (System.FormatException)
-			{
+			} catch (System.FormatException) {
 				MessageBox.Show("Please enter a valid number for all fields");
-			}
-			catch (System.OverflowException)
-			{
+			} catch (System.OverflowException) {
 				MessageBox.Show("Please enter a valid number in the range X to X for all fields");
 			}
 		}
@@ -911,6 +923,24 @@ namespace SpintronicsGUI
 				file.Write("\n");
 			}
 			file.Flush();
+		}
+
+		private void preferencesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (this.running == false)
+			{
+				Preferences preferenceWindow = new Preferences(sensorMultiplexerValues);
+				var dialogResult = preferenceWindow.ShowDialog();
+				if (dialogResult.Equals(DialogResult.OK))
+				{
+					sensorMultiplexerValues = preferenceWindow.getPreferences();
+				}
+			}
+			else
+			{
+				MessageBox.Show("Please stop the run before attempting\n" +
+						    "to adjust the sensor configurations");
+			}
 		}
 	}
 }
