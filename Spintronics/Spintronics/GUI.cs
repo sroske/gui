@@ -171,6 +171,20 @@ namespace SpintronicsGUI
 					adjustedChart3.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef2A);
 					adjustedChart3.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
 				}
+				else
+				{
+					this.bufferingProgressBar.Maximum = 30;
+					this.bufferingProgressBar.Minimum = 0;
+					this.bufferingProgressBar.Visible = true;
+					this.bufferingLabel.Visible = true;
+					this.bufferingProgressBar.Value = sensorId;
+					if(sensorId == 30)
+					{
+						this.bufferingProgressBar.Visible = false;
+						this.bufferingProgressBar.Value = 0;
+						this.bufferingLabel.Visible = false;
+					}
+				}
 
 				cycleSensorCount = sensorId;
 				if (sensorId >= adjustedChart1.Series.Count)
