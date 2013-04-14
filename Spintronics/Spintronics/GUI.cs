@@ -27,15 +27,15 @@ namespace SpintronicsGUI
 
 	public partial class GUI : Form
 	{
+		Configuration configFile;
 		SerialPort serialPort = null;
 		SerialPort debugSerial = null;
 		ProtocolHandler protocolHandler = new ProtocolHandler();
 		Microcontroller microcontroller;
-		TextWriter logFile = null;
-		string dataLogFileDirectory = "data";
-		TextWriter dataLogFile1 = null;
-		TextWriter dataLogFile2 = null;
-		TextWriter dataLogFile3 = null;
+		TextWriter initFile = null;
+		TextWriter dataFile1 = null;
+		TextWriter dataFile2 = null;
+		TextWriter dataFile3 = null;
 		bool printLogText = true;
 		bool running = false;
 		SensorAssignment sensorAssignment = SensorAssignment.A;
@@ -45,62 +45,26 @@ namespace SpintronicsGUI
 		int tareIndex = 0;
 		int recalculate = 1;
 		int cycleSensorCount = 0;
-		private int currentSensor1 = 1;
-		private int currentSensor2 = 1;
-		private int currentSensor3 = 1;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
-		int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-						 24, 25, 26, 27, 28, 29, 30};
 
 		public GUI(string comPort)
 		{
 			InitializeComponent();
 
-			/* 
-			 * Try to create logs folder and log file
-			 */
-			try {
-				System.IO.Directory.CreateDirectory("./logs");
-				string logFileName = "./logs/";
-				logFileName += DateTime.Now.Year + "-";
-				logFileName += DateTime.Now.Month + "-";
-				logFileName += DateTime.Now.Day + "__";
-				logFileName += DateTime.Now.Hour + "-";
-				logFileName += DateTime.Now.Minute + "-";
-				logFileName += DateTime.Now.Second;
-				logFileName += ".txt";
-				logFile = new StreamWriter(logFileName);
-				writeToFile(logFile, "Created log file");
-			} catch (Exception) {
-				MessageBox.Show("Unable to create log file");
-				logFile = null;
-			}
+			configFile = new Configuration();
 
-			/* 
-			 * Try to create data folder and data file.
-			 * If unsuccessful, prompt user and let them
-			 * Decide if the want to keep going without
-			 * logging data to a text file.
-			 */
-			createDataLogFiles();
-
-			/*
-			 * Initialize delegate for adding new data to the graph (this is because of stupid threading stuff; just nod and move on)
-			 */
+			// Initialize delegate for adding new data to the graph
+			// (this is because of stupid threading stuff; just nod and move on)
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
-			/*
-			 * Initialize COM ports
-			 */
+			// Initialize COM ports
 			//serialPort = new SerialPort(comPort, 115200);
 			serialPort = new SerialPort("COM5", 115200);
 			debugSerial = new SerialPort("COM6", 115200);
 			serialPort.ReadTimeout = 200;
 			debugSerial.ReadTimeout = 200;
 
-			/*
-			 * Open COM ports 
-			 */
+			// Open COM ports
 			try {
 				serialPort.Open();
 				debugSerial.Open();
@@ -141,11 +105,9 @@ namespace SpintronicsGUI
 				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);
 				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);
 				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);
-				currentSensor1 = logData(dataLogFile1, sensorId, currentSensor1, wheatstonef1A);
-				currentSensor2 = logData(dataLogFile2, sensorId, currentSensor2, wheatstonef1P);
-				currentSensor3 = logData(dataLogFile3, sensorId, currentSensor3, wheatstonef2A);
-
-				// Write all to log files
+				logData(dataFile1, sensorId, wheatstonef1A);
+				logData(dataFile2, sensorId, wheatstonef1P);
+				logData(dataFile3, sensorId, wheatstonef2A);
 
 				if (globalCycle > 1)
 				{
@@ -357,7 +319,7 @@ namespace SpintronicsGUI
 				byte startOfFrame = (byte)serialPort.ReadByte();
 				if (startOfFrame != 0xFE)
 				{
-					writeToFile(logFile, "<-<-<- Malformed packet sent. Started with 0x{0:X}", startOfFrame);
+					Console.WriteLine("<-<-<- Malformed packet sent. Started with 0x{0:X}", startOfFrame);
 					return;
 				}
 				Packet packet;
@@ -366,7 +328,7 @@ namespace SpintronicsGUI
 				byte[] payload = new byte[payloadLength];
 				if (serialPort.Read(payload, 0, payloadLength) < payloadLength)
 				{
-					writeToFile(logFile, "<-<-<- Payload length did not match");
+					Console.WriteLine("<-<-<- Payload length did not match");
 					return;
 				}
 				byte Xor = (byte)serialPort.ReadByte();
@@ -374,26 +336,26 @@ namespace SpintronicsGUI
 				printPacket(packet, PacketCommDirection.In);
 				if (packet.Xor != Xor)
 				{
-					writeToFile(logFile, "<-<-<- XOR did not match");
+					Console.WriteLine("<-<-<- XOR did not match");
 					return;
 				}
 
 				switch (packet.command)
 				{
 					case (byte)((byte)PacketType.Start | (byte)PacketSender.Microcontroller):
-						writeToFile(logFile, "Received a start acknowledge packet");
+						Console.WriteLine("Received a start acknowledge packet");
 						break;
 					case (byte)((byte)PacketType.Stop | (byte)PacketSender.Microcontroller):
-						writeToFile(logFile, "Received a stop acknowledge packet");
+						Console.WriteLine("Received a stop acknowledge packet");
 						break;
 					case (byte)((byte)PacketType.Report | (byte)PacketSender.Microcontroller):
-						writeToFile(logFile, "Received a report packet");
+						Console.WriteLine("Received a report packet");
 						break;
 					case (byte)((byte)PacketType.Error | (byte)PacketSender.Microcontroller):
-						writeToFile(logFile, "Received an error packet");
+						Console.WriteLine("Received an error packet");
 						break;
 					default:
-						writeToFile(logFile, "Received an unknown packet");
+						Console.WriteLine("Received an unknown packet");
 						break;
 				}
 
@@ -411,7 +373,7 @@ namespace SpintronicsGUI
 			} catch (ArgumentException) {
 				MessageBox.Show("Argument Exception in GUI, most likely thrown by ProtocolHandler");
 			} catch (TimeoutException) {
-				writeToFile(logFile, "<-<-<- Timeout Exception");
+				Console.WriteLine("<-<-<- Timeout Exception");
 			} catch (Exception) {
 				MessageBox.Show("Exception in GUI, most likely thrown by ProtocolHandler");
 			}
@@ -778,6 +740,7 @@ namespace SpintronicsGUI
 					}
 				}
 			}
+			createRunFiles();
 			globalCycle++;
 			try {
 				float[] data = new float[5];
@@ -792,12 +755,12 @@ namespace SpintronicsGUI
 				printPacket(startPacket, PacketCommDirection.Out);
 				protocolHandler.HandlePacket(startPacket, serialPort);
 				this.running = true;
-			} catch (System.ArgumentNullException) {
+			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
-			} catch (System.FormatException) {
+			} catch (FormatException) {
 				MessageBox.Show("Please enter a valid number for all fields");
-			} catch (System.OverflowException) {
-				MessageBox.Show("Please enter a valid number in the range X to X for all fields");
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter a valid number for all fields");
 			}
 		}
 
@@ -877,8 +840,12 @@ namespace SpintronicsGUI
 				if (((KeyEventArgs)e).KeyCode != Keys.Return)
 					return;
 			}
-			try
+			if (this.tareIndexTextbox.Text == "")
 			{
+				MessageBox.Show("Please enter a value for the Tare Index");
+				return;
+			}
+			try {
 				if ((System.Convert.ToInt32(this.tareIndexTextbox.Text) >= globalCycle) && (globalCycle != 0))
 				{
 					MessageBox.Show("You cannot set the tare index to a value greater than or equal to the current cycle");
@@ -889,15 +856,53 @@ namespace SpintronicsGUI
 					tareIndex = System.Convert.ToInt32(this.tareIndexTextbox.Text);
 					recalculateData();
 				}
-			}
-			catch (FormatException)
-			{
+			} catch (FormatException) {
 				MessageBox.Show("Please make sure the tare index is an integer");
-			}
-			catch (OverflowException)
-			{
+			} catch (OverflowException) {
 				MessageBox.Show("Please enter a valid integer for the tare index");
 			}
+		}
+
+		private void addBufferButton_Click(object sender, EventArgs e)
+		{
+			if (!this.running)
+			{
+				MessageBox.Show("Please start a run before trying to add Buffer");
+				return;
+			}
+			if (this.addBufferSizeTextBox.Text == "")
+			{
+				MessageBox.Show("Please add an amount to the Buffer text box");
+				return;
+			}
+			if (this.addBufferUnitComboBox.SelectedItem == null)
+			{
+				MessageBox.Show("Please select a unit for the Buffer amount");
+				return;
+			}
+			this.initFile.WriteLine(globalCycle + "\t\tAdd " + this.addBufferSizeTextBox.Text + " " + this.addBufferUnitComboBox.SelectedItem + " Buffer");
+			this.initFile.Flush();
+		}
+
+		private void addMnpButton_Click(object sender, EventArgs e)
+		{
+			if (!this.running)
+			{
+				MessageBox.Show("Please start a run before trying to add MNP");
+				return;
+			}
+			if (this.addMnpSizeTextBox.Text == "")
+			{
+				MessageBox.Show("Please add an amount to the MNP text box");
+				return;
+			}
+			if (this.addMnpUnitComboBox.SelectedItem == null)
+			{
+				MessageBox.Show("Please select a unit for the MNP amount");
+				return;
+			}
+			this.initFile.WriteLine(globalCycle + "\t\tAdd " + this.addMnpSizeTextBox.Text + " " + this.addMnpUnitComboBox.SelectedItem + " MNPs");
+			this.initFile.Flush();
 		}
 
 		/*
@@ -911,20 +916,20 @@ namespace SpintronicsGUI
 			else
 				directionString = "->->-> ";
 
-			writeToFile(logFile, directionString + "CMD:0x{0:X2}", packet.command, addNewLine: false);
-			writeToFile(logFile, " PL:" + packet.payloadLength, addNewLine: false, dateTimeStamp: false);
-			writeToFile(logFile, " P:0x", addNewLine: false, dateTimeStamp: false);
+			Console.Write(directionString + "CMD:0x{0:X2}", packet.command);
+			Console.Write(" PL:" + packet.payloadLength);
+			Console.Write(" P:0x");
 			for (int i = 0; i < packet.payloadLength; i++)
 			{
-				writeToFile(logFile, "{0:X2}", packet.payload[i], addNewLine: false, dateTimeStamp: false);
+				Console.Write("{0:X2}", packet.payload[i]);
 			}
-			writeToFile(logFile, " XOR:0x{0:X2}", packet.Xor, dateTimeStamp: false);
+			Console.Write(" XOR:0x{0:X2}");
 		}
 
 		/*
 		 * This writes a text string to a file (for logging)
 		 */
-		private void writeToFile(TextWriter file, string text, object arg0 = null, bool addNewLine = true, bool dateTimeStamp = true)
+		private void writeToFile2(TextWriter file, string text, object arg0 = null, bool addNewLine = true, bool dateTimeStamp = true)
 		{
 			if (file != null)
 			{
@@ -957,37 +962,46 @@ namespace SpintronicsGUI
 		/*
 		 * This initializes a data file by printing out the sensor name headers at the top of the file
 		 */
-		private void createDataLogFiles()
+		private void createRunFiles()
 		{
 			try {
-				System.IO.Directory.CreateDirectory("./" + dataLogFileDirectory);
-				string logFileNameBase = "./" + dataLogFileDirectory + "/";
-				logFileNameBase += DateTime.Now.Year + "-";
-				logFileNameBase += DateTime.Now.Month + "-";
-				logFileNameBase += DateTime.Now.Day + "__";
-				logFileNameBase += DateTime.Now.Hour + ".";
-				logFileNameBase += DateTime.Now.Minute + ".";
-				logFileNameBase += DateTime.Now.Second + "__";
-				string logFileNameExtension = ".txt";
-				dataLogFile1 = new StreamWriter(logFileNameBase + "wheatstonef1A" + logFileNameExtension);
-				dataLogFile2 = new StreamWriter(logFileNameBase + "wheatstonef1P" + logFileNameExtension);
-				dataLogFile3 = new StreamWriter(logFileNameBase + "wheatstonef2A" + logFileNameExtension);
-				writeToFile(logFile, "Created data log files");
+				string timestamp = "";
+				timestamp += DateTime.Now.Year + "-";
+				timestamp += DateTime.Now.Month + "-";
+				timestamp += DateTime.Now.Day + "__";
+				timestamp += DateTime.Now.Hour + ".";
+				timestamp += DateTime.Now.Minute + ".";
+				timestamp += DateTime.Now.Second;
+				System.IO.Directory.CreateDirectory("./temp/" + timestamp);
+
+				string logFileNameBase = "./temp/" + timestamp + "/";
+				initFile = new StreamWriter(logFileNameBase + "init.txt");
+				dataFile1 = new StreamWriter(logFileNameBase + "HT.txt");
+				dataFile2 = new StreamWriter(logFileNameBase + "LT.txt");
+				dataFile3 = new StreamWriter(logFileNameBase + "CT.txt");
+
+				initFile.WriteLine("Reaction Well:\t" + configFile.getReactionWell());
+				initFile.WriteLine("Sample:\t\t" + configFile.getSample() + "\n");
+				initFile.WriteLine("Cycle\t\tDetails");
+				initFile.WriteLine("*********************************************");
+				initFile.Flush();
 				for (int i = 1; i <= 30; i++)
 				{
-					dataLogFile1.Write("Sensor   " + i + "\t");
-					dataLogFile2.Write("Sensor   " + i + "\t");
-					dataLogFile3.Write("Sensor   " + i + "\t");
+					if (i == 16)
+						continue;
+					dataFile1.Write("Sensor   " + i + "\t");
+					dataFile2.Write("Sensor   " + i + "\t");
+					dataFile3.Write("Sensor   " + i + "\t");
 				}
-				dataLogFile1.Write("\n");
-				dataLogFile2.Write("\n");
-				dataLogFile3.Write("\n");
-				dataLogFile1.Flush();
-				dataLogFile2.Flush();
-				dataLogFile3.Flush();
-				writeToFile(logFile, "Initialized data log files");
+				dataFile1.Write("\n");
+				dataFile2.Write("\n");
+				dataFile3.Write("\n");
+				dataFile1.Flush();
+				dataFile2.Flush();
+				dataFile3.Flush();
+
 			} catch (Exception) {
-				DialogResult messageBoxResult = MessageBox.Show("Unable to create file for recording data. Continue?", "Error", MessageBoxButtons.YesNo);
+				DialogResult messageBoxResult = MessageBox.Show("Unable to create run files. Continue?", "Error", MessageBoxButtons.YesNo);
 				if (messageBoxResult != DialogResult.Yes)
 					throw new Exception();
 			}
@@ -996,27 +1010,8 @@ namespace SpintronicsGUI
 		/*
 		 * This adds data to the data log file
 		 */
-		private int logData(TextWriter file, int sensor, int counter, double data)
+		private void logData(TextWriter file, int sensor, double data)
 		{
-			if (sensor != counter)
-			{
-				for (; sensor != counter; counter++)
-				{
-					if (counter > 30)
-					{
-						counter = 0;
-						file.Write("\n");
-					}
-					else
-					{
-						if (sensor >= 10)
-							file.Write("X.XXXXXXXXX" + "\t");
-						else
-							file.Write("X.XXXXXXXX" + "\t");
-					}
-				}
-			}
-
 			string dataString = System.Convert.ToString(data);
 			if(sensor >= 10)
 			{
@@ -1034,19 +1029,11 @@ namespace SpintronicsGUI
 			}
 
 			file.Write(dataString + "\t");
-			counter++;
-			if (counter == 16)
+			if (sensor == 30)
 			{
-				file.Write("0.000000000" + "\t");
-				counter++;
-			}
-			if (counter > 30)
-			{
-				counter = 1;
 				file.Write("\n");
 			}
 			file.Flush();
-			return counter;
 		}
 
 		/*
@@ -1056,14 +1043,16 @@ namespace SpintronicsGUI
 		{
 			if (this.running == false)
 			{
-				Preferences preferenceWindow = new Preferences(sensorMultiplexerValues, dataLogFileDirectory);
+				Preferences preferenceWindow = new Preferences(configFile);
 				var dialogResult = preferenceWindow.ShowDialog();
 				if (dialogResult.Equals(DialogResult.OK))
 				{
-					sensorMultiplexerValues = preferenceWindow.getAssignments();
-					dataLogFileDirectory = preferenceWindow.getFolder();
-					createDataLogFiles();
+					configFile.setTempFoldersToKeep(preferenceWindow.getTempFoldersToKeep());
+					configFile.setSensorMultiplexerValues(preferenceWindow.getSensorMultiplexerValues());
+					configFile.setReactionWell(preferenceWindow.getReactionWell());
+					configFile.setSample(preferenceWindow.getSample());
 				}
+				preferenceWindow.Dispose();
 			}
 			else
 			{

@@ -68,6 +68,7 @@
     <Compile Include="ComSelector.Designer.cs">
       <DependentUpon>ComSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration.cs" />
     <Compile Include="InputTextForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -12,26 +12,40 @@ namespace SpintronicsGUI
 {
 	public partial class Preferences : Form
 	{
-		int[] assignments;
-		string folder;
+		int tempFoldersToKeep;
+		int[] sensorMultiplexerValues;
+		string reactionWell;
+		string sample;
 
-		public Preferences(int[] initialAssignments, string initialLogFolder)
+		public Preferences(int initialFoldersToKeep, int[] initialAssignments, string initialReactionWell, string initialSample)
 		{
 			InitializeComponent();
-			populateAssignmentFields(initialAssignments);
-			this.assignments = initialAssignments;
-			refreshFolders();
-			this.folder = initialLogFolder;
-			this.currentDirectoryLabel.Text = initialLogFolder;
+			this.tempFoldersToKeep = initialFoldersToKeep;
+			this.sensorMultiplexerValues = initialAssignments;
+			this.reactionWell = initialReactionWell;
+			this.sample = initialSample;
+			populateFields();
 		}
 
-		private void populateAssignmentFields(int[] initialAssignments)
+		public Preferences(Configuration config)
 		{
-			foreach (TextBox t in this.tabPage1.Controls.OfType<TextBox>())
+			InitializeComponent();
+			this.tempFoldersToKeep = config.getTempFoldersToKeep();
+			this.sensorMultiplexerValues = config.getSensorMultiplexerValues();
+			this.reactionWell = config.getReactionWell();
+			this.sample = config.getSample();
+			populateFields();
+		}
+
+		private void populateFields()
+		{
+			this.tempFoldersToKeepTextBox.Text = System.Convert.ToString(this.tempFoldersToKeep);
+
+			foreach (TextBox t in this.pinMultiplexerValuesTabPage.Controls.OfType<TextBox>())
 			{
 				try {
 					int element = System.Convert.ToInt32(t.Name.Substring(t.Name.Length - 2, 2));
-					t.Text = System.Convert.ToString(initialAssignments[element - 1]);
+					t.Text = System.Convert.ToString(sensorMultiplexerValues[element - 1]);
 				} catch (FormatException) {
 					t.Text = "0";
 				} catch (OverflowException) {
@@ -40,39 +54,111 @@ namespace SpintronicsGUI
 					t.Text = "0";
 				}
 			}
+			this.reactionWellTextBox.Text = this.reactionWell;
+			this.sampleTextBox.Text = this.sample;
 		}
 
-		public int[] getAssignments()
+		public int getTempFoldersToKeep()
 		{
-			return assignments;
+			return this.tempFoldersToKeep;
+		}
+		
+		public int[] getSensorMultiplexerValues()
+		{
+			return this.sensorMultiplexerValues;
 		}
 
-		public string[] getFolders()
+		public string getReactionWell()
 		{
-			return this.listBox1.Items.Cast<string>().ToArray();
+			return this.reactionWell;
 		}
 
-		public string getFolder()
+		public string getSample()
 		{
-			return this.folder;
+			return this.sample;
 		}
 
-		private void refreshFolders()
+		private bool saveGeneral()
 		{
-			this.listBox1.Items.Clear();
-			this.listBox1.Items.Add("data");
-			this.folder = "data";
-			string relativePath = Environment.CurrentDirectory;
-			foreach (string d in Directory.GetDirectories(relativePath + "\\data", "*", SearchOption.TopDirectoryOnly))
-			{
-				int index = d.LastIndexOf("\\");
-				string directory = "data/" + d.Substring(index + 1, d.Length - index - 1);
-				this.listBox1.Items.Add(directory);
+			try {
+				this.tempFoldersToKeep = System.Convert.ToInt32(this.tempFoldersToKeepTextBox.Text);
+				return true;
+			} catch (ArgumentNullException) {
+				MessageBox.Show("Please enter a value for the number of temporary run folders to keep");
+				return false;
+			} catch (FormatException) {
+				MessageBox.Show("Please enter a valid value for the number of temporary run folders to keep");
+				return false;
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter a valid value for the number of temporary run folders to keep");
+				return false;
 			}
+		}
+
+		private void revertGeneralButton_Click(object sender, EventArgs e)
+		{
+			this.tempFoldersToKeepTextBox.Text = System.Convert.ToString(this.tempFoldersToKeep);
+		}
+
+		private bool savePinAssignments()
+		{
+			foreach (TextBox t in this.pinMultiplexerValuesTabPage.Controls.OfType<TextBox>())
+			{
+				try {
+					int value = System.Convert.ToInt32(t.Text);
+					this.sensorMultiplexerValues[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1] = value;
+				} catch (ArgumentNullException) {
+					MessageBox.Show("Please enter a value for sensor " + t.Name);
+					return false;
+				} catch (FormatException) {
+					MessageBox.Show("Please enter a valid number for sensor " + t.Name);
+					return false;
+				} catch (OverflowException) {
+					MessageBox.Show("The value for sensor " + t.Name + " is too large.");
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private void revertPinAssignmentsButton_Click(object sender, EventArgs e)
+		{
+			foreach (TextBox t in this.pinMultiplexerValuesTabPage.Controls.OfType<TextBox>())
+			{
+				int value = sensorMultiplexerValues[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1];
+				t.Text = System.Convert.ToString(value);
+			}
+		}
+
+		private bool saveInitFileValues()
+		{
+			try {
+				this.reactionWell = this.reactionWellTextBox.Text;
+				this.sample = this.sampleTextBox.Text;
+				return true;
+			} catch (ArgumentNullException) {
+				MessageBox.Show("Please enter a value for all fields");
+				return false;
+			} catch (FormatException) {
+				MessageBox.Show("Please enter valid strings for all fields");
+				return false;
+			}
+		}
+
+		private void revertInitFileValuesButton_Click(object sender, EventArgs e)
+		{
+			this.reactionWellTextBox.Text = this.reactionWell;
+			this.sampleTextBox.Text = this.sample;
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
 		{
+			if (!saveGeneral())
+				return;
+			if (!savePinAssignments())
+				return;
+			if (!saveInitFileValues())
+				return;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}
@@ -81,103 +167,6 @@ namespace SpintronicsGUI
 		{
 			this.DialogResult = DialogResult.Cancel;
 			this.Close();
-		}
-
-		private void saveAssignmentsButton_Click(object sender, EventArgs e)
-		{
-			foreach (TextBox t in this.tabPage1.Controls.OfType<TextBox>())
-			{
-				try {
-					int value = System.Convert.ToInt32(t.Text);
-					assignments[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1] = value;
-				} catch (FormatException) {
-					MessageBox.Show("Please enter a valid number for sensor " + t.Name);
-				} catch (OverflowException) {
-					MessageBox.Show("The value for sensor " + t.Name + " is too large.");
-				}
-			}
-		}
-
-		private void cancelPinAssignmentsButton_Click(object sender, EventArgs e)
-		{
-			foreach (TextBox t in this.tabPage1.Controls.OfType<TextBox>())
-			{
-				try {
-					int value = assignments[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1];
-					t.Text = System.Convert.ToString(value);
-				} catch (FormatException) {
-					MessageBox.Show("Please enter a valid number for sensor " + t.Name);
-				} catch (OverflowException) {
-					MessageBox.Show("The value for sensor " + t.Name + " is too large.");
-				}
-			}
-		}
-
-		private void refreshFoldersButton_Click(object sender, EventArgs e)
-		{
-			refreshFolders();
-		}
-
-		private void chooseFolderButton_Click(object sender, EventArgs e)
-		{
-			if (this.listBox1.SelectedItem == null)
-			{
-				MessageBox.Show("Please select a directory first");
-				return;
-			}
-			this.folder = (string)this.listBox1.SelectedItem;
-			this.currentDirectoryLabel.Text = this.folder;
-		}
-
-		private void addFolderButton_Click(object sender, EventArgs e)
-		{
-			InputTextForm inputText = new InputTextForm();
-			inputText.ShowDialog();
-			if (inputText.DialogResult == DialogResult.OK)
-			{
-				try {
-					string directory = "./data/";// Environment.CurrentDirectory;
-					directory += inputText.GetInput();
-					Directory.CreateDirectory(directory);
-					folder = inputText.GetInput();
-					MessageBox.Show("Directory added");
-				} catch (Exception) {
-					MessageBox.Show("Failed to create directory");
-				}
-			}
-			this.refreshFoldersButton.PerformClick();
-		}
-
-		private void deleteFolderButton_Click(object sender, EventArgs e)
-		{
-			if (this.listBox1.SelectedItem == null)
-			{
-				MessageBox.Show("Please select a directory first");
-				return;
-			}
-			if ((string)this.listBox1.SelectedItem == "data")
-			{
-				MessageBox.Show("You cannot delete the root data directory");
-				return;
-			}
-			if ((string)this.listBox1.SelectedItem == this.folder)
-			{
-				MessageBox.Show("You cannot delete the currently-chosen directory.\n" +
-						    "Please select a different directory first.");
-				return;
-			}
-			var result = MessageBox.Show("Are you sure you want to delete this folder?", "Delete", MessageBoxButtons.YesNoCancel);
-			if(result == DialogResult.Yes)
-			{
-				try {
-					string directory = "./";// Environment.CurrentDirectory;
-					directory += /*"\\data\\" +*/ (string)this.listBox1.SelectedItem;
-					Directory.Delete(directory, true);
-					this.listBox1.Items.Remove(this.listBox1.SelectedItem);
-				} catch (Exception) {
-					MessageBox.Show("Failed to delete directory");
-				}
-			}
 		}
 	}
 }
