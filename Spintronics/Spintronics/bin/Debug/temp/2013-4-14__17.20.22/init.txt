@@ -1,0 +1,9 @@
+Reaction Well:	0000A
+Sample:		0ng/mL
+
+Cycle		Details
+*********************************************
+2		Add 1 mL Buffer
+2		Add 1 uL MNPs
+2		Add 1 uL MNPs
+2		Add 1 mL Buffer

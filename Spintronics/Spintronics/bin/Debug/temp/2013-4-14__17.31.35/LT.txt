@@ -1,0 +1,2 @@
+Sensor   1	Sensor   2	Sensor   3	Sensor   4	Sensor   5	Sensor   6	Sensor   7	Sensor   8	Sensor   9	Sensor   10	Sensor   11	Sensor   12	Sensor   13	Sensor   14	Sensor   15	Sensor   17	Sensor   18	Sensor   19	Sensor   20	Sensor   21	Sensor   22	Sensor   23	Sensor   24	Sensor   25	Sensor   26	Sensor   27	Sensor   28	Sensor   29	Sensor   30	
+0.07677163	0.02210105	0.07401186	0.02062055	0.16594997	0.41786080	0.46977159	0.41638028	

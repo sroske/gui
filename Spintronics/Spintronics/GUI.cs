@@ -32,6 +32,7 @@ namespace SpintronicsGUI
 		SerialPort debugSerial = null;
 		ProtocolHandler protocolHandler = new ProtocolHandler();
 		Microcontroller microcontroller;
+		string runFilesDirectory;
 		TextWriter initFile = null;
 		TextWriter dataFile1 = null;
 		TextWriter dataFile2 = null;
@@ -84,6 +85,19 @@ namespace SpintronicsGUI
 			recalculate = 0;
 			this.radioButtonA.PerformClick();
 			recalculate = 1;
+		}
+
+		private void GUI_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == Keys.S))
+			{
+				this.saveRunFilesAsToolStripMenuItem.PerformClick();
+			}
+
+			if (e.Control && (e.KeyCode == Keys.N))
+			{
+				this.startRunButton.PerformClick();
+			}
 		}
 
 		private void addNewDataPointMethod(Packet packet)
@@ -789,6 +803,44 @@ namespace SpintronicsGUI
 			}
 		}
 
+		private void saveRunFilesAs(object sender, EventArgs e)
+		{
+			if (this.running)
+			{
+				MessageBox.Show("Please stop the current run before saving files");
+				return;
+			}
+			if (this.runFilesDirectory == null)
+			{
+				MessageBox.Show("Please complete a run before saving files");
+				return;
+			}
+
+			SaveFileDialog saveFile = new SaveFileDialog();
+			saveFile.FileName = "Run Files";
+			saveFile.InitialDirectory = this.configFile.getDefaultSaveDirectory();
+			if (saveFile.ShowDialog() == DialogResult.OK)
+			{
+				try {
+					string newDefaultDirectory = saveFile.FileName;
+					int last = newDefaultDirectory.LastIndexOf("\\");
+					newDefaultDirectory = newDefaultDirectory.Substring(0, last);
+					this.configFile.setDefaultSaveDirectory(newDefaultDirectory);
+					Directory.CreateDirectory(saveFile.FileName);
+					File.Copy(this.runFilesDirectory + "/HT.txt", saveFile.FileName + "/HT.txt");
+					File.Copy(this.runFilesDirectory + "/LT.txt", saveFile.FileName + "/LT.txt");
+					File.Copy(this.runFilesDirectory + "/CT.txt", saveFile.FileName + "/CT.txt");
+					File.Copy(this.runFilesDirectory + "/init.txt", saveFile.FileName + "/init.txt");
+				} catch (FileNotFoundException) {
+					MessageBox.Show("Error while saving files: One or more files could not be found");
+				} catch (UnauthorizedAccessException) {
+					MessageBox.Show("Error while saving files: One or more files could not be accessed due to lack of authorization");
+				} catch (Exception ex) {
+					MessageBox.Show("Error while saving files:" + ex.Message);
+				}
+			}
+		}
+
 		/*
 		 * This tares the graph and sets new visible limits
 		 */
@@ -972,9 +1024,10 @@ namespace SpintronicsGUI
 				timestamp += DateTime.Now.Hour + ".";
 				timestamp += DateTime.Now.Minute + ".";
 				timestamp += DateTime.Now.Second;
-				System.IO.Directory.CreateDirectory("./temp/" + timestamp);
+				runFilesDirectory = "./temp/" + timestamp;
+				System.IO.Directory.CreateDirectory(runFilesDirectory);
 
-				string logFileNameBase = "./temp/" + timestamp + "/";
+				string logFileNameBase = runFilesDirectory + "/";
 				initFile = new StreamWriter(logFileNameBase + "init.txt");
 				dataFile1 = new StreamWriter(logFileNameBase + "HT.txt");
 				dataFile2 = new StreamWriter(logFileNameBase + "LT.txt");

@@ -8,7 +8,7 @@ namespace SpintronicsGUI
 {
 	public class Configuration
 	{
-		private string defaultSaveDirectory = "./";
+		private string defaultSaveDirectory = Directory.GetCurrentDirectory();
 		private int tempFoldersToKeep = -1;
 		private int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
 									24, 25, 26, 27, 28, 29, 30};
@@ -57,7 +57,7 @@ namespace SpintronicsGUI
 		private void writeConfigFileValues()
 		{
 			StreamWriter file = new StreamWriter("./config.ini");
-			file.WriteLine("DefaultSaveDirectory:" + Directory.GetCurrentDirectory());
+			file.WriteLine("DefaultSaveDirectory:" + this.defaultSaveDirectory);
 			file.WriteLine("TempFoldersToKeep:" + this.tempFoldersToKeep);
 			file.Write("SensorMultiplexerValues:");
 			for (int i = 0; i < sensorMultiplexerValues.Length; i++)

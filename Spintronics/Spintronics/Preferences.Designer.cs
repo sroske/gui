@@ -100,16 +100,18 @@ namespace SpintronicsGUI
 			this.textBox02 = new System.Windows.Forms.TextBox();
 			this.textBox01 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.initFileDataTabPage = new System.Windows.Forms.TabPage();
+			this.logInformationTabPage = new System.Windows.Forms.TabPage();
 			this.sampleTextBox = new System.Windows.Forms.TextBox();
-			this.sampleLabel = new System.Windows.Forms.Label();
-			this.reactionWellLabel = new System.Windows.Forms.Label();
+			this.MnpsNameLabel = new System.Windows.Forms.Label();
+			this.bufferNameLabel = new System.Windows.Forms.Label();
 			this.reactionWellTextBox = new System.Windows.Forms.TextBox();
 			this.revertInitFileValuesButton = new System.Windows.Forms.Button();
+			this.preloadBufferVolumeLabel = new System.Windows.Forms.Label();
+			this.preloadBufferVolumeTextBox = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.pinMultiplexerValuesTabPage.SuspendLayout();
-			this.initFileDataTabPage.SuspendLayout();
+			this.logInformationTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// doneButton
@@ -136,7 +138,7 @@ namespace SpintronicsGUI
 			// 
 			this.tabControl1.Controls.Add(this.generalTabPage);
 			this.tabControl1.Controls.Add(this.pinMultiplexerValuesTabPage);
-			this.tabControl1.Controls.Add(this.initFileDataTabPage);
+			this.tabControl1.Controls.Add(this.logInformationTabPage);
 			this.tabControl1.Location = new System.Drawing.Point(13, 12);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -755,45 +757,47 @@ namespace SpintronicsGUI
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Pin:";
 			// 
-			// initFileDataTabPage
+			// logInformationTabPage
 			// 
-			this.initFileDataTabPage.Controls.Add(this.sampleTextBox);
-			this.initFileDataTabPage.Controls.Add(this.sampleLabel);
-			this.initFileDataTabPage.Controls.Add(this.reactionWellLabel);
-			this.initFileDataTabPage.Controls.Add(this.reactionWellTextBox);
-			this.initFileDataTabPage.Controls.Add(this.revertInitFileValuesButton);
-			this.initFileDataTabPage.Location = new System.Drawing.Point(4, 22);
-			this.initFileDataTabPage.Name = "initFileDataTabPage";
-			this.initFileDataTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.initFileDataTabPage.Size = new System.Drawing.Size(524, 227);
-			this.initFileDataTabPage.TabIndex = 1;
-			this.initFileDataTabPage.Text = "Init File Values";
-			this.initFileDataTabPage.UseVisualStyleBackColor = true;
+			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeTextBox);
+			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeLabel);
+			this.logInformationTabPage.Controls.Add(this.sampleTextBox);
+			this.logInformationTabPage.Controls.Add(this.MnpsNameLabel);
+			this.logInformationTabPage.Controls.Add(this.bufferNameLabel);
+			this.logInformationTabPage.Controls.Add(this.reactionWellTextBox);
+			this.logInformationTabPage.Controls.Add(this.revertInitFileValuesButton);
+			this.logInformationTabPage.Location = new System.Drawing.Point(4, 22);
+			this.logInformationTabPage.Name = "logInformationTabPage";
+			this.logInformationTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.logInformationTabPage.Size = new System.Drawing.Size(524, 227);
+			this.logInformationTabPage.TabIndex = 1;
+			this.logInformationTabPage.Text = "Log Information";
+			this.logInformationTabPage.UseVisualStyleBackColor = true;
 			// 
 			// sampleTextBox
 			// 
-			this.sampleTextBox.Location = new System.Drawing.Point(4, 89);
+			this.sampleTextBox.Location = new System.Drawing.Point(3, 74);
 			this.sampleTextBox.Name = "sampleTextBox";
 			this.sampleTextBox.Size = new System.Drawing.Size(100, 20);
 			this.sampleTextBox.TabIndex = 5;
 			// 
-			// sampleLabel
+			// MnpsNameLabel
 			// 
-			this.sampleLabel.AutoSize = true;
-			this.sampleLabel.Location = new System.Drawing.Point(7, 72);
-			this.sampleLabel.Name = "sampleLabel";
-			this.sampleLabel.Size = new System.Drawing.Size(42, 13);
-			this.sampleLabel.TabIndex = 4;
-			this.sampleLabel.Text = "Sample";
+			this.MnpsNameLabel.AutoSize = true;
+			this.MnpsNameLabel.Location = new System.Drawing.Point(7, 58);
+			this.MnpsNameLabel.Name = "MnpsNameLabel";
+			this.MnpsNameLabel.Size = new System.Drawing.Size(67, 13);
+			this.MnpsNameLabel.TabIndex = 4;
+			this.MnpsNameLabel.Text = "MNPs Name";
 			// 
-			// reactionWellLabel
+			// bufferNameLabel
 			// 
-			this.reactionWellLabel.AutoSize = true;
-			this.reactionWellLabel.Location = new System.Drawing.Point(7, 19);
-			this.reactionWellLabel.Name = "reactionWellLabel";
-			this.reactionWellLabel.Size = new System.Drawing.Size(74, 13);
-			this.reactionWellLabel.TabIndex = 3;
-			this.reactionWellLabel.Text = "Reaction Well";
+			this.bufferNameLabel.AutoSize = true;
+			this.bufferNameLabel.Location = new System.Drawing.Point(7, 19);
+			this.bufferNameLabel.Name = "bufferNameLabel";
+			this.bufferNameLabel.Size = new System.Drawing.Size(66, 13);
+			this.bufferNameLabel.TabIndex = 3;
+			this.bufferNameLabel.Text = "Buffer Name";
 			// 
 			// reactionWellTextBox
 			// 
@@ -812,6 +816,22 @@ namespace SpintronicsGUI
 			this.revertInitFileValuesButton.UseVisualStyleBackColor = true;
 			this.revertInitFileValuesButton.Click += new System.EventHandler(this.revertInitFileValuesButton_Click);
 			// 
+			// preloadBufferVolumeLabel
+			// 
+			this.preloadBufferVolumeLabel.AutoSize = true;
+			this.preloadBufferVolumeLabel.Location = new System.Drawing.Point(7, 97);
+			this.preloadBufferVolumeLabel.Name = "preloadBufferVolumeLabel";
+			this.preloadBufferVolumeLabel.Size = new System.Drawing.Size(112, 13);
+			this.preloadBufferVolumeLabel.TabIndex = 6;
+			this.preloadBufferVolumeLabel.Text = "Preload Buffer Volume";
+			// 
+			// preloadBufferVolumeTextBox
+			// 
+			this.preloadBufferVolumeTextBox.Location = new System.Drawing.Point(3, 113);
+			this.preloadBufferVolumeTextBox.Name = "preloadBufferVolumeTextBox";
+			this.preloadBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
+			this.preloadBufferVolumeTextBox.TabIndex = 7;
+			// 
 			// Preferences
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -827,8 +847,8 @@ namespace SpintronicsGUI
 			this.generalTabPage.PerformLayout();
 			this.pinMultiplexerValuesTabPage.ResumeLayout(false);
 			this.pinMultiplexerValuesTabPage.PerformLayout();
-			this.initFileDataTabPage.ResumeLayout(false);
-			this.initFileDataTabPage.PerformLayout();
+			this.logInformationTabPage.ResumeLayout(false);
+			this.logInformationTabPage.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -900,16 +920,18 @@ namespace SpintronicsGUI
 		private Label sensor3;
 		private Label sensor2;
 		private Label sensor1;
-		private TabPage initFileDataTabPage;
+		private TabPage logInformationTabPage;
 		private Button revertInitFileValuesButton;
 		private TextBox sampleTextBox;
-		private Label sampleLabel;
-		private Label reactionWellLabel;
+		private Label MnpsNameLabel;
+		private Label bufferNameLabel;
 		private TextBox reactionWellTextBox;
 		private Button revertPinAssignmentsButton;
 		private TabPage generalTabPage;
 		private Button revertGeneralButton;
 		private Label tempFoldersToKeepLabel;
 		private TextBox tempFoldersToKeepTextBox;
+		private TextBox preloadBufferVolumeTextBox;
+		private Label preloadBufferVolumeLabel;
 	}
 }
