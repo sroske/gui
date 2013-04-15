@@ -319,11 +319,12 @@ namespace SpintronicsGUI
 			this.addBufferButton = new System.Windows.Forms.Button();
 			this.addBufferVolumeTextBox = new System.Windows.Forms.TextBox();
 			this.addMnpVolumeTextBox = new System.Windows.Forms.TextBox();
-			this.addBufferMnpVolumeUnitTextBox = new System.Windows.Forms.TextBox();
 			this.reactionWellLabel = new System.Windows.Forms.Label();
 			this.reactionWellTextBox = new System.Windows.Forms.TextBox();
 			this.sampleLabel = new System.Windows.Forms.Label();
 			this.sampleTextBox = new System.Windows.Forms.TextBox();
+			this.addBufferUnitLabel = new System.Windows.Forms.Label();
+			this.addMnpUnitLabel = new System.Windows.Forms.Label();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -441,6 +442,7 @@ namespace SpintronicsGUI
 			this.groupBox1.Controls.Add(this.s28_12);
 			this.groupBox1.Controls.Add(this.s05_22);
 			this.groupBox1.Controls.Add(this.s06_21);
+			this.groupBox1.Controls.Add(this.radioButtonA);
 			this.groupBox1.Controls.Add(this.s25_11);
 			this.groupBox1.Controls.Add(this.s26_10);
 			this.groupBox1.Controls.Add(this.s08_24);
@@ -2174,7 +2176,7 @@ namespace SpintronicsGUI
 			// 
 			this.radioButtonA.AutoSize = true;
 			this.radioButtonA.Checked = true;
-			this.radioButtonA.Location = new System.Drawing.Point(156, 134);
+			this.radioButtonA.Location = new System.Drawing.Point(143, 88);
 			this.radioButtonA.Name = "radioButtonA";
 			this.radioButtonA.Size = new System.Drawing.Size(32, 17);
 			this.radioButtonA.TabIndex = 43;
@@ -2232,6 +2234,7 @@ namespace SpintronicsGUI
 			// 
 			// bufferingProgressBar
 			// 
+			this.bufferingProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.bufferingProgressBar.Location = new System.Drawing.Point(940, 560);
 			this.bufferingProgressBar.Name = "bufferingProgressBar";
 			this.bufferingProgressBar.Size = new System.Drawing.Size(134, 23);
@@ -2240,6 +2243,7 @@ namespace SpintronicsGUI
 			// 
 			// bufferingLabel
 			// 
+			this.bufferingLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.bufferingLabel.AutoSize = true;
 			this.bufferingLabel.Location = new System.Drawing.Point(940, 537);
 			this.bufferingLabel.Name = "bufferingLabel";
@@ -2250,6 +2254,7 @@ namespace SpintronicsGUI
 			// 
 			// addMnpButton
 			// 
+			this.addMnpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addMnpButton.Location = new System.Drawing.Point(830, 555);
 			this.addMnpButton.Name = "addMnpButton";
 			this.addMnpButton.Size = new System.Drawing.Size(75, 23);
@@ -2260,6 +2265,7 @@ namespace SpintronicsGUI
 			// 
 			// addBufferButton
 			// 
+			this.addBufferButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addBufferButton.Location = new System.Drawing.Point(830, 525);
 			this.addBufferButton.Name = "addBufferButton";
 			this.addBufferButton.Size = new System.Drawing.Size(75, 23);
@@ -2270,6 +2276,7 @@ namespace SpintronicsGUI
 			// 
 			// addBufferVolumeTextBox
 			// 
+			this.addBufferVolumeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addBufferVolumeTextBox.Location = new System.Drawing.Point(738, 528);
 			this.addBufferVolumeTextBox.Name = "addBufferVolumeTextBox";
 			this.addBufferVolumeTextBox.Size = new System.Drawing.Size(38, 20);
@@ -2277,17 +2284,11 @@ namespace SpintronicsGUI
 			// 
 			// addMnpVolumeTextBox
 			// 
+			this.addMnpVolumeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addMnpVolumeTextBox.Location = new System.Drawing.Point(738, 557);
 			this.addMnpVolumeTextBox.Name = "addMnpVolumeTextBox";
 			this.addMnpVolumeTextBox.Size = new System.Drawing.Size(38, 20);
 			this.addMnpVolumeTextBox.TabIndex = 53;
-			// 
-			// addBufferMnpVolumeUnitTextBox
-			// 
-			this.addBufferMnpVolumeUnitTextBox.Location = new System.Drawing.Point(782, 540);
-			this.addBufferMnpVolumeUnitTextBox.Name = "addBufferMnpVolumeUnitTextBox";
-			this.addBufferMnpVolumeUnitTextBox.Size = new System.Drawing.Size(29, 20);
-			this.addBufferMnpVolumeUnitTextBox.TabIndex = 54;
 			// 
 			// reactionWellLabel
 			// 
@@ -2321,16 +2322,35 @@ namespace SpintronicsGUI
 			this.sampleTextBox.Size = new System.Drawing.Size(86, 20);
 			this.sampleTextBox.TabIndex = 59;
 			// 
+			// addBufferUnitLabel
+			// 
+			this.addBufferUnitLabel.AutoSize = true;
+			this.addBufferUnitLabel.Location = new System.Drawing.Point(782, 532);
+			this.addBufferUnitLabel.Name = "addBufferUnitLabel";
+			this.addBufferUnitLabel.Size = new System.Drawing.Size(35, 13);
+			this.addBufferUnitLabel.TabIndex = 60;
+			this.addBufferUnitLabel.Text = "label1";
+			// 
+			// addMnpUnitLabel
+			// 
+			this.addMnpUnitLabel.AutoSize = true;
+			this.addMnpUnitLabel.Location = new System.Drawing.Point(782, 560);
+			this.addMnpUnitLabel.Name = "addMnpUnitLabel";
+			this.addMnpUnitLabel.Size = new System.Drawing.Size(35, 13);
+			this.addMnpUnitLabel.TabIndex = 61;
+			this.addMnpUnitLabel.Text = "label1";
+			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1086, 595);
+			this.Controls.Add(this.addMnpUnitLabel);
+			this.Controls.Add(this.addBufferUnitLabel);
 			this.Controls.Add(this.sampleTextBox);
 			this.Controls.Add(this.sampleLabel);
 			this.Controls.Add(this.reactionWellTextBox);
 			this.Controls.Add(this.reactionWellLabel);
-			this.Controls.Add(this.addBufferMnpVolumeUnitTextBox);
 			this.Controls.Add(this.addMnpVolumeTextBox);
 			this.Controls.Add(this.addBufferVolumeTextBox);
 			this.Controls.Add(this.addBufferButton);
@@ -2341,7 +2361,6 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.tareIndexTextbox);
 			this.Controls.Add(this.referenceTareCheckbox);
 			this.Controls.Add(this.amplitudeTareCheckbox);
-			this.Controls.Add(this.radioButtonA);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.timeTareButton);
 			this.Controls.Add(this.startRunButton);
@@ -2474,11 +2493,12 @@ namespace SpintronicsGUI
 		private ToolStripMenuItem saveRunFilesAsToolStripMenuItem;
 		private ToolStripMenuItem openRunToolStripMenuItem;
 		private ToolStripMenuItem exitToolStripMenuItem;
-		private TextBox addBufferMnpVolumeUnitTextBox;
 		private Label reactionWellLabel;
 		private TextBox reactionWellTextBox;
 		private Label sampleLabel;
 		private TextBox sampleTextBox;
+		private Label addBufferUnitLabel;
+		private Label addMnpUnitLabel;
 	}
 }
 

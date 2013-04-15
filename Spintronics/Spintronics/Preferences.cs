@@ -12,38 +12,44 @@ namespace SpintronicsGUI
 {
 	public partial class Preferences : Form
 	{
-		int tempFoldersToKeep;
-		int[] sensorMultiplexerValues;
-		string bufferName;
-		string mnpsName;
-		int preloadBufferVolume;
-		string preloadBufferVolumeUnit;
-		int defaultAddBufferVolume;
-		int defaultAddMnpsVolume;
-		string defaultBufferMnpsVolumeUnit;
-
-		public Preferences(int initialFoldersToKeep, int[] initialAssignments, string initialReactionWell, string initialSample)
-		{
-			InitializeComponent();
-			this.tempFoldersToKeep = initialFoldersToKeep;
-			this.sensorMultiplexerValues = initialAssignments;
-			this.bufferName = initialReactionWell;
-			this.mnpsName = initialSample;
-			populateFields();
-		}
+		public int tempFoldersToKeep;
+		public int[] sensorMultiplexerValues;
+		public string bufferName;
+		public string mnpsName;
+		public int preloadBufferVolume;
+		public int defaultAddBufferVolume;
+		public int defaultAddMnpsVolume;
+		public string defaultVolumeUnit;
+		public int wheatstoneAmplitude;
+		public string wheatstoneAmplitudeUnit;
+		public int wheatstoneFrequency;
+		public int coilAmplitude;
+		public string coilAmplitudeUnit;
+		public int coilFrequency;
+		public int coilDcOffset;
+		public string coilDcOffsetUnit;
+		public int measurementPeriod;
 
 		public Preferences(Configuration config)
 		{
 			InitializeComponent();
-			this.tempFoldersToKeep = config.getTempFoldersToKeep();
-			this.sensorMultiplexerValues = config.getSensorMultiplexerValues();
-			this.bufferName = config.getBufferName();
-			this.mnpsName = config.getMnpsName();
-			this.preloadBufferVolume = config.getPreloadBufferVolume();
-			this.preloadBufferVolumeUnit = config.getPreloadBufferVolumeUnit();
-			this.defaultAddBufferVolume = config.getDefaultAddBufferVolume();
-			this.defaultAddMnpsVolume = config.getDefaultAddMnpsVolume();
-			this.defaultBufferMnpsVolumeUnit = config.getDefaultBufferMnpsVolumeUnit();
+			this.tempFoldersToKeep = config.tempFoldersToKeep;
+			this.sensorMultiplexerValues = config.sensorMultiplexerValues;
+			this.bufferName = config.bufferName;
+			this.mnpsName = config.mnpsName;
+			this.preloadBufferVolume = config.preloadBufferVolume;
+			this.defaultAddBufferVolume = config.defaultAddBufferVolume;
+			this.defaultAddMnpsVolume = config.defaultAddMnpsVolume;
+			this.defaultVolumeUnit = config.defaultVolumeUnit;
+			this.wheatstoneAmplitude = config.wheatstoneAmplitude;
+			this.wheatstoneAmplitudeUnit = config.wheatstoneAmplitudeUnit;
+			this.wheatstoneFrequency = config.wheatstoneFrequency;
+			this.coilAmplitude = config.coilAmplitude;
+			this.coilAmplitudeUnit = config.coilAmplitudeUnit;
+			this.coilFrequency = config.coilFrequency;
+			this.coilDcOffset = config.coilDcOffset;
+			this.coilDcOffsetUnit = config.coilDcOffsetUnit;
+			this.measurementPeriod = config.measurementPeriod;
 			populateFields();
 		}
 
@@ -67,58 +73,21 @@ namespace SpintronicsGUI
 			this.bufferNameTextBox.Text = this.bufferName;
 			this.mnpsNameTextBox.Text = this.mnpsName;
 			this.preloadBufferVolumeTextBox.Text = System.Convert.ToString(this.preloadBufferVolume);
-			this.preloadBufferVolumeUnitTextBox.Text = this.preloadBufferVolumeUnit;
 			this.defaultAddBufferVolumeTextBox.Text = System.Convert.ToString(this.defaultAddBufferVolume);
 			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
-			this.defaultBufferMnpVolumeUnitComboBox.SelectedItem = this.defaultBufferMnpsVolumeUnit;
+			this.defaultVolumeUnitComboBox.SelectedItem = this.defaultVolumeUnit;
+			this.wheatstoneAmplitudeTextBox.Text = System.Convert.ToString(this.wheatstoneAmplitude);
+			this.wheatstoneAmplitudeUnitTextBox.Text = this.wheatstoneAmplitudeUnit;
+			this.wheatstoneFrequencyTextBox.Text = System.Convert.ToString(this.wheatstoneFrequency);
+			this.coilAmplitudeTextBox.Text = System.Convert.ToString(this.coilAmplitude);
+			this.coilAmplitudeUnitTextBox.Text = this.coilAmplitudeUnit;
+			this.coilFrequencyTextBox.Text = System.Convert.ToString(this.coilFrequency);
+			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
+			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
+			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 		}
 
-		public int getTempFoldersToKeep()
-		{
-			return this.tempFoldersToKeep;
-		}
-		
-		public int[] getSensorMultiplexerValues()
-		{
-			return this.sensorMultiplexerValues;
-		}
-
-		public string getBufferName()
-		{
-			return this.bufferName;
-		}
-
-		public string getMnpsName()
-		{
-			return this.mnpsName;
-		}
-
-		public int getPreloadBufferVolume()
-		{
-			return this.preloadBufferVolume;
-		}
-
-		public string getPreloadBufferVolumeUnit()
-		{
-			return this.preloadBufferVolumeUnit;
-		}
-
-		public int getDefaultAddBufferVolume()
-		{
-			return this.defaultAddBufferVolume;
-		}
-
-		public int getDefaultAddMnpsVolume()
-		{
-			return this.defaultAddMnpsVolume;
-		}
-
-		public string getDefaultBufferMnpsVolumeUnit()
-		{
-			return this.defaultBufferMnpsVolumeUnit;
-		}
-
-		private bool saveGeneral()
+		private bool saveGeneralTabPreferences()
 		{
 			try {
 				this.tempFoldersToKeep = System.Convert.ToInt32(this.tempFoldersToKeepTextBox.Text);
@@ -140,7 +109,45 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepTextBox.Text = System.Convert.ToString(this.tempFoldersToKeep);
 		}
 
-		private bool savePinAssignments()
+		private bool saveMeasurementParametersTabPreferences()
+		{
+			try {
+				this.wheatstoneAmplitude = System.Convert.ToInt32(this.wheatstoneAmplitudeTextBox.Text);
+				this.wheatstoneAmplitudeUnit = this.wheatstoneAmplitudeUnitTextBox.Text;
+				this.wheatstoneFrequency = System.Convert.ToInt32(this.wheatstoneFrequencyTextBox.Text);
+				this.coilAmplitude = System.Convert.ToInt32(this.coilAmplitudeTextBox.Text);
+				this.coilAmplitudeUnit = this.coilAmplitudeUnitTextBox.Text;
+				this.coilFrequency = System.Convert.ToInt32(this.coilFrequencyTextBox.Text);
+				this.coilDcOffset = System.Convert.ToInt32(this.coilDcOffsetTextBox.Text);
+				this.coilDcOffsetUnit = this.coilDcOffsetUnitTextBox.Text;
+				this.measurementPeriod = System.Convert.ToInt32(this.measurementPeriodTextBox.Text);
+				return true;
+			} catch (ArgumentNullException) {
+				MessageBox.Show("Please enter a for all fields");
+				return false;
+			} catch (FormatException) {
+				MessageBox.Show("Please enter a valid value for all fields");
+				return false;
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter a valid value for all fields");
+				return false;
+			}
+		}
+
+		private void measurementParametersRevertButton_Click(object sender, EventArgs e)
+		{
+			this.wheatstoneAmplitudeTextBox.Text = System.Convert.ToString(this.wheatstoneAmplitude);
+			this.wheatstoneAmplitudeUnit = this.wheatstoneAmplitudeUnitTextBox.Text;
+			this.wheatstoneFrequencyTextBox.Text = System.Convert.ToString(this.wheatstoneFrequency);
+			this.coilAmplitudeTextBox.Text = System.Convert.ToString(this.coilAmplitude);
+			this.coilAmplitudeUnit = this.coilAmplitudeUnitTextBox.Text;
+			this.coilFrequencyTextBox.Text = System.Convert.ToString(this.coilFrequency);
+			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
+			this.coilDcOffsetUnit = this.coilDcOffsetUnitTextBox.Text;
+			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
+		}
+
+		private bool savePinAssignmentsTabPreferences()
 		{
 			foreach (TextBox t in this.pinMultiplexerValuesTabPage.Controls.OfType<TextBox>())
 			{
@@ -170,16 +177,15 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private bool saveLogInformation()
+		private bool saveLogInformationTabPreferences()
 		{
 			try {
 				this.bufferName = this.bufferNameTextBox.Text;
 				this.mnpsName = this.mnpsNameTextBox.Text;
 				this.preloadBufferVolume = System.Convert.ToInt32(this.preloadBufferVolumeTextBox.Text);
-				this.preloadBufferVolumeUnit = this.preloadBufferVolumeUnitTextBox.Text;
 				this.defaultAddBufferVolume = System.Convert.ToInt32(this.defaultAddBufferVolumeTextBox.Text);
 				this.defaultAddMnpsVolume = System.Convert.ToInt32(this.defaultAddMnpsVolumeTextBox.Text);
-				this.defaultBufferMnpsVolumeUnit = (string)this.defaultBufferMnpVolumeUnitComboBox.SelectedItem;
+				this.defaultVolumeUnit = (string)this.defaultVolumeUnitComboBox.SelectedItem;
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
@@ -198,19 +204,20 @@ namespace SpintronicsGUI
 			this.bufferNameTextBox.Text = this.bufferName;
 			this.mnpsNameTextBox.Text = this.mnpsName;
 			this.preloadBufferVolumeTextBox.Text = System.Convert.ToString(this.preloadBufferVolume);
-			this.preloadBufferVolumeUnitTextBox.Text = this.preloadBufferVolumeUnit;
 			this.defaultAddBufferVolumeTextBox.Text = System.Convert.ToString(this.defaultAddBufferVolume);
 			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
-			this.defaultBufferMnpVolumeUnitComboBox.SelectedItem = this.defaultBufferMnpsVolumeUnit;
+			this.defaultVolumeUnitComboBox.SelectedItem = this.defaultVolumeUnit;
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
 		{
-			if (!saveGeneral())
+			if (!saveGeneralTabPreferences())
 				return;
-			if (!savePinAssignments())
+			if (!saveMeasurementParametersTabPreferences())
 				return;
-			if (!saveLogInformation())
+			if (!savePinAssignmentsTabPreferences())
+				return;
+			if (!saveLogInformationTabPreferences())
 				return;
 			this.DialogResult = DialogResult.OK;
 			this.Close();

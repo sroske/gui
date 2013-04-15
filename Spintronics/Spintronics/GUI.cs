@@ -86,9 +86,10 @@ namespace SpintronicsGUI
 			this.radioButtonA.PerformClick();
 			recalculate = 1;
 
-			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.getDefaultAddBufferVolume());
-			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.getDefaultAddMnpsVolume());
-			this.addBufferMnpVolumeUnitTextBox.Text = configFile.getDefaultBufferMnpsVolumeUnit();
+			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddBufferVolume);
+			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);
+			this.addBufferUnitLabel.Text = this.configFile.defaultVolumeUnit;
+			this.addMnpUnitLabel.Text = this.configFile.defaultVolumeUnit;
 		}
 
 		private void GUI_KeyDown(object sender, KeyEventArgs e)
@@ -799,6 +800,8 @@ namespace SpintronicsGUI
 				Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
 				printPacket(stopPacket, PacketCommDirection.Out);
 				protocolHandler.HandlePacket(stopPacket, serialPort);
+				this.bufferingLabel.Visible = false;
+				this.bufferingProgressBar.Visible = false;
 				this.running = false;
 			} catch (System.ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
@@ -826,7 +829,7 @@ namespace SpintronicsGUI
 			saveFile.FileName = this.reactionWellTextBox.Text + "(" + this.sampleTextBox.Text + ")";
 			saveFile.FileName = saveFile.FileName.Replace('\\', '_');
 			saveFile.FileName = saveFile.FileName.Replace('/', '_');
-			saveFile.InitialDirectory = this.configFile.getDefaultSaveDirectory();
+			saveFile.InitialDirectory = this.configFile.defaultSaveDirectory;
 			if (saveFile.ShowDialog() == DialogResult.OK)
 			{
 				try {
@@ -937,8 +940,8 @@ namespace SpintronicsGUI
 			}
 			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
 							this.addBufferVolumeTextBox.Text + " " +
-							this.addBufferMnpVolumeUnitTextBox.Text + " Buffer (" +
-							this.configFile.getBufferName() + ")");
+							this.configFile.defaultVolumeUnit + " Buffer (" +
+							this.configFile.bufferName + ")");
 			this.initFile.Flush();
 		}
 
@@ -956,8 +959,8 @@ namespace SpintronicsGUI
 			}
 			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
 							this.addMnpVolumeTextBox.Text + " " +
-							this.addBufferMnpVolumeUnitTextBox.Text + " MNPs (" +
-							this.configFile.getMnpsName() + ")");
+							this.configFile.defaultVolumeUnit + " MNPs (" +
+							this.configFile.mnpsName + ")");
 			this.initFile.Flush();
 		}
 
@@ -979,7 +982,7 @@ namespace SpintronicsGUI
 			{
 				Console.Write("{0:X2}", packet.payload[i]);
 			}
-			Console.Write(" XOR:0x{0:X2}");
+			Console.Write(" XOR:0x{0:X2}\n", packet.Xor);
 		}
 
 		/*
@@ -1042,9 +1045,9 @@ namespace SpintronicsGUI
 				initFile.WriteLine("Cycle\t\tDetails");
 				initFile.WriteLine("*********************************************");
 				initFile.WriteLine(globalCycle + "\t\tPreload " +
-							 this.configFile.getPreloadBufferVolume() + " " +
-							 this.configFile.getPreloadBufferVolumeUnit() + " Buffer (" +
-							 this.configFile.getBufferName() + ")");
+							 this.configFile.preloadBufferVolume + " " +
+							 this.configFile.defaultVolumeUnit + " Buffer (" +
+							 this.configFile.bufferName + ")");
 				initFile.Flush();
 				for (int i = 1; i <= 30; i++)
 				{
@@ -1108,15 +1111,25 @@ namespace SpintronicsGUI
 				var dialogResult = preferenceWindow.ShowDialog();
 				if (dialogResult.Equals(DialogResult.OK))
 				{
-					configFile.setTempFoldersToKeep(preferenceWindow.getTempFoldersToKeep());
-					configFile.setSensorMultiplexerValues(preferenceWindow.getSensorMultiplexerValues());
-					configFile.setBufferName(preferenceWindow.getBufferName());
-					configFile.setMnpsName(preferenceWindow.getMnpsName());
-					configFile.setPreloadBufferVolume(preferenceWindow.getPreloadBufferVolume());
-					configFile.setPreloadBufferVolumeUnit(preferenceWindow.getPreloadBufferVolumeUnit());
-					configFile.setDefaultAddBufferVolume(preferenceWindow.getDefaultAddBufferVolume());
-					configFile.setDefaultAddMnpsVolume(preferenceWindow.getDefaultAddMnpsVolume());
-					configFile.setDefaultBufferMnpsVolumeUnit(preferenceWindow.getDefaultBufferMnpsVolumeUnit());
+					configFile.setTempFoldersToKeep(preferenceWindow.tempFoldersToKeep);
+					configFile.setSensorMultiplexerValues(preferenceWindow.sensorMultiplexerValues);
+					configFile.setBufferName(preferenceWindow.bufferName);
+					configFile.setMnpsName(preferenceWindow.mnpsName);
+					configFile.setPreloadBufferVolume(preferenceWindow.preloadBufferVolume);
+					configFile.setDefaultAddBufferVolume(preferenceWindow.defaultAddBufferVolume);
+					configFile.setDefaultAddMnpsVolume(preferenceWindow.defaultAddMnpsVolume);
+					configFile.setDefaultVolumeUnit(preferenceWindow.defaultVolumeUnit);
+					configFile.setWheatstoneAmplitude(preferenceWindow.wheatstoneAmplitude);
+					configFile.setWheatstoneAmplitudeUnit(preferenceWindow.wheatstoneAmplitudeUnit);
+					configFile.setWheatstoneFrequency(preferenceWindow.wheatstoneFrequency);
+					configFile.setCoilAmplitude(preferenceWindow.coilAmplitude);
+					configFile.setCoilAmplitudeUnit(preferenceWindow.coilAmplitudeUnit);
+					configFile.setCoilFrequncy(preferenceWindow.coilFrequency);
+					configFile.setCoilDcOffset(preferenceWindow.coilDcOffset);
+					configFile.setCoilDcOffsetUnit(preferenceWindow.coilDcOffsetUnit);
+					configFile.setMeasurementPeriod(preferenceWindow.measurementPeriod);
+					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
+					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
 				}
 				preferenceWindow.Dispose();
 			}

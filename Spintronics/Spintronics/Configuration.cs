@@ -8,17 +8,25 @@ namespace SpintronicsGUI
 {
 	public class Configuration
 	{
-		private string defaultSaveDirectory = Directory.GetCurrentDirectory();
-		private int tempFoldersToKeep = -1;
-		private int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
+		public string defaultSaveDirectory = Directory.GetCurrentDirectory();
+		public int tempFoldersToKeep = -1;
+		public int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
 									24, 25, 26, 27, 28, 29, 30};
-		private string bufferName = "PBS";
-		private string mnpsName = "MACS";
-		private int preloadBufferVolume = 10;
-		private string preloadBufferVolumeUnit = "uL";
-		private int defaultAddBufferVolume = 5;
-		private int defaultAddMnpsVolume = 20;
-		private string defaultBufferMnpsVolumeUnit = "uL";
+		public string bufferName = "PBS";
+		public string mnpsName = "MACS";
+		public int preloadBufferVolume = 10;
+		public int defaultAddBufferVolume = 5;
+		public int defaultAddMnpsVolume = 20;
+		public string defaultVolumeUnit = "uL";
+		public int wheatstoneAmplitude = 300;
+		public string wheatstoneAmplitudeUnit = "mV";
+		public int wheatstoneFrequency = 1000;
+		public int coilAmplitude = 200;
+		public string coilAmplitudeUnit = "mV";
+		public int coilFrequency = 50;
+		public int coilDcOffset = 0;
+		public string coilDcOffsetUnit = "V";
+		public int measurementPeriod = 1;
 
 		public Configuration()
 		{
@@ -31,15 +39,23 @@ namespace SpintronicsGUI
 				writeConfigFileValues();
 			}
 
-			this.defaultSaveDirectory = readDefaultSaveDirectory();
+			this.defaultSaveDirectory = readStringConfiguration("DefaultSaveDirectory");
 			this.sensorMultiplexerValues = readSensorMultiplexerValues();
-			this.bufferName = readBufferName();
-			this.mnpsName = readMnpsName();
-			this.preloadBufferVolume = readPreloadBufferVolume();
-			this.preloadBufferVolumeUnit = readPreloadBufferVolumeUnit();
-			this.defaultAddBufferVolume = readDefaultAddBufferVolume();
-			this.defaultAddMnpsVolume = readDefaultAddMnpsVolume();
-			this.defaultBufferMnpsVolumeUnit = readDefaultBufferMnpsVolumeUnit();
+			this.bufferName = readStringConfiguration("BufferName");
+			this.mnpsName = readStringConfiguration("MnpsName");
+			this.preloadBufferVolume = readIntConfiguration("PreloadBufferVolume");
+			this.defaultAddBufferVolume = readIntConfiguration("DefaultAddBufferVolume");
+			this.defaultAddMnpsVolume = readIntConfiguration("DefaultAddMnpsVolume");
+			this.defaultVolumeUnit = readStringConfiguration("DefaultVolumeUnit");
+			this.wheatstoneAmplitude = readIntConfiguration("WheatstoneAmplitude");
+			this.wheatstoneAmplitudeUnit = readStringConfiguration("WheatstoneAmplitudeUnit");
+			this.wheatstoneFrequency = readIntConfiguration("WheatstoneFrequency");
+			this.coilAmplitude = readIntConfiguration("CoilAmplitude");
+			this.coilAmplitudeUnit = readStringConfiguration("CoilAmplitudeUnit");
+			this.coilFrequency = readIntConfiguration("CoilFrequency");
+			this.coilDcOffset = readIntConfiguration("CoilDcOffset");
+			this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
+			this.measurementPeriod = readIntConfiguration("MeasurementPeriod");
 		}
 
 		private void writeConfigFileValues()
@@ -56,10 +72,19 @@ namespace SpintronicsGUI
 			file.WriteLine("BufferName:" + this.bufferName);
 			file.WriteLine("MnpsName:" + this.mnpsName);
 			file.WriteLine("PreloadBufferVolume:" + this.preloadBufferVolume);
-			file.WriteLine("PreloadBufferVolumeUnit:" + this.preloadBufferVolumeUnit);
 			file.WriteLine("DefaultAddBufferVolume:" + this.defaultAddBufferVolume);
 			file.WriteLine("DefaultAddMnpsVolume:" + this.defaultAddMnpsVolume);
-			file.WriteLine("DefaultBufferMnpsVolumeUnit:" + this.defaultBufferMnpsVolumeUnit);
+			file.WriteLine("DefaultVolumeUnit:" + this.defaultVolumeUnit);
+
+			file.WriteLine("WheatstoneAmplitude:" + this.wheatstoneAmplitude);
+			file.WriteLine("WheatstoneAmplitudeUnit:" + this.wheatstoneAmplitudeUnit);
+			file.WriteLine("WheatstoneFrequency:" + this.wheatstoneFrequency);
+			file.WriteLine("CoilAmplitude:" + this.coilAmplitude);
+			file.WriteLine("CoilAmplitudeUnit:" + this.coilAmplitudeUnit);
+			file.WriteLine("CoilFrequency:" + this.coilFrequency);
+			file.WriteLine("CoilDcOffset:" + this.coilDcOffset);
+			file.WriteLine("CoilDcOffsetUnit:" + this.coilDcOffsetUnit);
+			file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
 			file.Flush();
 			file.Close();
 			file.Dispose();
@@ -76,28 +101,30 @@ namespace SpintronicsGUI
 		}
 
 
-		public string readDefaultSaveDirectory()
+		public string readStringConfiguration(string label)
 		{
 			StreamReader file = new StreamReader("./config.ini");
 			string line = file.ReadToEnd();
 			file.Close();
 			file.Dispose();
-			int start = line.IndexOf("DefaultSaveDirectory:", 0);
+			label += ":";
+			int start = line.IndexOf(label, 0);
 			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 21, end - start - 22);
+			line = line.Substring(start + label.Length, end - start - label.Length - 1);
 			return line;
 		}
 
-		public string readTempFoldersToKeep()
+		public int readIntConfiguration(string label)
 		{
 			StreamReader file = new StreamReader("./config.ini");
 			string line = file.ReadToEnd();
 			file.Close();
 			file.Dispose();
-			int start = line.IndexOf("TempFoldersToKeep:", 0);
+			label += ":";
+			int start = line.IndexOf(label, 0);
 			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 18, end - start - 19);
-			return line;
+			line = line.Substring(start + label.Length, end - start - label.Length - 1);
+			return System.Convert.ToInt32(line);
 		}
 
 		public int[] readSensorMultiplexerValues()
@@ -118,90 +145,6 @@ namespace SpintronicsGUI
 				line = line.Remove(first, last - first);
 			}
 			return array;
-		}
-
-		public string readBufferName()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("BufferName:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 11, end - start - 12);
-			return line;
-		}
-
-		public string readMnpsName()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("MnpsName:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 9, end - start - 10);
-			return line;
-		}
-
-		public int readPreloadBufferVolume()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("PreloadBufferVolume:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 20, end - start - 21);
-			return System.Convert.ToInt32(line);
-		}
-
-		public string readPreloadBufferVolumeUnit()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("PreloadBufferVolumeUnit:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 24, end - start - 25);
-			return line;
-		}
-
-		public int readDefaultAddBufferVolume()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("DefaultAddBufferVolume:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 23, end - start - 24);
-			return System.Convert.ToInt32(line);
-		}
-
-		public int readDefaultAddMnpsVolume()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("DefaultAddMnpsVolume:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 21, end - start - 22);
-			return System.Convert.ToInt32(line);
-		}
-
-		public string readDefaultBufferMnpsVolumeUnit()
-		{
-			StreamReader file = new StreamReader("./config.ini");
-			string line = file.ReadToEnd();
-			file.Close();
-			file.Dispose();
-			int start = line.IndexOf("DefaultBufferMnpsVolumeUnit:", 0);
-			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 28, end - start - 29);
-			return line;
 		}
 
 
@@ -241,12 +184,6 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setPreloadBufferVolumeUnit(string unit)
-		{
-			this.preloadBufferVolumeUnit = unit;
-			saveConfigurations();
-		}
-
 		public void setDefaultAddBufferVolume(int volume)
 		{
 			this.defaultAddBufferVolume = volume;
@@ -259,61 +196,64 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setDefaultBufferMnpsVolumeUnit(string unit)
+		public void setDefaultVolumeUnit(string unit)
 		{
-			this.defaultBufferMnpsVolumeUnit = unit;
+			this.defaultVolumeUnit = unit;
 			saveConfigurations();
 		}
 
-
-		public string getDefaultSaveDirectory()
+		public void setWheatstoneAmplitude(int amplitude)
 		{
-			return this.defaultSaveDirectory;
+			this.wheatstoneAmplitude = amplitude;
+			saveConfigurations();
 		}
 
-		public int getTempFoldersToKeep()
+		public void setWheatstoneAmplitudeUnit(string unit)
 		{
-			return this.tempFoldersToKeep;
+			this.wheatstoneAmplitudeUnit = unit;
+			saveConfigurations();
 		}
 
-		public int[] getSensorMultiplexerValues()
+		public void setWheatstoneFrequency(int frequency)
 		{
-			return this.sensorMultiplexerValues;
+			this.wheatstoneFrequency = frequency;
+			saveConfigurations();
 		}
 
-		public string getBufferName()
+		public void setCoilAmplitude(int amplitude)
 		{
-			return this.bufferName;
+			this.coilAmplitude = amplitude;
+			saveConfigurations();
 		}
 
-		public string getMnpsName()
+		public void setCoilAmplitudeUnit(string unit)
 		{
-			return this.mnpsName;
+			this.coilAmplitudeUnit = unit;
+			saveConfigurations();
 		}
 
-		public int getPreloadBufferVolume()
+		public void setCoilFrequncy(int frequency)
 		{
-			return this.preloadBufferVolume;
+			this.coilFrequency = frequency;
+			saveConfigurations();
 		}
 
-		public string getPreloadBufferVolumeUnit()
+		public void setCoilDcOffset(int offset)
 		{
-			return this.preloadBufferVolumeUnit;
+			this.coilDcOffset = offset;
+			saveConfigurations();
 		}
 
-		public int getDefaultAddBufferVolume()
+		public void setCoilDcOffsetUnit(string unit)
 		{
-			return this.defaultAddBufferVolume;
+			this.coilDcOffsetUnit = unit;
+			saveConfigurations();
 		}
 
-		public int getDefaultAddMnpsVolume()
+		public void setMeasurementPeriod(int period)
 		{
-			return this.defaultAddMnpsVolume;
-		}
-
-		public string getDefaultBufferMnpsVolumeUnit()
-		{
-			return this.defaultBufferMnpsVolumeUnit;
+			this.measurementPeriod = period;
+			saveConfigurations();
 		}
 	}
 }

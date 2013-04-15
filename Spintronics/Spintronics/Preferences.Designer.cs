@@ -37,6 +37,23 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepLabel = new System.Windows.Forms.Label();
 			this.tempFoldersToKeepTextBox = new System.Windows.Forms.TextBox();
 			this.revertGeneralButton = new System.Windows.Forms.Button();
+			this.measurementParametersTabPage = new System.Windows.Forms.TabPage();
+			this.measurementPeriodUnitLabel = new System.Windows.Forms.Label();
+			this.coilFrequencyUnitLabel = new System.Windows.Forms.Label();
+			this.wheatstoneFrequencyUnitLabel = new System.Windows.Forms.Label();
+			this.coilDcOffsetTextBox = new System.Windows.Forms.TextBox();
+			this.coilDcOffsetLabel = new System.Windows.Forms.Label();
+			this.wheatstoneAmplitudeTextBox = new System.Windows.Forms.TextBox();
+			this.coilAmplitudeTextBox = new System.Windows.Forms.TextBox();
+			this.wheatstoneFrequencyTextBox = new System.Windows.Forms.TextBox();
+			this.coilFrequencyTextBox = new System.Windows.Forms.TextBox();
+			this.measurementPeriodTextBox = new System.Windows.Forms.TextBox();
+			this.measurementPeriodLabel = new System.Windows.Forms.Label();
+			this.coilFrequencyLabel = new System.Windows.Forms.Label();
+			this.wheatstoneFrequencyLabel = new System.Windows.Forms.Label();
+			this.coilAmplitudeLabel = new System.Windows.Forms.Label();
+			this.wheatstoneAmplitudeLabel = new System.Windows.Forms.Label();
+			this.measurementParametersRevertButton = new System.Windows.Forms.Button();
 			this.pinMultiplexerValuesTabPage = new System.Windows.Forms.TabPage();
 			this.sensor30 = new System.Windows.Forms.Label();
 			this.sensor29 = new System.Windows.Forms.Label();
@@ -101,21 +118,25 @@ namespace SpintronicsGUI
 			this.textBox01 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.logInformationTabPage = new System.Windows.Forms.TabPage();
-			this.defaultBufferMnpVolumeUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.defaultVolumeUnitLabel = new System.Windows.Forms.Label();
+			this.defaultVolumeUnitComboBox = new System.Windows.Forms.ComboBox();
 			this.defaultAddMnpsVolumeTextBox = new System.Windows.Forms.TextBox();
 			this.defaultAddMnpsVolumeLabel = new System.Windows.Forms.Label();
 			this.defaultAddBufferVolumeTextBox = new System.Windows.Forms.TextBox();
 			this.defaultAddBufferVolumeLabel = new System.Windows.Forms.Label();
-			this.preloadBufferVolumeUnitTextBox = new System.Windows.Forms.TextBox();
 			this.preloadBufferVolumeTextBox = new System.Windows.Forms.TextBox();
 			this.preloadBufferVolumeLabel = new System.Windows.Forms.Label();
 			this.mnpsNameTextBox = new System.Windows.Forms.TextBox();
-			this.MnpsNameLabel = new System.Windows.Forms.Label();
+			this.mnpsNameLabel = new System.Windows.Forms.Label();
 			this.bufferNameLabel = new System.Windows.Forms.Label();
 			this.bufferNameTextBox = new System.Windows.Forms.TextBox();
 			this.revertLogInformationButton = new System.Windows.Forms.Button();
+			this.wheatstoneAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
+			this.coilAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
+			this.coilDcOffsetUnitTextBox = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
+			this.measurementParametersTabPage.SuspendLayout();
 			this.pinMultiplexerValuesTabPage.SuspendLayout();
 			this.logInformationTabPage.SuspendLayout();
 			this.SuspendLayout();
@@ -143,6 +164,7 @@ namespace SpintronicsGUI
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.generalTabPage);
+			this.tabControl1.Controls.Add(this.measurementParametersTabPage);
 			this.tabControl1.Controls.Add(this.pinMultiplexerValuesTabPage);
 			this.tabControl1.Controls.Add(this.logInformationTabPage);
 			this.tabControl1.Location = new System.Drawing.Point(13, 12);
@@ -189,6 +211,180 @@ namespace SpintronicsGUI
 			this.revertGeneralButton.Text = "Revert";
 			this.revertGeneralButton.UseVisualStyleBackColor = true;
 			this.revertGeneralButton.Click += new System.EventHandler(this.revertGeneralButton_Click);
+			// 
+			// measurementParametersTabPage
+			// 
+			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetUnitTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeUnitTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeUnitTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.measurementPeriodUnitLabel);
+			this.measurementParametersTabPage.Controls.Add(this.coilFrequencyUnitLabel);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneFrequencyUnitLabel);
+			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetLabel);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneFrequencyTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilFrequencyTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.measurementPeriodTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.measurementPeriodLabel);
+			this.measurementParametersTabPage.Controls.Add(this.coilFrequencyLabel);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneFrequencyLabel);
+			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeLabel);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeLabel);
+			this.measurementParametersTabPage.Controls.Add(this.measurementParametersRevertButton);
+			this.measurementParametersTabPage.Location = new System.Drawing.Point(4, 22);
+			this.measurementParametersTabPage.Name = "measurementParametersTabPage";
+			this.measurementParametersTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.measurementParametersTabPage.Size = new System.Drawing.Size(524, 227);
+			this.measurementParametersTabPage.TabIndex = 3;
+			this.measurementParametersTabPage.Text = "Measurement Parameters";
+			this.measurementParametersTabPage.UseVisualStyleBackColor = true;
+			// 
+			// measurementPeriodUnitLabel
+			// 
+			this.measurementPeriodUnitLabel.AutoSize = true;
+			this.measurementPeriodUnitLabel.Location = new System.Drawing.Point(94, 165);
+			this.measurementPeriodUnitLabel.Name = "measurementPeriodUnitLabel";
+			this.measurementPeriodUnitLabel.Size = new System.Drawing.Size(24, 13);
+			this.measurementPeriodUnitLabel.TabIndex = 33;
+			this.measurementPeriodUnitLabel.Text = "sec";
+			// 
+			// coilFrequencyUnitLabel
+			// 
+			this.coilFrequencyUnitLabel.AutoSize = true;
+			this.coilFrequencyUnitLabel.Location = new System.Drawing.Point(261, 98);
+			this.coilFrequencyUnitLabel.Name = "coilFrequencyUnitLabel";
+			this.coilFrequencyUnitLabel.Size = new System.Drawing.Size(20, 13);
+			this.coilFrequencyUnitLabel.TabIndex = 31;
+			this.coilFrequencyUnitLabel.Text = "Hz";
+			// 
+			// wheatstoneFrequencyUnitLabel
+			// 
+			this.wheatstoneFrequencyUnitLabel.AutoSize = true;
+			this.wheatstoneFrequencyUnitLabel.Location = new System.Drawing.Point(261, 39);
+			this.wheatstoneFrequencyUnitLabel.Name = "wheatstoneFrequencyUnitLabel";
+			this.wheatstoneFrequencyUnitLabel.Size = new System.Drawing.Size(20, 13);
+			this.wheatstoneFrequencyUnitLabel.TabIndex = 29;
+			this.wheatstoneFrequencyUnitLabel.Text = "Hz";
+			// 
+			// coilDcOffsetTextBox
+			// 
+			this.coilDcOffsetTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilDcOffsetTextBox.Location = new System.Drawing.Point(336, 95);
+			this.coilDcOffsetTextBox.Name = "coilDcOffsetTextBox";
+			this.coilDcOffsetTextBox.Size = new System.Drawing.Size(82, 20);
+			this.coilDcOffsetTextBox.TabIndex = 27;
+			// 
+			// coilDcOffsetLabel
+			// 
+			this.coilDcOffsetLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilDcOffsetLabel.AutoSize = true;
+			this.coilDcOffsetLabel.Location = new System.Drawing.Point(333, 79);
+			this.coilDcOffsetLabel.Name = "coilDcOffsetLabel";
+			this.coilDcOffsetLabel.Size = new System.Drawing.Size(73, 13);
+			this.coilDcOffsetLabel.TabIndex = 26;
+			this.coilDcOffsetLabel.Text = "Coil DC Offset";
+			// 
+			// wheatstoneAmplitudeTextBox
+			// 
+			this.wheatstoneAmplitudeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.wheatstoneAmplitudeTextBox.Location = new System.Drawing.Point(9, 36);
+			this.wheatstoneAmplitudeTextBox.Name = "wheatstoneAmplitudeTextBox";
+			this.wheatstoneAmplitudeTextBox.Size = new System.Drawing.Size(79, 20);
+			this.wheatstoneAmplitudeTextBox.TabIndex = 19;
+			// 
+			// coilAmplitudeTextBox
+			// 
+			this.coilAmplitudeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilAmplitudeTextBox.Location = new System.Drawing.Point(6, 95);
+			this.coilAmplitudeTextBox.Name = "coilAmplitudeTextBox";
+			this.coilAmplitudeTextBox.Size = new System.Drawing.Size(82, 20);
+			this.coilAmplitudeTextBox.TabIndex = 20;
+			// 
+			// wheatstoneFrequencyTextBox
+			// 
+			this.wheatstoneFrequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.wheatstoneFrequencyTextBox.Location = new System.Drawing.Point(173, 36);
+			this.wheatstoneFrequencyTextBox.Name = "wheatstoneFrequencyTextBox";
+			this.wheatstoneFrequencyTextBox.Size = new System.Drawing.Size(82, 20);
+			this.wheatstoneFrequencyTextBox.TabIndex = 18;
+			// 
+			// coilFrequencyTextBox
+			// 
+			this.coilFrequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilFrequencyTextBox.Location = new System.Drawing.Point(173, 95);
+			this.coilFrequencyTextBox.Name = "coilFrequencyTextBox";
+			this.coilFrequencyTextBox.Size = new System.Drawing.Size(82, 20);
+			this.coilFrequencyTextBox.TabIndex = 16;
+			// 
+			// measurementPeriodTextBox
+			// 
+			this.measurementPeriodTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.measurementPeriodTextBox.Location = new System.Drawing.Point(6, 158);
+			this.measurementPeriodTextBox.Name = "measurementPeriodTextBox";
+			this.measurementPeriodTextBox.Size = new System.Drawing.Size(82, 20);
+			this.measurementPeriodTextBox.TabIndex = 17;
+			// 
+			// measurementPeriodLabel
+			// 
+			this.measurementPeriodLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.measurementPeriodLabel.AutoSize = true;
+			this.measurementPeriodLabel.Location = new System.Drawing.Point(6, 142);
+			this.measurementPeriodLabel.Name = "measurementPeriodLabel";
+			this.measurementPeriodLabel.Size = new System.Drawing.Size(104, 13);
+			this.measurementPeriodLabel.TabIndex = 25;
+			this.measurementPeriodLabel.Text = "Measurement Period";
+			// 
+			// coilFrequencyLabel
+			// 
+			this.coilFrequencyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilFrequencyLabel.AutoSize = true;
+			this.coilFrequencyLabel.Location = new System.Drawing.Point(170, 79);
+			this.coilFrequencyLabel.Name = "coilFrequencyLabel";
+			this.coilFrequencyLabel.Size = new System.Drawing.Size(77, 13);
+			this.coilFrequencyLabel.TabIndex = 24;
+			this.coilFrequencyLabel.Text = "Coil Frequency";
+			// 
+			// wheatstoneFrequencyLabel
+			// 
+			this.wheatstoneFrequencyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.wheatstoneFrequencyLabel.AutoSize = true;
+			this.wheatstoneFrequencyLabel.Location = new System.Drawing.Point(170, 20);
+			this.wheatstoneFrequencyLabel.Name = "wheatstoneFrequencyLabel";
+			this.wheatstoneFrequencyLabel.Size = new System.Drawing.Size(118, 13);
+			this.wheatstoneFrequencyLabel.TabIndex = 23;
+			this.wheatstoneFrequencyLabel.Text = "Wheatstone Frequency";
+			// 
+			// coilAmplitudeLabel
+			// 
+			this.coilAmplitudeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.coilAmplitudeLabel.AutoSize = true;
+			this.coilAmplitudeLabel.Location = new System.Drawing.Point(6, 79);
+			this.coilAmplitudeLabel.Name = "coilAmplitudeLabel";
+			this.coilAmplitudeLabel.Size = new System.Drawing.Size(73, 13);
+			this.coilAmplitudeLabel.TabIndex = 22;
+			this.coilAmplitudeLabel.Text = "Coil Amplitude";
+			// 
+			// wheatstoneAmplitudeLabel
+			// 
+			this.wheatstoneAmplitudeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.wheatstoneAmplitudeLabel.AutoSize = true;
+			this.wheatstoneAmplitudeLabel.Location = new System.Drawing.Point(6, 20);
+			this.wheatstoneAmplitudeLabel.Name = "wheatstoneAmplitudeLabel";
+			this.wheatstoneAmplitudeLabel.Size = new System.Drawing.Size(114, 13);
+			this.wheatstoneAmplitudeLabel.TabIndex = 21;
+			this.wheatstoneAmplitudeLabel.Text = "Wheatstone Amplitude";
+			// 
+			// measurementParametersRevertButton
+			// 
+			this.measurementParametersRevertButton.Location = new System.Drawing.Point(6, 198);
+			this.measurementParametersRevertButton.Name = "measurementParametersRevertButton";
+			this.measurementParametersRevertButton.Size = new System.Drawing.Size(75, 23);
+			this.measurementParametersRevertButton.TabIndex = 1;
+			this.measurementParametersRevertButton.Text = "Revert";
+			this.measurementParametersRevertButton.UseVisualStyleBackColor = true;
+			this.measurementParametersRevertButton.Click += new EventHandler(measurementParametersRevertButton_Click);
 			// 
 			// pinMultiplexerValuesTabPage
 			// 
@@ -765,16 +961,16 @@ namespace SpintronicsGUI
 			// 
 			// logInformationTabPage
 			// 
-			this.logInformationTabPage.Controls.Add(this.defaultBufferMnpVolumeUnitComboBox);
+			this.logInformationTabPage.Controls.Add(this.defaultVolumeUnitLabel);
+			this.logInformationTabPage.Controls.Add(this.defaultVolumeUnitComboBox);
 			this.logInformationTabPage.Controls.Add(this.defaultAddMnpsVolumeTextBox);
 			this.logInformationTabPage.Controls.Add(this.defaultAddMnpsVolumeLabel);
 			this.logInformationTabPage.Controls.Add(this.defaultAddBufferVolumeTextBox);
 			this.logInformationTabPage.Controls.Add(this.defaultAddBufferVolumeLabel);
-			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeUnitTextBox);
 			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeTextBox);
 			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeLabel);
 			this.logInformationTabPage.Controls.Add(this.mnpsNameTextBox);
-			this.logInformationTabPage.Controls.Add(this.MnpsNameLabel);
+			this.logInformationTabPage.Controls.Add(this.mnpsNameLabel);
 			this.logInformationTabPage.Controls.Add(this.bufferNameLabel);
 			this.logInformationTabPage.Controls.Add(this.bufferNameTextBox);
 			this.logInformationTabPage.Controls.Add(this.revertLogInformationButton);
@@ -786,19 +982,28 @@ namespace SpintronicsGUI
 			this.logInformationTabPage.Text = "Log Information";
 			this.logInformationTabPage.UseVisualStyleBackColor = true;
 			// 
-			// defaultBufferMnpVolumeUnitComboBox
+			// defaultVolumeUnitLabel
 			// 
-			this.defaultBufferMnpVolumeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.defaultBufferMnpVolumeUnitComboBox.FormattingEnabled = true;
-			this.defaultBufferMnpVolumeUnitComboBox.Items.AddRange(new object[] {
+			this.defaultVolumeUnitLabel.AutoSize = true;
+			this.defaultVolumeUnitLabel.Location = new System.Drawing.Point(237, 97);
+			this.defaultVolumeUnitLabel.Name = "defaultVolumeUnitLabel";
+			this.defaultVolumeUnitLabel.Size = new System.Drawing.Size(101, 13);
+			this.defaultVolumeUnitLabel.TabIndex = 56;
+			this.defaultVolumeUnitLabel.Text = "Default Volume Unit";
+			// 
+			// defaultVolumeUnitComboBox
+			// 
+			this.defaultVolumeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.defaultVolumeUnitComboBox.FormattingEnabled = true;
+			this.defaultVolumeUnitComboBox.Items.AddRange(new object[] {
             "L",
             "mL",
             "uL",
             "nL"});
-			this.defaultBufferMnpVolumeUnitComboBox.Location = new System.Drawing.Point(386, 50);
-			this.defaultBufferMnpVolumeUnitComboBox.Name = "defaultBufferMnpVolumeUnitComboBox";
-			this.defaultBufferMnpVolumeUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.defaultBufferMnpVolumeUnitComboBox.TabIndex = 55;
+			this.defaultVolumeUnitComboBox.Location = new System.Drawing.Point(237, 113);
+			this.defaultVolumeUnitComboBox.Name = "defaultVolumeUnitComboBox";
+			this.defaultVolumeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.defaultVolumeUnitComboBox.TabIndex = 55;
 			// 
 			// defaultAddMnpsVolumeTextBox
 			// 
@@ -832,14 +1037,6 @@ namespace SpintronicsGUI
 			this.defaultAddBufferVolumeLabel.TabIndex = 9;
 			this.defaultAddBufferVolumeLabel.Text = "Default Add Buffer Volume";
 			// 
-			// preloadBufferVolumeUnitTextBox
-			// 
-			this.preloadBufferVolumeUnitTextBox.Location = new System.Drawing.Point(109, 113);
-			this.preloadBufferVolumeUnitTextBox.Name = "preloadBufferVolumeUnitTextBox";
-			this.preloadBufferVolumeUnitTextBox.Size = new System.Drawing.Size(28, 20);
-			this.preloadBufferVolumeUnitTextBox.TabIndex = 8;
-			this.preloadBufferVolumeUnitTextBox.Text = "uL";
-			// 
 			// preloadBufferVolumeTextBox
 			// 
 			this.preloadBufferVolumeTextBox.Location = new System.Drawing.Point(3, 113);
@@ -865,12 +1062,12 @@ namespace SpintronicsGUI
 			// 
 			// MnpsNameLabel
 			// 
-			this.MnpsNameLabel.AutoSize = true;
-			this.MnpsNameLabel.Location = new System.Drawing.Point(7, 58);
-			this.MnpsNameLabel.Name = "MnpsNameLabel";
-			this.MnpsNameLabel.Size = new System.Drawing.Size(67, 13);
-			this.MnpsNameLabel.TabIndex = 4;
-			this.MnpsNameLabel.Text = "MNPs Name";
+			this.mnpsNameLabel.AutoSize = true;
+			this.mnpsNameLabel.Location = new System.Drawing.Point(7, 58);
+			this.mnpsNameLabel.Name = "MnpsNameLabel";
+			this.mnpsNameLabel.Size = new System.Drawing.Size(67, 13);
+			this.mnpsNameLabel.TabIndex = 4;
+			this.mnpsNameLabel.Text = "MNPs Name";
 			// 
 			// bufferNameLabel
 			// 
@@ -898,6 +1095,27 @@ namespace SpintronicsGUI
 			this.revertLogInformationButton.UseVisualStyleBackColor = true;
 			this.revertLogInformationButton.Click += new System.EventHandler(this.revertLogInformation_Click);
 			// 
+			// wheatstoneAmplitudeUnitTextBox
+			// 
+			this.wheatstoneAmplitudeUnitTextBox.Location = new System.Drawing.Point(94, 36);
+			this.wheatstoneAmplitudeUnitTextBox.Name = "wheatstoneAmplitudeUnitTextBox";
+			this.wheatstoneAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.wheatstoneAmplitudeUnitTextBox.TabIndex = 34;
+			// 
+			// coilAmplitudeUnitTextBox
+			// 
+			this.coilAmplitudeUnitTextBox.Location = new System.Drawing.Point(92, 95);
+			this.coilAmplitudeUnitTextBox.Name = "coilAmplitudeUnitTextBox";
+			this.coilAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.coilAmplitudeUnitTextBox.TabIndex = 35;
+			// 
+			// coilDcOffsetUnitTextBox
+			// 
+			this.coilDcOffsetUnitTextBox.Location = new System.Drawing.Point(424, 95);
+			this.coilDcOffsetUnitTextBox.Name = "coilDcOffsetUnitTextBox";
+			this.coilDcOffsetUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.coilDcOffsetUnitTextBox.TabIndex = 36;
+			// 
 			// Preferences
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -911,6 +1129,8 @@ namespace SpintronicsGUI
 			this.tabControl1.ResumeLayout(false);
 			this.generalTabPage.ResumeLayout(false);
 			this.generalTabPage.PerformLayout();
+			this.measurementParametersTabPage.ResumeLayout(false);
+			this.measurementParametersTabPage.PerformLayout();
 			this.pinMultiplexerValuesTabPage.ResumeLayout(false);
 			this.pinMultiplexerValuesTabPage.PerformLayout();
 			this.logInformationTabPage.ResumeLayout(false);
@@ -989,7 +1209,7 @@ namespace SpintronicsGUI
 		private TabPage logInformationTabPage;
 		private Button revertLogInformationButton;
 		private TextBox mnpsNameTextBox;
-		private Label MnpsNameLabel;
+		private Label mnpsNameLabel;
 		private Label bufferNameLabel;
 		private TextBox bufferNameTextBox;
 		private Button revertPinAssignmentsButton;
@@ -999,11 +1219,31 @@ namespace SpintronicsGUI
 		private TextBox tempFoldersToKeepTextBox;
 		private TextBox preloadBufferVolumeTextBox;
 		private Label preloadBufferVolumeLabel;
-		private TextBox preloadBufferVolumeUnitTextBox;
 		private TextBox defaultAddMnpsVolumeTextBox;
 		private Label defaultAddMnpsVolumeLabel;
 		private TextBox defaultAddBufferVolumeTextBox;
 		private Label defaultAddBufferVolumeLabel;
-		private ComboBox defaultBufferMnpVolumeUnitComboBox;
+		private ComboBox defaultVolumeUnitComboBox;
+		private TabPage measurementParametersTabPage;
+		private Button measurementParametersRevertButton;
+		private TextBox coilDcOffsetTextBox;
+		private Label coilDcOffsetLabel;
+		private TextBox wheatstoneAmplitudeTextBox;
+		private TextBox coilAmplitudeTextBox;
+		private TextBox wheatstoneFrequencyTextBox;
+		private TextBox coilFrequencyTextBox;
+		private TextBox measurementPeriodTextBox;
+		private Label measurementPeriodLabel;
+		private Label coilFrequencyLabel;
+		private Label wheatstoneFrequencyLabel;
+		private Label coilAmplitudeLabel;
+		private Label wheatstoneAmplitudeLabel;
+		private Label defaultVolumeUnitLabel;
+		private Label measurementPeriodUnitLabel;
+		private Label coilFrequencyUnitLabel;
+		private Label wheatstoneFrequencyUnitLabel;
+		private TextBox coilDcOffsetUnitTextBox;
+		private TextBox coilAmplitudeUnitTextBox;
+		private TextBox wheatstoneAmplitudeUnitTextBox;
 	}
 }
