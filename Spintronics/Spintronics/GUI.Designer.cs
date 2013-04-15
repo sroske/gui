@@ -256,6 +256,7 @@ namespace SpintronicsGUI
 			this.s28_12 = new System.Windows.Forms.CheckBox();
 			this.s05_22 = new System.Windows.Forms.CheckBox();
 			this.s06_21 = new System.Windows.Forms.CheckBox();
+			this.radioButtonA = new System.Windows.Forms.RadioButton();
 			this.s25_11 = new System.Windows.Forms.CheckBox();
 			this.s26_10 = new System.Windows.Forms.CheckBox();
 			this.s08_24 = new System.Windows.Forms.CheckBox();
@@ -286,17 +287,7 @@ namespace SpintronicsGUI
 			this.sensorsLabelA = new System.Windows.Forms.Label();
 			this.s18_01 = new System.Windows.Forms.CheckBox();
 			this.startRunButton = new System.Windows.Forms.Button();
-			this.f1Amplitude = new System.Windows.Forms.TextBox();
-			this.f1AmplitudeLabel = new System.Windows.Forms.Label();
-			this.f2AmplitudeLabel = new System.Windows.Forms.Label();
-			this.f2Amplitude = new System.Windows.Forms.TextBox();
 			this.adjustedChart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-			this.f1FrequencyLabel = new System.Windows.Forms.Label();
-			this.f1Frequency = new System.Windows.Forms.TextBox();
-			this.f2FrequencyLabel = new System.Windows.Forms.Label();
-			this.f2Frequency = new System.Windows.Forms.TextBox();
-			this.measurementPeriodLabel = new System.Windows.Forms.Label();
-			this.measurementPeriod = new System.Windows.Forms.TextBox();
 			this.stopRunButton = new System.Windows.Forms.Button();
 			this.timeTareButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -308,7 +299,6 @@ namespace SpintronicsGUI
 			this.adjustedChart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.adjustedChart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-			this.radioButtonA = new System.Windows.Forms.RadioButton();
 			this.amplitudeTareCheckbox = new System.Windows.Forms.CheckBox();
 			this.referenceTareCheckbox = new System.Windows.Forms.CheckBox();
 			this.tareIndexTextbox = new System.Windows.Forms.TextBox();
@@ -366,34 +356,34 @@ namespace SpintronicsGUI
 			// startRunToolStripMenuItem
 			// 
 			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.startRunToolStripMenuItem.Text = "Start Run";
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.startRunToolStripMenuItem.Text = "Start New";
 			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
 			// 
 			// stopRunToolStripMenuItem
 			// 
 			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.stopRunToolStripMenuItem.Text = "Stop Run";
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopRunToolStripMenuItem.Text = "Stop";
 			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
 			// 
 			// saveRunFilesAsToolStripMenuItem
 			// 
 			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.saveRunFilesAsToolStripMenuItem.Text = "Save Run Files As...";
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveRunFilesAsToolStripMenuItem.Text = "Save Files As...";
 			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAs);
 			// 
 			// openRunToolStripMenuItem
 			// 
 			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.openRunToolStripMenuItem.Text = "Open Run";
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openRunToolStripMenuItem.Text = "Open";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
@@ -407,7 +397,7 @@ namespace SpintronicsGUI
 			// preferencesToolStripMenuItem
 			// 
 			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.preferencesToolStripMenuItem.Text = "Preferences";
 			this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
 			// 
@@ -472,7 +462,7 @@ namespace SpintronicsGUI
 			this.groupBox1.Controls.Add(this.sensorsLabelE);
 			this.groupBox1.Controls.Add(this.sensorsLabelA);
 			this.groupBox1.Controls.Add(this.s18_01);
-			this.groupBox1.Location = new System.Drawing.Point(12, 101);
+			this.groupBox1.Location = new System.Drawing.Point(12, 190);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(187, 270);
 			this.groupBox1.TabIndex = 2;
@@ -648,6 +638,19 @@ namespace SpintronicsGUI
 			this.s06_21.TabIndex = 31;
 			this.s06_21.UseVisualStyleBackColor = true;
 			this.s06_21.CheckedChanged += new System.EventHandler(this.sensor_CheckedChanged);
+			// 
+			// radioButtonA
+			// 
+			this.radioButtonA.AutoSize = true;
+			this.radioButtonA.Checked = true;
+			this.radioButtonA.Location = new System.Drawing.Point(143, 88);
+			this.radioButtonA.Name = "radioButtonA";
+			this.radioButtonA.Size = new System.Drawing.Size(32, 17);
+			this.radioButtonA.TabIndex = 43;
+			this.radioButtonA.TabStop = true;
+			this.radioButtonA.Text = "A";
+			this.radioButtonA.UseVisualStyleBackColor = true;
+			this.radioButtonA.Click += new System.EventHandler(this.radioButton_Click);
 			// 
 			// s25_11
 			// 
@@ -974,45 +977,9 @@ namespace SpintronicsGUI
 			this.startRunButton.Name = "startRunButton";
 			this.startRunButton.Size = new System.Drawing.Size(92, 23);
 			this.startRunButton.TabIndex = 1;
-			this.startRunButton.Text = "St&art Run";
+			this.startRunButton.Text = "Start New";
 			this.startRunButton.UseVisualStyleBackColor = true;
 			this.startRunButton.Click += new System.EventHandler(this.startRun);
-			// 
-			// f1Amplitude
-			// 
-			this.f1Amplitude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f1Amplitude.Location = new System.Drawing.Point(23, 407);
-			this.f1Amplitude.Name = "f1Amplitude";
-			this.f1Amplitude.Size = new System.Drawing.Size(100, 20);
-			this.f1Amplitude.TabIndex = 0;
-			// 
-			// f1AmplitudeLabel
-			// 
-			this.f1AmplitudeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f1AmplitudeLabel.AutoSize = true;
-			this.f1AmplitudeLabel.Location = new System.Drawing.Point(20, 391);
-			this.f1AmplitudeLabel.Name = "f1AmplitudeLabel";
-			this.f1AmplitudeLabel.Size = new System.Drawing.Size(114, 13);
-			this.f1AmplitudeLabel.TabIndex = 6;
-			this.f1AmplitudeLabel.Text = "Wheatstone Amplitude";
-			// 
-			// f2AmplitudeLabel
-			// 
-			this.f2AmplitudeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f2AmplitudeLabel.AutoSize = true;
-			this.f2AmplitudeLabel.Location = new System.Drawing.Point(20, 430);
-			this.f2AmplitudeLabel.Name = "f2AmplitudeLabel";
-			this.f2AmplitudeLabel.Size = new System.Drawing.Size(73, 13);
-			this.f2AmplitudeLabel.TabIndex = 7;
-			this.f2AmplitudeLabel.Text = "Coil Amplitude";
-			// 
-			// f2Amplitude
-			// 
-			this.f2Amplitude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f2Amplitude.Location = new System.Drawing.Point(23, 446);
-			this.f2Amplitude.Name = "f2Amplitude";
-			this.f2Amplitude.Size = new System.Drawing.Size(100, 20);
-			this.f2Amplitude.TabIndex = 0;
 			// 
 			// adjustedChart1
 			// 
@@ -1186,60 +1153,6 @@ namespace SpintronicsGUI
 			title1.Text = "Wheatstone F1 Amplitude";
 			this.adjustedChart1.Titles.Add(title1);
 			// 
-			// f1FrequencyLabel
-			// 
-			this.f1FrequencyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f1FrequencyLabel.AutoSize = true;
-			this.f1FrequencyLabel.Location = new System.Drawing.Point(20, 469);
-			this.f1FrequencyLabel.Name = "f1FrequencyLabel";
-			this.f1FrequencyLabel.Size = new System.Drawing.Size(118, 13);
-			this.f1FrequencyLabel.TabIndex = 11;
-			this.f1FrequencyLabel.Text = "Wheatstone Frequency";
-			// 
-			// f1Frequency
-			// 
-			this.f1Frequency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f1Frequency.Location = new System.Drawing.Point(23, 485);
-			this.f1Frequency.Name = "f1Frequency";
-			this.f1Frequency.Size = new System.Drawing.Size(100, 20);
-			this.f1Frequency.TabIndex = 0;
-			// 
-			// f2FrequencyLabel
-			// 
-			this.f2FrequencyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f2FrequencyLabel.AutoSize = true;
-			this.f2FrequencyLabel.Location = new System.Drawing.Point(20, 508);
-			this.f2FrequencyLabel.Name = "f2FrequencyLabel";
-			this.f2FrequencyLabel.Size = new System.Drawing.Size(77, 13);
-			this.f2FrequencyLabel.TabIndex = 13;
-			this.f2FrequencyLabel.Text = "Coil Frequency";
-			// 
-			// f2Frequency
-			// 
-			this.f2Frequency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.f2Frequency.Location = new System.Drawing.Point(23, 524);
-			this.f2Frequency.Name = "f2Frequency";
-			this.f2Frequency.Size = new System.Drawing.Size(100, 20);
-			this.f2Frequency.TabIndex = 0;
-			// 
-			// measurementPeriodLabel
-			// 
-			this.measurementPeriodLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.measurementPeriodLabel.AutoSize = true;
-			this.measurementPeriodLabel.Location = new System.Drawing.Point(20, 547);
-			this.measurementPeriodLabel.Name = "measurementPeriodLabel";
-			this.measurementPeriodLabel.Size = new System.Drawing.Size(104, 13);
-			this.measurementPeriodLabel.TabIndex = 15;
-			this.measurementPeriodLabel.Text = "Measurement Period";
-			// 
-			// measurementPeriod
-			// 
-			this.measurementPeriod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.measurementPeriod.Location = new System.Drawing.Point(23, 563);
-			this.measurementPeriod.Name = "measurementPeriod";
-			this.measurementPeriod.Size = new System.Drawing.Size(100, 20);
-			this.measurementPeriod.TabIndex = 0;
-			// 
 			// stopRunButton
 			// 
 			this.stopRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1247,7 +1160,7 @@ namespace SpintronicsGUI
 			this.stopRunButton.Name = "stopRunButton";
 			this.stopRunButton.Size = new System.Drawing.Size(92, 23);
 			this.stopRunButton.TabIndex = 1;
-			this.stopRunButton.Text = "St&op Run";
+			this.stopRunButton.Text = "Stop";
 			this.stopRunButton.UseVisualStyleBackColor = true;
 			this.stopRunButton.Click += new System.EventHandler(this.stopRun);
 			// 
@@ -2172,19 +2085,6 @@ namespace SpintronicsGUI
 			title6.Text = "Wheatstone F2 Amplitude";
 			this.adjustedChart3.Titles.Add(title6);
 			// 
-			// radioButtonA
-			// 
-			this.radioButtonA.AutoSize = true;
-			this.radioButtonA.Checked = true;
-			this.radioButtonA.Location = new System.Drawing.Point(143, 88);
-			this.radioButtonA.Name = "radioButtonA";
-			this.radioButtonA.Size = new System.Drawing.Size(32, 17);
-			this.radioButtonA.TabIndex = 43;
-			this.radioButtonA.TabStop = true;
-			this.radioButtonA.Text = "A";
-			this.radioButtonA.UseVisualStyleBackColor = true;
-			this.radioButtonA.Click += new System.EventHandler(this.radioButton_Click);
-			// 
 			// amplitudeTareCheckbox
 			// 
 			this.amplitudeTareCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -2293,7 +2193,7 @@ namespace SpintronicsGUI
 			// reactionWellLabel
 			// 
 			this.reactionWellLabel.AutoSize = true;
-			this.reactionWellLabel.Location = new System.Drawing.Point(9, 41);
+			this.reactionWellLabel.Location = new System.Drawing.Point(9, 123);
 			this.reactionWellLabel.Name = "reactionWellLabel";
 			this.reactionWellLabel.Size = new System.Drawing.Size(74, 13);
 			this.reactionWellLabel.TabIndex = 56;
@@ -2301,7 +2201,7 @@ namespace SpintronicsGUI
 			// 
 			// reactionWellTextBox
 			// 
-			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 58);
+			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 140);
 			this.reactionWellTextBox.Name = "reactionWellTextBox";
 			this.reactionWellTextBox.Size = new System.Drawing.Size(85, 20);
 			this.reactionWellTextBox.TabIndex = 57;
@@ -2309,7 +2209,7 @@ namespace SpintronicsGUI
 			// sampleLabel
 			// 
 			this.sampleLabel.AutoSize = true;
-			this.sampleLabel.Location = new System.Drawing.Point(107, 41);
+			this.sampleLabel.Location = new System.Drawing.Point(107, 123);
 			this.sampleLabel.Name = "sampleLabel";
 			this.sampleLabel.Size = new System.Drawing.Size(42, 13);
 			this.sampleLabel.TabIndex = 58;
@@ -2317,7 +2217,7 @@ namespace SpintronicsGUI
 			// 
 			// sampleTextBox
 			// 
-			this.sampleTextBox.Location = new System.Drawing.Point(109, 57);
+			this.sampleTextBox.Location = new System.Drawing.Point(109, 139);
 			this.sampleTextBox.Name = "sampleTextBox";
 			this.sampleTextBox.Size = new System.Drawing.Size(86, 20);
 			this.sampleTextBox.TabIndex = 59;
@@ -2365,16 +2265,6 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.timeTareButton);
 			this.Controls.Add(this.startRunButton);
 			this.Controls.Add(this.stopRunButton);
-			this.Controls.Add(this.f1Amplitude);
-			this.Controls.Add(this.f2Amplitude);
-			this.Controls.Add(this.f1Frequency);
-			this.Controls.Add(this.f2Frequency);
-			this.Controls.Add(this.measurementPeriod);
-			this.Controls.Add(this.measurementPeriodLabel);
-			this.Controls.Add(this.f2FrequencyLabel);
-			this.Controls.Add(this.f1FrequencyLabel);
-			this.Controls.Add(this.f2AmplitudeLabel);
-			this.Controls.Add(this.f1AmplitudeLabel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.menuStrip1);
 			this.KeyPreview = true;
@@ -2448,16 +2338,6 @@ namespace SpintronicsGUI
 		private System.Windows.Forms.CheckBox s02_17;
 		private System.Windows.Forms.CheckBox s01_18;
 		private System.Windows.Forms.Button startRunButton;
-		private System.Windows.Forms.TextBox f1Amplitude;
-		private System.Windows.Forms.TextBox f2Amplitude;
-		private System.Windows.Forms.TextBox f1Frequency;
-		private System.Windows.Forms.TextBox f2Frequency;
-		private System.Windows.Forms.TextBox measurementPeriod;
-		private System.Windows.Forms.Label f1AmplitudeLabel;
-		private System.Windows.Forms.Label f2AmplitudeLabel;
-		private System.Windows.Forms.Label f1FrequencyLabel;
-		private System.Windows.Forms.Label f2FrequencyLabel;
-		private System.Windows.Forms.Label measurementPeriodLabel;
 		private System.Windows.Forms.DataVisualization.Charting.Chart adjustedChart1;
 		private System.Windows.Forms.DataVisualization.Charting.Chart adjustedChart2;
 		private System.Windows.Forms.DataVisualization.Charting.Chart adjustedChart3;

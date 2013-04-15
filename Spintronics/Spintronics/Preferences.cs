@@ -20,15 +20,15 @@ namespace SpintronicsGUI
 		public int defaultAddBufferVolume;
 		public int defaultAddMnpsVolume;
 		public string defaultVolumeUnit;
-		public int wheatstoneAmplitude;
+		public float wheatstoneAmplitude;
 		public string wheatstoneAmplitudeUnit;
-		public int wheatstoneFrequency;
-		public int coilAmplitude;
+		public float wheatstoneFrequency;
+		public float coilAmplitude;
 		public string coilAmplitudeUnit;
-		public int coilFrequency;
-		public int coilDcOffset;
+		public float coilFrequency;
+		public float coilDcOffset;
 		public string coilDcOffsetUnit;
-		public int measurementPeriod;
+		public float measurementPeriod;
 
 		public Preferences(Configuration config)
 		{
@@ -112,15 +112,15 @@ namespace SpintronicsGUI
 		private bool saveMeasurementParametersTabPreferences()
 		{
 			try {
-				this.wheatstoneAmplitude = System.Convert.ToInt32(this.wheatstoneAmplitudeTextBox.Text);
+				this.wheatstoneAmplitude = float.Parse(this.wheatstoneAmplitudeTextBox.Text);
 				this.wheatstoneAmplitudeUnit = this.wheatstoneAmplitudeUnitTextBox.Text;
-				this.wheatstoneFrequency = System.Convert.ToInt32(this.wheatstoneFrequencyTextBox.Text);
-				this.coilAmplitude = System.Convert.ToInt32(this.coilAmplitudeTextBox.Text);
+				this.wheatstoneFrequency = float.Parse(this.wheatstoneFrequencyTextBox.Text);
+				this.coilAmplitude = float.Parse(this.coilAmplitudeTextBox.Text);
 				this.coilAmplitudeUnit = this.coilAmplitudeUnitTextBox.Text;
-				this.coilFrequency = System.Convert.ToInt32(this.coilFrequencyTextBox.Text);
-				this.coilDcOffset = System.Convert.ToInt32(this.coilDcOffsetTextBox.Text);
+				this.coilFrequency = float.Parse(this.coilFrequencyTextBox.Text);
+				this.coilDcOffset = float.Parse(this.coilDcOffsetTextBox.Text);
 				this.coilDcOffsetUnit = this.coilDcOffsetUnitTextBox.Text;
-				this.measurementPeriod = System.Convert.ToInt32(this.measurementPeriodTextBox.Text);
+				this.measurementPeriod = float.Parse(this.measurementPeriodTextBox.Text);
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a for all fields");
@@ -134,16 +134,16 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private void measurementParametersRevertButton_Click(object sender, EventArgs e)
+		private void revertMeasurementParametersButton_Click(object sender, EventArgs e)
 		{
 			this.wheatstoneAmplitudeTextBox.Text = System.Convert.ToString(this.wheatstoneAmplitude);
-			this.wheatstoneAmplitudeUnit = this.wheatstoneAmplitudeUnitTextBox.Text;
+			this.wheatstoneAmplitudeUnitTextBox.Text = this.wheatstoneAmplitudeUnit;
 			this.wheatstoneFrequencyTextBox.Text = System.Convert.ToString(this.wheatstoneFrequency);
 			this.coilAmplitudeTextBox.Text = System.Convert.ToString(this.coilAmplitude);
-			this.coilAmplitudeUnit = this.coilAmplitudeUnitTextBox.Text;
+			this.coilAmplitudeUnitTextBox.Text = this.coilAmplitudeUnit;
 			this.coilFrequencyTextBox.Text = System.Convert.ToString(this.coilFrequency);
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
-			this.coilDcOffsetUnit = this.coilDcOffsetUnitTextBox.Text;
+			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 		}
 

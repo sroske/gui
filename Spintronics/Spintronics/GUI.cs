@@ -725,19 +725,6 @@ namespace SpintronicsGUI
 		 */
 		private void startRun(object sender, EventArgs e)
 		{
-			if ((this.f1Amplitude.Text == "") ||
-				(this.f1Frequency.Text == "") ||
-				(this.f2Amplitude.Text == "") ||
-				(this.f2Frequency.Text == "") ||
-				(this.measurementPeriod.Text == "") ||
-				(this.reactionWellTextBox.Text == "") ||
-				(this.sampleTextBox.Text == "")
-			   )
-			{
-				MessageBox.Show("Please enter a value for all fields");
-				return;
-			}
-
 			if (this.running == true)
 			{
 				MessageBox.Show("Please stop the current run before starting a new one");
@@ -766,11 +753,11 @@ namespace SpintronicsGUI
 			try {
 				float[] data = new float[5];
 				byte[] payload = new byte[20];
-				data[0] = float.Parse(this.f1Amplitude.Text);
-				data[1] = float.Parse(this.f2Amplitude.Text);
-				data[2] = float.Parse(this.f1Frequency.Text);
-				data[3] = float.Parse(this.f2Frequency.Text);
-				data[4] = float.Parse(this.measurementPeriod.Text);
+				data[0] = this.configFile.wheatstoneAmplitude;
+				data[1] = this.configFile.coilAmplitude;
+				data[2] = this.configFile.wheatstoneFrequency;
+				data[3] = this.configFile.coilFrequency;
+				data[4] = this.configFile.measurementPeriod;
 				Buffer.BlockCopy(data, 0, payload, 0, payload.Length);
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(startPacket, PacketCommDirection.Out);

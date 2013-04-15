@@ -38,6 +38,9 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepTextBox = new System.Windows.Forms.TextBox();
 			this.revertGeneralButton = new System.Windows.Forms.Button();
 			this.measurementParametersTabPage = new System.Windows.Forms.TabPage();
+			this.coilDcOffsetUnitTextBox = new System.Windows.Forms.TextBox();
+			this.coilAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
+			this.wheatstoneAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
 			this.measurementPeriodUnitLabel = new System.Windows.Forms.Label();
 			this.coilFrequencyUnitLabel = new System.Windows.Forms.Label();
 			this.wheatstoneFrequencyUnitLabel = new System.Windows.Forms.Label();
@@ -53,7 +56,7 @@ namespace SpintronicsGUI
 			this.wheatstoneFrequencyLabel = new System.Windows.Forms.Label();
 			this.coilAmplitudeLabel = new System.Windows.Forms.Label();
 			this.wheatstoneAmplitudeLabel = new System.Windows.Forms.Label();
-			this.measurementParametersRevertButton = new System.Windows.Forms.Button();
+			this.revertMeasurementParametersButton = new System.Windows.Forms.Button();
 			this.pinMultiplexerValuesTabPage = new System.Windows.Forms.TabPage();
 			this.sensor30 = new System.Windows.Forms.Label();
 			this.sensor29 = new System.Windows.Forms.Label();
@@ -131,9 +134,6 @@ namespace SpintronicsGUI
 			this.bufferNameLabel = new System.Windows.Forms.Label();
 			this.bufferNameTextBox = new System.Windows.Forms.TextBox();
 			this.revertLogInformationButton = new System.Windows.Forms.Button();
-			this.wheatstoneAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
-			this.coilAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
-			this.coilDcOffsetUnitTextBox = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -232,7 +232,7 @@ namespace SpintronicsGUI
 			this.measurementParametersTabPage.Controls.Add(this.wheatstoneFrequencyLabel);
 			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeLabel);
 			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeLabel);
-			this.measurementParametersTabPage.Controls.Add(this.measurementParametersRevertButton);
+			this.measurementParametersTabPage.Controls.Add(this.revertMeasurementParametersButton);
 			this.measurementParametersTabPage.Location = new System.Drawing.Point(4, 22);
 			this.measurementParametersTabPage.Name = "measurementParametersTabPage";
 			this.measurementParametersTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -240,6 +240,27 @@ namespace SpintronicsGUI
 			this.measurementParametersTabPage.TabIndex = 3;
 			this.measurementParametersTabPage.Text = "Measurement Parameters";
 			this.measurementParametersTabPage.UseVisualStyleBackColor = true;
+			// 
+			// coilDcOffsetUnitTextBox
+			// 
+			this.coilDcOffsetUnitTextBox.Location = new System.Drawing.Point(424, 95);
+			this.coilDcOffsetUnitTextBox.Name = "coilDcOffsetUnitTextBox";
+			this.coilDcOffsetUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.coilDcOffsetUnitTextBox.TabIndex = 36;
+			// 
+			// coilAmplitudeUnitTextBox
+			// 
+			this.coilAmplitudeUnitTextBox.Location = new System.Drawing.Point(92, 95);
+			this.coilAmplitudeUnitTextBox.Name = "coilAmplitudeUnitTextBox";
+			this.coilAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.coilAmplitudeUnitTextBox.TabIndex = 35;
+			// 
+			// wheatstoneAmplitudeUnitTextBox
+			// 
+			this.wheatstoneAmplitudeUnitTextBox.Location = new System.Drawing.Point(94, 36);
+			this.wheatstoneAmplitudeUnitTextBox.Name = "wheatstoneAmplitudeUnitTextBox";
+			this.wheatstoneAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
+			this.wheatstoneAmplitudeUnitTextBox.TabIndex = 34;
 			// 
 			// measurementPeriodUnitLabel
 			// 
@@ -376,15 +397,15 @@ namespace SpintronicsGUI
 			this.wheatstoneAmplitudeLabel.TabIndex = 21;
 			this.wheatstoneAmplitudeLabel.Text = "Wheatstone Amplitude";
 			// 
-			// measurementParametersRevertButton
+			// revertMeasurementParametersButton
 			// 
-			this.measurementParametersRevertButton.Location = new System.Drawing.Point(6, 198);
-			this.measurementParametersRevertButton.Name = "measurementParametersRevertButton";
-			this.measurementParametersRevertButton.Size = new System.Drawing.Size(75, 23);
-			this.measurementParametersRevertButton.TabIndex = 1;
-			this.measurementParametersRevertButton.Text = "Revert";
-			this.measurementParametersRevertButton.UseVisualStyleBackColor = true;
-			this.measurementParametersRevertButton.Click += new EventHandler(measurementParametersRevertButton_Click);
+			this.revertMeasurementParametersButton.Location = new System.Drawing.Point(6, 198);
+			this.revertMeasurementParametersButton.Name = "revertMeasurementParametersButton";
+			this.revertMeasurementParametersButton.Size = new System.Drawing.Size(75, 23);
+			this.revertMeasurementParametersButton.TabIndex = 1;
+			this.revertMeasurementParametersButton.Text = "Revert";
+			this.revertMeasurementParametersButton.UseVisualStyleBackColor = true;
+			this.revertMeasurementParametersButton.Click += new System.EventHandler(this.revertMeasurementParametersButton_Click);
 			// 
 			// pinMultiplexerValuesTabPage
 			// 
@@ -1060,11 +1081,11 @@ namespace SpintronicsGUI
 			this.mnpsNameTextBox.Size = new System.Drawing.Size(100, 20);
 			this.mnpsNameTextBox.TabIndex = 5;
 			// 
-			// MnpsNameLabel
+			// mnpsNameLabel
 			// 
 			this.mnpsNameLabel.AutoSize = true;
 			this.mnpsNameLabel.Location = new System.Drawing.Point(7, 58);
-			this.mnpsNameLabel.Name = "MnpsNameLabel";
+			this.mnpsNameLabel.Name = "mnpsNameLabel";
 			this.mnpsNameLabel.Size = new System.Drawing.Size(67, 13);
 			this.mnpsNameLabel.TabIndex = 4;
 			this.mnpsNameLabel.Text = "MNPs Name";
@@ -1094,27 +1115,6 @@ namespace SpintronicsGUI
 			this.revertLogInformationButton.Text = "Revert";
 			this.revertLogInformationButton.UseVisualStyleBackColor = true;
 			this.revertLogInformationButton.Click += new System.EventHandler(this.revertLogInformation_Click);
-			// 
-			// wheatstoneAmplitudeUnitTextBox
-			// 
-			this.wheatstoneAmplitudeUnitTextBox.Location = new System.Drawing.Point(94, 36);
-			this.wheatstoneAmplitudeUnitTextBox.Name = "wheatstoneAmplitudeUnitTextBox";
-			this.wheatstoneAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.wheatstoneAmplitudeUnitTextBox.TabIndex = 34;
-			// 
-			// coilAmplitudeUnitTextBox
-			// 
-			this.coilAmplitudeUnitTextBox.Location = new System.Drawing.Point(92, 95);
-			this.coilAmplitudeUnitTextBox.Name = "coilAmplitudeUnitTextBox";
-			this.coilAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.coilAmplitudeUnitTextBox.TabIndex = 35;
-			// 
-			// coilDcOffsetUnitTextBox
-			// 
-			this.coilDcOffsetUnitTextBox.Location = new System.Drawing.Point(424, 95);
-			this.coilDcOffsetUnitTextBox.Name = "coilDcOffsetUnitTextBox";
-			this.coilDcOffsetUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.coilDcOffsetUnitTextBox.TabIndex = 36;
 			// 
 			// Preferences
 			// 
@@ -1225,7 +1225,7 @@ namespace SpintronicsGUI
 		private Label defaultAddBufferVolumeLabel;
 		private ComboBox defaultVolumeUnitComboBox;
 		private TabPage measurementParametersTabPage;
-		private Button measurementParametersRevertButton;
+		private Button revertMeasurementParametersButton;
 		private TextBox coilDcOffsetTextBox;
 		private Label coilDcOffsetLabel;
 		private TextBox wheatstoneAmplitudeTextBox;

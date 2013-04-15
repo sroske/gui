@@ -18,15 +18,15 @@ namespace SpintronicsGUI
 		public int defaultAddBufferVolume = 5;
 		public int defaultAddMnpsVolume = 20;
 		public string defaultVolumeUnit = "uL";
-		public int wheatstoneAmplitude = 300;
+		public float wheatstoneAmplitude = 300;
 		public string wheatstoneAmplitudeUnit = "mV";
-		public int wheatstoneFrequency = 1000;
-		public int coilAmplitude = 200;
+		public float wheatstoneFrequency = 1000;
+		public float coilAmplitude = 200;
 		public string coilAmplitudeUnit = "mV";
-		public int coilFrequency = 50;
-		public int coilDcOffset = 0;
+		public float coilFrequency = 50;
+		public float coilDcOffset = 0;
 		public string coilDcOffsetUnit = "V";
-		public int measurementPeriod = 1;
+		public float measurementPeriod = 1;
 
 		public Configuration()
 		{
@@ -47,15 +47,15 @@ namespace SpintronicsGUI
 			this.defaultAddBufferVolume = readIntConfiguration("DefaultAddBufferVolume");
 			this.defaultAddMnpsVolume = readIntConfiguration("DefaultAddMnpsVolume");
 			this.defaultVolumeUnit = readStringConfiguration("DefaultVolumeUnit");
-			this.wheatstoneAmplitude = readIntConfiguration("WheatstoneAmplitude");
+			this.wheatstoneAmplitude = readFloatConfiguration("WheatstoneAmplitude");
 			this.wheatstoneAmplitudeUnit = readStringConfiguration("WheatstoneAmplitudeUnit");
-			this.wheatstoneFrequency = readIntConfiguration("WheatstoneFrequency");
-			this.coilAmplitude = readIntConfiguration("CoilAmplitude");
+			this.wheatstoneFrequency = readFloatConfiguration("WheatstoneFrequency");
+			this.coilAmplitude = readFloatConfiguration("CoilAmplitude");
 			this.coilAmplitudeUnit = readStringConfiguration("CoilAmplitudeUnit");
-			this.coilFrequency = readIntConfiguration("CoilFrequency");
-			this.coilDcOffset = readIntConfiguration("CoilDcOffset");
+			this.coilFrequency = readFloatConfiguration("CoilFrequency");
+			this.coilDcOffset = readFloatConfiguration("CoilDcOffset");
 			this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
-			this.measurementPeriod = readIntConfiguration("MeasurementPeriod");
+			this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
 		}
 
 		private void writeConfigFileValues()
@@ -125,6 +125,19 @@ namespace SpintronicsGUI
 			int end = line.IndexOf("\n", start);
 			line = line.Substring(start + label.Length, end - start - label.Length - 1);
 			return System.Convert.ToInt32(line);
+		}
+
+		public float readFloatConfiguration(string label)
+		{
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			label += ":";
+			int start = line.IndexOf(label, 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + label.Length, end - start - label.Length - 1);
+			return float.Parse(line);
 		}
 
 		public int[] readSensorMultiplexerValues()
@@ -202,7 +215,7 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setWheatstoneAmplitude(int amplitude)
+		public void setWheatstoneAmplitude(float amplitude)
 		{
 			this.wheatstoneAmplitude = amplitude;
 			saveConfigurations();
@@ -214,13 +227,13 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setWheatstoneFrequency(int frequency)
+		public void setWheatstoneFrequency(float frequency)
 		{
 			this.wheatstoneFrequency = frequency;
 			saveConfigurations();
 		}
 
-		public void setCoilAmplitude(int amplitude)
+		public void setCoilAmplitude(float amplitude)
 		{
 			this.coilAmplitude = amplitude;
 			saveConfigurations();
@@ -232,13 +245,13 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setCoilFrequncy(int frequency)
+		public void setCoilFrequncy(float frequency)
 		{
 			this.coilFrequency = frequency;
 			saveConfigurations();
 		}
 
-		public void setCoilDcOffset(int offset)
+		public void setCoilDcOffset(float offset)
 		{
 			this.coilDcOffset = offset;
 			saveConfigurations();
@@ -250,7 +263,7 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setMeasurementPeriod(int period)
+		public void setMeasurementPeriod(float period)
 		{
 			this.measurementPeriod = period;
 			saveConfigurations();
