@@ -231,6 +231,11 @@ namespace SpintronicsGUI
 			System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.startRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.stopRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveRunFilesAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -312,15 +317,13 @@ namespace SpintronicsGUI
 			this.bufferingLabel = new System.Windows.Forms.Label();
 			this.addMnpButton = new System.Windows.Forms.Button();
 			this.addBufferButton = new System.Windows.Forms.Button();
-			this.addBufferSizeTextBox = new System.Windows.Forms.TextBox();
-			this.addMnpSizeTextBox = new System.Windows.Forms.TextBox();
-			this.addBufferUnitComboBox = new System.Windows.Forms.ComboBox();
-			this.addMnpUnitComboBox = new System.Windows.Forms.ComboBox();
-			this.startRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.stopRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveRunFilesAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.openRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.addBufferVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.addMnpVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.addBufferMnpVolumeUnitTextBox = new System.Windows.Forms.TextBox();
+			this.reactionWellLabel = new System.Windows.Forms.Label();
+			this.reactionWellTextBox = new System.Windows.Forms.TextBox();
+			this.sampleLabel = new System.Windows.Forms.Label();
+			this.sampleTextBox = new System.Windows.Forms.TextBox();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -359,6 +362,39 @@ namespace SpintronicsGUI
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "&File";
 			// 
+			// startRunToolStripMenuItem
+			// 
+			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.startRunToolStripMenuItem.Text = "Start Run";
+			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
+			// 
+			// stopRunToolStripMenuItem
+			// 
+			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.stopRunToolStripMenuItem.Text = "Stop Run";
+			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
+			// 
+			// saveRunFilesAsToolStripMenuItem
+			// 
+			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.saveRunFilesAsToolStripMenuItem.Text = "Save Run Files As...";
+			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAs);
+			// 
+			// openRunToolStripMenuItem
+			// 
+			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.openRunToolStripMenuItem.Text = "Open Run";
+			// 
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.exitToolStripMenuItem.Text = "Exit";
+			// 
 			// editToolStripMenuItem
 			// 
 			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -370,7 +406,7 @@ namespace SpintronicsGUI
 			// preferencesToolStripMenuItem
 			// 
 			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.preferencesToolStripMenuItem.Text = "Preferences";
 			this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
 			// 
@@ -434,7 +470,7 @@ namespace SpintronicsGUI
 			this.groupBox1.Controls.Add(this.sensorsLabelE);
 			this.groupBox1.Controls.Add(this.sensorsLabelA);
 			this.groupBox1.Controls.Add(this.s18_01);
-			this.groupBox1.Location = new System.Drawing.Point(13, 41);
+			this.groupBox1.Location = new System.Drawing.Point(12, 101);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(187, 270);
 			this.groupBox1.TabIndex = 2;
@@ -2232,90 +2268,71 @@ namespace SpintronicsGUI
 			this.addBufferButton.UseVisualStyleBackColor = true;
 			this.addBufferButton.Click += new System.EventHandler(this.addBufferButton_Click);
 			// 
-			// addBufferSizeTextBox
+			// addBufferVolumeTextBox
 			// 
-			this.addBufferSizeTextBox.Location = new System.Drawing.Point(747, 528);
-			this.addBufferSizeTextBox.Name = "addBufferSizeTextBox";
-			this.addBufferSizeTextBox.Size = new System.Drawing.Size(29, 20);
-			this.addBufferSizeTextBox.TabIndex = 52;
+			this.addBufferVolumeTextBox.Location = new System.Drawing.Point(738, 528);
+			this.addBufferVolumeTextBox.Name = "addBufferVolumeTextBox";
+			this.addBufferVolumeTextBox.Size = new System.Drawing.Size(38, 20);
+			this.addBufferVolumeTextBox.TabIndex = 52;
 			// 
-			// addMnpSizeTextBox
+			// addMnpVolumeTextBox
 			// 
-			this.addMnpSizeTextBox.Location = new System.Drawing.Point(747, 557);
-			this.addMnpSizeTextBox.Name = "addMnpSizeTextBox";
-			this.addMnpSizeTextBox.Size = new System.Drawing.Size(29, 20);
-			this.addMnpSizeTextBox.TabIndex = 53;
+			this.addMnpVolumeTextBox.Location = new System.Drawing.Point(738, 557);
+			this.addMnpVolumeTextBox.Name = "addMnpVolumeTextBox";
+			this.addMnpVolumeTextBox.Size = new System.Drawing.Size(38, 20);
+			this.addMnpVolumeTextBox.TabIndex = 53;
 			// 
-			// addBufferUnitComboBox
+			// addBufferMnpVolumeUnitTextBox
 			// 
-			this.addBufferUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.addBufferUnitComboBox.FormattingEnabled = true;
-			this.addBufferUnitComboBox.Items.AddRange(new object[] {
-            "L",
-            "mL",
-            "uL",
-            "nL"});
-			this.addBufferUnitComboBox.Location = new System.Drawing.Point(782, 527);
-			this.addBufferUnitComboBox.Name = "addBufferUnitComboBox";
-			this.addBufferUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.addBufferUnitComboBox.TabIndex = 54;
+			this.addBufferMnpVolumeUnitTextBox.Location = new System.Drawing.Point(782, 540);
+			this.addBufferMnpVolumeUnitTextBox.Name = "addBufferMnpVolumeUnitTextBox";
+			this.addBufferMnpVolumeUnitTextBox.Size = new System.Drawing.Size(29, 20);
+			this.addBufferMnpVolumeUnitTextBox.TabIndex = 54;
 			// 
-			// addMnpUnitComboBox
+			// reactionWellLabel
 			// 
-			this.addMnpUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.addMnpUnitComboBox.FormattingEnabled = true;
-			this.addMnpUnitComboBox.Items.AddRange(new object[] {
-            "L",
-            "mL",
-            "uL",
-            "nL"});
-			this.addMnpUnitComboBox.Location = new System.Drawing.Point(782, 557);
-			this.addMnpUnitComboBox.Name = "addMnpUnitComboBox";
-			this.addMnpUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.addMnpUnitComboBox.TabIndex = 55;
+			this.reactionWellLabel.AutoSize = true;
+			this.reactionWellLabel.Location = new System.Drawing.Point(9, 41);
+			this.reactionWellLabel.Name = "reactionWellLabel";
+			this.reactionWellLabel.Size = new System.Drawing.Size(74, 13);
+			this.reactionWellLabel.TabIndex = 56;
+			this.reactionWellLabel.Text = "Reaction Well";
 			// 
-			// startRunToolStripMenuItem
+			// reactionWellTextBox
 			// 
-			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.startRunToolStripMenuItem.Text = "Start Run";
-			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
+			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 58);
+			this.reactionWellTextBox.Name = "reactionWellTextBox";
+			this.reactionWellTextBox.Size = new System.Drawing.Size(85, 20);
+			this.reactionWellTextBox.TabIndex = 57;
 			// 
-			// stopRunToolStripMenuItem
+			// sampleLabel
 			// 
-			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.stopRunToolStripMenuItem.Text = "Stop Run";
-			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
+			this.sampleLabel.AutoSize = true;
+			this.sampleLabel.Location = new System.Drawing.Point(107, 41);
+			this.sampleLabel.Name = "sampleLabel";
+			this.sampleLabel.Size = new System.Drawing.Size(42, 13);
+			this.sampleLabel.TabIndex = 58;
+			this.sampleLabel.Text = "Sample";
 			// 
-			// saveRunFilesAsToolStripMenuItem
+			// sampleTextBox
 			// 
-			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.saveRunFilesAsToolStripMenuItem.Text = "Save Run Files As...";
-			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAs);
-			// 
-			// openRunToolStripMenuItem
-			// 
-			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.openRunToolStripMenuItem.Text = "Open Run";
-			// 
-			// exitToolStripMenuItem
-			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-			this.exitToolStripMenuItem.Text = "Exit";
+			this.sampleTextBox.Location = new System.Drawing.Point(109, 57);
+			this.sampleTextBox.Name = "sampleTextBox";
+			this.sampleTextBox.Size = new System.Drawing.Size(86, 20);
+			this.sampleTextBox.TabIndex = 59;
 			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1086, 595);
-			this.Controls.Add(this.addMnpUnitComboBox);
-			this.Controls.Add(this.addBufferUnitComboBox);
-			this.Controls.Add(this.addMnpSizeTextBox);
-			this.Controls.Add(this.addBufferSizeTextBox);
+			this.Controls.Add(this.sampleTextBox);
+			this.Controls.Add(this.sampleLabel);
+			this.Controls.Add(this.reactionWellTextBox);
+			this.Controls.Add(this.reactionWellLabel);
+			this.Controls.Add(this.addBufferMnpVolumeUnitTextBox);
+			this.Controls.Add(this.addMnpVolumeTextBox);
+			this.Controls.Add(this.addBufferVolumeTextBox);
 			this.Controls.Add(this.addBufferButton);
 			this.Controls.Add(this.addMnpButton);
 			this.Controls.Add(this.bufferingLabel);
@@ -2341,12 +2358,12 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.f1AmplitudeLabel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.menuStrip1);
+			this.KeyPreview = true;
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "GUI";
 			this.Text = "Spintronics";
 			this.Shown += new System.EventHandler(this.GUI_Shown);
-			this.KeyPreview = true;
-			this.KeyDown += new KeyEventHandler(GUI_KeyDown);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GUI_KeyDown);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.groupBox1.ResumeLayout(false);
@@ -2450,15 +2467,18 @@ namespace SpintronicsGUI
 		private Label bufferingLabel;
 		private Button addMnpButton;
 		private Button addBufferButton;
-		private TextBox addBufferSizeTextBox;
-		private TextBox addMnpSizeTextBox;
-		private ComboBox addBufferUnitComboBox;
-		private ComboBox addMnpUnitComboBox;
+		private TextBox addBufferVolumeTextBox;
+		private TextBox addMnpVolumeTextBox;
 		private ToolStripMenuItem startRunToolStripMenuItem;
 		private ToolStripMenuItem stopRunToolStripMenuItem;
 		private ToolStripMenuItem saveRunFilesAsToolStripMenuItem;
 		private ToolStripMenuItem openRunToolStripMenuItem;
 		private ToolStripMenuItem exitToolStripMenuItem;
+		private TextBox addBufferMnpVolumeUnitTextBox;
+		private Label reactionWellLabel;
+		private TextBox reactionWellTextBox;
+		private Label sampleLabel;
+		private TextBox sampleTextBox;
 	}
 }
 

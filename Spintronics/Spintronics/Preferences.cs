@@ -14,16 +14,21 @@ namespace SpintronicsGUI
 	{
 		int tempFoldersToKeep;
 		int[] sensorMultiplexerValues;
-		string reactionWell;
-		string sample;
+		string bufferName;
+		string mnpsName;
+		int preloadBufferVolume;
+		string preloadBufferVolumeUnit;
+		int defaultAddBufferVolume;
+		int defaultAddMnpsVolume;
+		string defaultBufferMnpsVolumeUnit;
 
 		public Preferences(int initialFoldersToKeep, int[] initialAssignments, string initialReactionWell, string initialSample)
 		{
 			InitializeComponent();
 			this.tempFoldersToKeep = initialFoldersToKeep;
 			this.sensorMultiplexerValues = initialAssignments;
-			this.reactionWell = initialReactionWell;
-			this.sample = initialSample;
+			this.bufferName = initialReactionWell;
+			this.mnpsName = initialSample;
 			populateFields();
 		}
 
@@ -32,8 +37,13 @@ namespace SpintronicsGUI
 			InitializeComponent();
 			this.tempFoldersToKeep = config.getTempFoldersToKeep();
 			this.sensorMultiplexerValues = config.getSensorMultiplexerValues();
-			this.reactionWell = config.getReactionWell();
-			this.sample = config.getSample();
+			this.bufferName = config.getBufferName();
+			this.mnpsName = config.getMnpsName();
+			this.preloadBufferVolume = config.getPreloadBufferVolume();
+			this.preloadBufferVolumeUnit = config.getPreloadBufferVolumeUnit();
+			this.defaultAddBufferVolume = config.getDefaultAddBufferVolume();
+			this.defaultAddMnpsVolume = config.getDefaultAddMnpsVolume();
+			this.defaultBufferMnpsVolumeUnit = config.getDefaultBufferMnpsVolumeUnit();
 			populateFields();
 		}
 
@@ -54,8 +64,13 @@ namespace SpintronicsGUI
 					t.Text = "0";
 				}
 			}
-			this.reactionWellTextBox.Text = this.reactionWell;
-			this.sampleTextBox.Text = this.sample;
+			this.bufferNameTextBox.Text = this.bufferName;
+			this.mnpsNameTextBox.Text = this.mnpsName;
+			this.preloadBufferVolumeTextBox.Text = System.Convert.ToString(this.preloadBufferVolume);
+			this.preloadBufferVolumeUnitTextBox.Text = this.preloadBufferVolumeUnit;
+			this.defaultAddBufferVolumeTextBox.Text = System.Convert.ToString(this.defaultAddBufferVolume);
+			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
+			this.defaultBufferMnpVolumeUnitComboBox.SelectedItem = this.defaultBufferMnpsVolumeUnit;
 		}
 
 		public int getTempFoldersToKeep()
@@ -68,14 +83,39 @@ namespace SpintronicsGUI
 			return this.sensorMultiplexerValues;
 		}
 
-		public string getReactionWell()
+		public string getBufferName()
 		{
-			return this.reactionWell;
+			return this.bufferName;
 		}
 
-		public string getSample()
+		public string getMnpsName()
 		{
-			return this.sample;
+			return this.mnpsName;
+		}
+
+		public int getPreloadBufferVolume()
+		{
+			return this.preloadBufferVolume;
+		}
+
+		public string getPreloadBufferVolumeUnit()
+		{
+			return this.preloadBufferVolumeUnit;
+		}
+
+		public int getDefaultAddBufferVolume()
+		{
+			return this.defaultAddBufferVolume;
+		}
+
+		public int getDefaultAddMnpsVolume()
+		{
+			return this.defaultAddMnpsVolume;
+		}
+
+		public string getDefaultBufferMnpsVolumeUnit()
+		{
+			return this.defaultBufferMnpsVolumeUnit;
 		}
 
 		private bool saveGeneral()
@@ -130,25 +170,38 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private bool saveInitFileValues()
+		private bool saveLogInformation()
 		{
 			try {
-				this.reactionWell = this.reactionWellTextBox.Text;
-				this.sample = this.sampleTextBox.Text;
+				this.bufferName = this.bufferNameTextBox.Text;
+				this.mnpsName = this.mnpsNameTextBox.Text;
+				this.preloadBufferVolume = System.Convert.ToInt32(this.preloadBufferVolumeTextBox.Text);
+				this.preloadBufferVolumeUnit = this.preloadBufferVolumeUnitTextBox.Text;
+				this.defaultAddBufferVolume = System.Convert.ToInt32(this.defaultAddBufferVolumeTextBox.Text);
+				this.defaultAddMnpsVolume = System.Convert.ToInt32(this.defaultAddMnpsVolumeTextBox.Text);
+				this.defaultBufferMnpsVolumeUnit = (string)this.defaultBufferMnpVolumeUnitComboBox.SelectedItem;
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
 				return false;
 			} catch (FormatException) {
-				MessageBox.Show("Please enter valid strings for all fields");
+				MessageBox.Show("Please enter valid value for all fields");
+				return false;
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter valid value for all fields");
 				return false;
 			}
 		}
 
-		private void revertInitFileValuesButton_Click(object sender, EventArgs e)
+		private void revertLogInformation_Click(object sender, EventArgs e)
 		{
-			this.reactionWellTextBox.Text = this.reactionWell;
-			this.sampleTextBox.Text = this.sample;
+			this.bufferNameTextBox.Text = this.bufferName;
+			this.mnpsNameTextBox.Text = this.mnpsName;
+			this.preloadBufferVolumeTextBox.Text = System.Convert.ToString(this.preloadBufferVolume);
+			this.preloadBufferVolumeUnitTextBox.Text = this.preloadBufferVolumeUnit;
+			this.defaultAddBufferVolumeTextBox.Text = System.Convert.ToString(this.defaultAddBufferVolume);
+			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
+			this.defaultBufferMnpVolumeUnitComboBox.SelectedItem = this.defaultBufferMnpsVolumeUnit;
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
@@ -157,7 +210,7 @@ namespace SpintronicsGUI
 				return;
 			if (!savePinAssignments())
 				return;
-			if (!saveInitFileValues())
+			if (!saveLogInformation())
 				return;
 			this.DialogResult = DialogResult.OK;
 			this.Close();

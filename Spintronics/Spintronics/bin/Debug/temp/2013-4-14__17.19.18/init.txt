@@ -1,5 +1,0 @@
-Reaction Well:	0000A
-Sample:		0ng/mL
-
-Cycle		Details
-*********************************************

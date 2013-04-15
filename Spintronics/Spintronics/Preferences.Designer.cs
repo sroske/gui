@@ -101,13 +101,19 @@ namespace SpintronicsGUI
 			this.textBox01 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.logInformationTabPage = new System.Windows.Forms.TabPage();
-			this.sampleTextBox = new System.Windows.Forms.TextBox();
+			this.defaultBufferMnpVolumeUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.defaultAddMnpsVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.defaultAddMnpsVolumeLabel = new System.Windows.Forms.Label();
+			this.defaultAddBufferVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.defaultAddBufferVolumeLabel = new System.Windows.Forms.Label();
+			this.preloadBufferVolumeUnitTextBox = new System.Windows.Forms.TextBox();
+			this.preloadBufferVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.preloadBufferVolumeLabel = new System.Windows.Forms.Label();
+			this.mnpsNameTextBox = new System.Windows.Forms.TextBox();
 			this.MnpsNameLabel = new System.Windows.Forms.Label();
 			this.bufferNameLabel = new System.Windows.Forms.Label();
-			this.reactionWellTextBox = new System.Windows.Forms.TextBox();
-			this.revertInitFileValuesButton = new System.Windows.Forms.Button();
-			this.preloadBufferVolumeLabel = new System.Windows.Forms.Label();
-			this.preloadBufferVolumeTextBox = new System.Windows.Forms.TextBox();
+			this.bufferNameTextBox = new System.Windows.Forms.TextBox();
+			this.revertLogInformationButton = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.pinMultiplexerValuesTabPage.SuspendLayout();
@@ -759,13 +765,19 @@ namespace SpintronicsGUI
 			// 
 			// logInformationTabPage
 			// 
+			this.logInformationTabPage.Controls.Add(this.defaultBufferMnpVolumeUnitComboBox);
+			this.logInformationTabPage.Controls.Add(this.defaultAddMnpsVolumeTextBox);
+			this.logInformationTabPage.Controls.Add(this.defaultAddMnpsVolumeLabel);
+			this.logInformationTabPage.Controls.Add(this.defaultAddBufferVolumeTextBox);
+			this.logInformationTabPage.Controls.Add(this.defaultAddBufferVolumeLabel);
+			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeUnitTextBox);
 			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeTextBox);
 			this.logInformationTabPage.Controls.Add(this.preloadBufferVolumeLabel);
-			this.logInformationTabPage.Controls.Add(this.sampleTextBox);
+			this.logInformationTabPage.Controls.Add(this.mnpsNameTextBox);
 			this.logInformationTabPage.Controls.Add(this.MnpsNameLabel);
 			this.logInformationTabPage.Controls.Add(this.bufferNameLabel);
-			this.logInformationTabPage.Controls.Add(this.reactionWellTextBox);
-			this.logInformationTabPage.Controls.Add(this.revertInitFileValuesButton);
+			this.logInformationTabPage.Controls.Add(this.bufferNameTextBox);
+			this.logInformationTabPage.Controls.Add(this.revertLogInformationButton);
 			this.logInformationTabPage.Location = new System.Drawing.Point(4, 22);
 			this.logInformationTabPage.Name = "logInformationTabPage";
 			this.logInformationTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -774,12 +786,82 @@ namespace SpintronicsGUI
 			this.logInformationTabPage.Text = "Log Information";
 			this.logInformationTabPage.UseVisualStyleBackColor = true;
 			// 
-			// sampleTextBox
+			// defaultBufferMnpVolumeUnitComboBox
 			// 
-			this.sampleTextBox.Location = new System.Drawing.Point(3, 74);
-			this.sampleTextBox.Name = "sampleTextBox";
-			this.sampleTextBox.Size = new System.Drawing.Size(100, 20);
-			this.sampleTextBox.TabIndex = 5;
+			this.defaultBufferMnpVolumeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.defaultBufferMnpVolumeUnitComboBox.FormattingEnabled = true;
+			this.defaultBufferMnpVolumeUnitComboBox.Items.AddRange(new object[] {
+            "L",
+            "mL",
+            "uL",
+            "nL"});
+			this.defaultBufferMnpVolumeUnitComboBox.Location = new System.Drawing.Point(386, 50);
+			this.defaultBufferMnpVolumeUnitComboBox.Name = "defaultBufferMnpVolumeUnitComboBox";
+			this.defaultBufferMnpVolumeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.defaultBufferMnpVolumeUnitComboBox.TabIndex = 55;
+			// 
+			// defaultAddMnpsVolumeTextBox
+			// 
+			this.defaultAddMnpsVolumeTextBox.Location = new System.Drawing.Point(237, 74);
+			this.defaultAddMnpsVolumeTextBox.Name = "defaultAddMnpsVolumeTextBox";
+			this.defaultAddMnpsVolumeTextBox.Size = new System.Drawing.Size(100, 20);
+			this.defaultAddMnpsVolumeTextBox.TabIndex = 13;
+			// 
+			// defaultAddMnpsVolumeLabel
+			// 
+			this.defaultAddMnpsVolumeLabel.AutoSize = true;
+			this.defaultAddMnpsVolumeLabel.Location = new System.Drawing.Point(237, 58);
+			this.defaultAddMnpsVolumeLabel.Name = "defaultAddMnpsVolumeLabel";
+			this.defaultAddMnpsVolumeLabel.Size = new System.Drawing.Size(133, 13);
+			this.defaultAddMnpsVolumeLabel.TabIndex = 12;
+			this.defaultAddMnpsVolumeLabel.Text = "Default Add MNPs Volume";
+			// 
+			// defaultAddBufferVolumeTextBox
+			// 
+			this.defaultAddBufferVolumeTextBox.Location = new System.Drawing.Point(237, 36);
+			this.defaultAddBufferVolumeTextBox.Name = "defaultAddBufferVolumeTextBox";
+			this.defaultAddBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
+			this.defaultAddBufferVolumeTextBox.TabIndex = 10;
+			// 
+			// defaultAddBufferVolumeLabel
+			// 
+			this.defaultAddBufferVolumeLabel.AutoSize = true;
+			this.defaultAddBufferVolumeLabel.Location = new System.Drawing.Point(234, 19);
+			this.defaultAddBufferVolumeLabel.Name = "defaultAddBufferVolumeLabel";
+			this.defaultAddBufferVolumeLabel.Size = new System.Drawing.Size(132, 13);
+			this.defaultAddBufferVolumeLabel.TabIndex = 9;
+			this.defaultAddBufferVolumeLabel.Text = "Default Add Buffer Volume";
+			// 
+			// preloadBufferVolumeUnitTextBox
+			// 
+			this.preloadBufferVolumeUnitTextBox.Location = new System.Drawing.Point(109, 113);
+			this.preloadBufferVolumeUnitTextBox.Name = "preloadBufferVolumeUnitTextBox";
+			this.preloadBufferVolumeUnitTextBox.Size = new System.Drawing.Size(28, 20);
+			this.preloadBufferVolumeUnitTextBox.TabIndex = 8;
+			this.preloadBufferVolumeUnitTextBox.Text = "uL";
+			// 
+			// preloadBufferVolumeTextBox
+			// 
+			this.preloadBufferVolumeTextBox.Location = new System.Drawing.Point(3, 113);
+			this.preloadBufferVolumeTextBox.Name = "preloadBufferVolumeTextBox";
+			this.preloadBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
+			this.preloadBufferVolumeTextBox.TabIndex = 7;
+			// 
+			// preloadBufferVolumeLabel
+			// 
+			this.preloadBufferVolumeLabel.AutoSize = true;
+			this.preloadBufferVolumeLabel.Location = new System.Drawing.Point(7, 97);
+			this.preloadBufferVolumeLabel.Name = "preloadBufferVolumeLabel";
+			this.preloadBufferVolumeLabel.Size = new System.Drawing.Size(112, 13);
+			this.preloadBufferVolumeLabel.TabIndex = 6;
+			this.preloadBufferVolumeLabel.Text = "Preload Buffer Volume";
+			// 
+			// mnpsNameTextBox
+			// 
+			this.mnpsNameTextBox.Location = new System.Drawing.Point(3, 74);
+			this.mnpsNameTextBox.Name = "mnpsNameTextBox";
+			this.mnpsNameTextBox.Size = new System.Drawing.Size(100, 20);
+			this.mnpsNameTextBox.TabIndex = 5;
 			// 
 			// MnpsNameLabel
 			// 
@@ -799,38 +881,22 @@ namespace SpintronicsGUI
 			this.bufferNameLabel.TabIndex = 3;
 			this.bufferNameLabel.Text = "Buffer Name";
 			// 
-			// reactionWellTextBox
+			// bufferNameTextBox
 			// 
-			this.reactionWellTextBox.Location = new System.Drawing.Point(3, 35);
-			this.reactionWellTextBox.Name = "reactionWellTextBox";
-			this.reactionWellTextBox.Size = new System.Drawing.Size(100, 20);
-			this.reactionWellTextBox.TabIndex = 2;
+			this.bufferNameTextBox.Location = new System.Drawing.Point(3, 35);
+			this.bufferNameTextBox.Name = "bufferNameTextBox";
+			this.bufferNameTextBox.Size = new System.Drawing.Size(100, 20);
+			this.bufferNameTextBox.TabIndex = 2;
 			// 
-			// revertInitFileValuesButton
+			// revertLogInformationButton
 			// 
-			this.revertInitFileValuesButton.Location = new System.Drawing.Point(6, 198);
-			this.revertInitFileValuesButton.Name = "revertInitFileValuesButton";
-			this.revertInitFileValuesButton.Size = new System.Drawing.Size(75, 23);
-			this.revertInitFileValuesButton.TabIndex = 1;
-			this.revertInitFileValuesButton.Text = "Revert";
-			this.revertInitFileValuesButton.UseVisualStyleBackColor = true;
-			this.revertInitFileValuesButton.Click += new System.EventHandler(this.revertInitFileValuesButton_Click);
-			// 
-			// preloadBufferVolumeLabel
-			// 
-			this.preloadBufferVolumeLabel.AutoSize = true;
-			this.preloadBufferVolumeLabel.Location = new System.Drawing.Point(7, 97);
-			this.preloadBufferVolumeLabel.Name = "preloadBufferVolumeLabel";
-			this.preloadBufferVolumeLabel.Size = new System.Drawing.Size(112, 13);
-			this.preloadBufferVolumeLabel.TabIndex = 6;
-			this.preloadBufferVolumeLabel.Text = "Preload Buffer Volume";
-			// 
-			// preloadBufferVolumeTextBox
-			// 
-			this.preloadBufferVolumeTextBox.Location = new System.Drawing.Point(3, 113);
-			this.preloadBufferVolumeTextBox.Name = "preloadBufferVolumeTextBox";
-			this.preloadBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
-			this.preloadBufferVolumeTextBox.TabIndex = 7;
+			this.revertLogInformationButton.Location = new System.Drawing.Point(6, 198);
+			this.revertLogInformationButton.Name = "revertLogInformationButton";
+			this.revertLogInformationButton.Size = new System.Drawing.Size(75, 23);
+			this.revertLogInformationButton.TabIndex = 1;
+			this.revertLogInformationButton.Text = "Revert";
+			this.revertLogInformationButton.UseVisualStyleBackColor = true;
+			this.revertLogInformationButton.Click += new System.EventHandler(this.revertLogInformation_Click);
 			// 
 			// Preferences
 			// 
@@ -921,11 +987,11 @@ namespace SpintronicsGUI
 		private Label sensor2;
 		private Label sensor1;
 		private TabPage logInformationTabPage;
-		private Button revertInitFileValuesButton;
-		private TextBox sampleTextBox;
+		private Button revertLogInformationButton;
+		private TextBox mnpsNameTextBox;
 		private Label MnpsNameLabel;
 		private Label bufferNameLabel;
-		private TextBox reactionWellTextBox;
+		private TextBox bufferNameTextBox;
 		private Button revertPinAssignmentsButton;
 		private TabPage generalTabPage;
 		private Button revertGeneralButton;
@@ -933,5 +999,11 @@ namespace SpintronicsGUI
 		private TextBox tempFoldersToKeepTextBox;
 		private TextBox preloadBufferVolumeTextBox;
 		private Label preloadBufferVolumeLabel;
+		private TextBox preloadBufferVolumeUnitTextBox;
+		private TextBox defaultAddMnpsVolumeTextBox;
+		private Label defaultAddMnpsVolumeLabel;
+		private TextBox defaultAddBufferVolumeTextBox;
+		private Label defaultAddBufferVolumeLabel;
+		private ComboBox defaultBufferMnpVolumeUnitComboBox;
 	}
 }

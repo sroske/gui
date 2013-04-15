@@ -85,6 +85,10 @@ namespace SpintronicsGUI
 			recalculate = 0;
 			this.radioButtonA.PerformClick();
 			recalculate = 1;
+
+			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.getDefaultAddBufferVolume());
+			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.getDefaultAddMnpsVolume());
+			this.addBufferMnpVolumeUnitTextBox.Text = configFile.getDefaultBufferMnpsVolumeUnit();
 		}
 
 		private void GUI_KeyDown(object sender, KeyEventArgs e)
@@ -720,11 +724,13 @@ namespace SpintronicsGUI
 		 */
 		private void startRun(object sender, EventArgs e)
 		{
-			if ((this.f1Amplitude.Text == "") |
-				(this.f1Frequency.Text == "") |
-				(this.f2Amplitude.Text == "") |
-				(this.f2Frequency.Text == "") |
-				(this.measurementPeriod.Text == "")
+			if ((this.f1Amplitude.Text == "") ||
+				(this.f1Frequency.Text == "") ||
+				(this.f2Amplitude.Text == "") ||
+				(this.f2Frequency.Text == "") ||
+				(this.measurementPeriod.Text == "") ||
+				(this.reactionWellTextBox.Text == "") ||
+				(this.sampleTextBox.Text == "")
 			   )
 			{
 				MessageBox.Show("Please enter a value for all fields");
@@ -817,7 +823,9 @@ namespace SpintronicsGUI
 			}
 
 			SaveFileDialog saveFile = new SaveFileDialog();
-			saveFile.FileName = "Run Files";
+			saveFile.FileName = this.reactionWellTextBox.Text + "(" + this.sampleTextBox.Text + ")";
+			saveFile.FileName = saveFile.FileName.Replace('\\', '_');
+			saveFile.FileName = saveFile.FileName.Replace('/', '_');
 			saveFile.InitialDirectory = this.configFile.getDefaultSaveDirectory();
 			if (saveFile.ShowDialog() == DialogResult.OK)
 			{
@@ -922,17 +930,15 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please start a run before trying to add Buffer");
 				return;
 			}
-			if (this.addBufferSizeTextBox.Text == "")
+			if (this.addBufferVolumeTextBox.Text == "")
 			{
 				MessageBox.Show("Please add an amount to the Buffer text box");
 				return;
 			}
-			if (this.addBufferUnitComboBox.SelectedItem == null)
-			{
-				MessageBox.Show("Please select a unit for the Buffer amount");
-				return;
-			}
-			this.initFile.WriteLine(globalCycle + "\t\tAdd " + this.addBufferSizeTextBox.Text + " " + this.addBufferUnitComboBox.SelectedItem + " Buffer");
+			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
+							this.addBufferVolumeTextBox.Text + " " +
+							this.addBufferMnpVolumeUnitTextBox.Text + " Buffer (" +
+							this.configFile.getBufferName() + ")");
 			this.initFile.Flush();
 		}
 
@@ -943,17 +949,15 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please start a run before trying to add MNP");
 				return;
 			}
-			if (this.addMnpSizeTextBox.Text == "")
+			if (this.addMnpVolumeTextBox.Text == "")
 			{
 				MessageBox.Show("Please add an amount to the MNP text box");
 				return;
 			}
-			if (this.addMnpUnitComboBox.SelectedItem == null)
-			{
-				MessageBox.Show("Please select a unit for the MNP amount");
-				return;
-			}
-			this.initFile.WriteLine(globalCycle + "\t\tAdd " + this.addMnpSizeTextBox.Text + " " + this.addMnpUnitComboBox.SelectedItem + " MNPs");
+			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
+							this.addMnpVolumeTextBox.Text + " " +
+							this.addBufferMnpVolumeUnitTextBox.Text + " MNPs (" +
+							this.configFile.getMnpsName() + ")");
 			this.initFile.Flush();
 		}
 
@@ -1033,10 +1037,14 @@ namespace SpintronicsGUI
 				dataFile2 = new StreamWriter(logFileNameBase + "LT.txt");
 				dataFile3 = new StreamWriter(logFileNameBase + "CT.txt");
 
-				initFile.WriteLine("Reaction Well:\t" + configFile.getReactionWell());
-				initFile.WriteLine("Sample:\t\t" + configFile.getSample() + "\n");
+				initFile.WriteLine("Reaction Well:\t" + this.reactionWellTextBox.Text);
+				initFile.WriteLine("Sample:\t\t" + this.sampleTextBox.Text + "\n");
 				initFile.WriteLine("Cycle\t\tDetails");
 				initFile.WriteLine("*********************************************");
+				initFile.WriteLine(globalCycle + "\t\tPreload " +
+							 this.configFile.getPreloadBufferVolume() + " " +
+							 this.configFile.getPreloadBufferVolumeUnit() + " Buffer (" +
+							 this.configFile.getBufferName() + ")");
 				initFile.Flush();
 				for (int i = 1; i <= 30; i++)
 				{
@@ -1102,8 +1110,13 @@ namespace SpintronicsGUI
 				{
 					configFile.setTempFoldersToKeep(preferenceWindow.getTempFoldersToKeep());
 					configFile.setSensorMultiplexerValues(preferenceWindow.getSensorMultiplexerValues());
-					configFile.setReactionWell(preferenceWindow.getReactionWell());
-					configFile.setSample(preferenceWindow.getSample());
+					configFile.setBufferName(preferenceWindow.getBufferName());
+					configFile.setMnpsName(preferenceWindow.getMnpsName());
+					configFile.setPreloadBufferVolume(preferenceWindow.getPreloadBufferVolume());
+					configFile.setPreloadBufferVolumeUnit(preferenceWindow.getPreloadBufferVolumeUnit());
+					configFile.setDefaultAddBufferVolume(preferenceWindow.getDefaultAddBufferVolume());
+					configFile.setDefaultAddMnpsVolume(preferenceWindow.getDefaultAddMnpsVolume());
+					configFile.setDefaultBufferMnpsVolumeUnit(preferenceWindow.getDefaultBufferMnpsVolumeUnit());
 				}
 				preferenceWindow.Dispose();
 			}

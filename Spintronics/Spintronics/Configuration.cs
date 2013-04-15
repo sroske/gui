@@ -12,8 +12,13 @@ namespace SpintronicsGUI
 		private int tempFoldersToKeep = -1;
 		private int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
 									24, 25, 26, 27, 28, 29, 30};
-		private string reactionWell = "0000A";
-		private string sample = "0ng/mL";
+		private string bufferName = "PBS";
+		private string mnpsName = "MACS";
+		private int preloadBufferVolume = 10;
+		private string preloadBufferVolumeUnit = "uL";
+		private int defaultAddBufferVolume = 5;
+		private int defaultAddMnpsVolume = 20;
+		private string defaultBufferMnpsVolumeUnit = "uL";
 
 		public Configuration()
 		{
@@ -28,30 +33,13 @@ namespace SpintronicsGUI
 
 			this.defaultSaveDirectory = readDefaultSaveDirectory();
 			this.sensorMultiplexerValues = readSensorMultiplexerValues();
-			this.reactionWell = readReactionWell();
-			this.sample = readSample();
-		}
-
-		public Configuration(string startSaveDirectory, int startFoldersToKeep, int[] startSensorMultiplexerValues, string startReactionWell, string startSample)
-		{
-			if (!File.Exists("./config.ini"))
-			{
-				FileStream configFile;
-				configFile = File.Create("./config.ini");
-				configFile.Close();
-				configFile.Dispose();
-				this.defaultSaveDirectory = startSaveDirectory;
-				this.tempFoldersToKeep = startFoldersToKeep;
-				this.sensorMultiplexerValues = startSensorMultiplexerValues;
-				this.reactionWell = startReactionWell;
-				this.sample = startSample;
-				writeConfigFileValues();
-			}
-
-			this.defaultSaveDirectory = readDefaultSaveDirectory();
-			this.sensorMultiplexerValues = readSensorMultiplexerValues();
-			this.reactionWell = readReactionWell();
-			this.sample = readSample();
+			this.bufferName = readBufferName();
+			this.mnpsName = readMnpsName();
+			this.preloadBufferVolume = readPreloadBufferVolume();
+			this.preloadBufferVolumeUnit = readPreloadBufferVolumeUnit();
+			this.defaultAddBufferVolume = readDefaultAddBufferVolume();
+			this.defaultAddMnpsVolume = readDefaultAddMnpsVolume();
+			this.defaultBufferMnpsVolumeUnit = readDefaultBufferMnpsVolumeUnit();
 		}
 
 		private void writeConfigFileValues()
@@ -65,12 +53,28 @@ namespace SpintronicsGUI
 				file.Write("-" + sensorMultiplexerValues[i]);
 			}
 			file.Write("-\n");
-			file.WriteLine("ReactionWell:" + this.reactionWell);
-			file.WriteLine("Sample:" + this.sample);
+			file.WriteLine("BufferName:" + this.bufferName);
+			file.WriteLine("MnpsName:" + this.mnpsName);
+			file.WriteLine("PreloadBufferVolume:" + this.preloadBufferVolume);
+			file.WriteLine("PreloadBufferVolumeUnit:" + this.preloadBufferVolumeUnit);
+			file.WriteLine("DefaultAddBufferVolume:" + this.defaultAddBufferVolume);
+			file.WriteLine("DefaultAddMnpsVolume:" + this.defaultAddMnpsVolume);
+			file.WriteLine("DefaultBufferMnpsVolumeUnit:" + this.defaultBufferMnpsVolumeUnit);
 			file.Flush();
 			file.Close();
 			file.Dispose();
 		}
+
+
+		public void saveConfigurations()
+		{
+			FileStream configFile;
+			configFile = File.Create("./config.ini");
+			configFile.Close();
+			configFile.Dispose();
+			writeConfigFileValues();
+		}
+
 
 		public string readDefaultSaveDirectory()
 		{
@@ -116,38 +120,90 @@ namespace SpintronicsGUI
 			return array;
 		}
 
-		public string readReactionWell()
+		public string readBufferName()
 		{
 			StreamReader file = new StreamReader("./config.ini");
 			string line = file.ReadToEnd();
 			file.Close();
 			file.Dispose();
-			int start = line.IndexOf("ReactionWell:", 0);
+			int start = line.IndexOf("BufferName:", 0);
 			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 13, end - start - 14);
+			line = line.Substring(start + 11, end - start - 12);
 			return line;
 		}
 
-		public string readSample()
+		public string readMnpsName()
 		{
 			StreamReader file = new StreamReader("./config.ini");
 			string line = file.ReadToEnd();
 			file.Close();
 			file.Dispose();
-			int start = line.IndexOf("Sample:", 0);
+			int start = line.IndexOf("MnpsName:", 0);
 			int end = line.IndexOf("\n", start);
-			line = line.Substring(start + 7, end - start - 8);
+			line = line.Substring(start + 9, end - start - 10);
 			return line;
 		}
 
-		public void saveConfigurations()
+		public int readPreloadBufferVolume()
 		{
-			FileStream configFile;
-			configFile = File.Create("./config.ini");
-			configFile.Close();
-			configFile.Dispose();
-			writeConfigFileValues();
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			int start = line.IndexOf("PreloadBufferVolume:", 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + 20, end - start - 21);
+			return System.Convert.ToInt32(line);
 		}
+
+		public string readPreloadBufferVolumeUnit()
+		{
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			int start = line.IndexOf("PreloadBufferVolumeUnit:", 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + 24, end - start - 25);
+			return line;
+		}
+
+		public int readDefaultAddBufferVolume()
+		{
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			int start = line.IndexOf("DefaultAddBufferVolume:", 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + 23, end - start - 24);
+			return System.Convert.ToInt32(line);
+		}
+
+		public int readDefaultAddMnpsVolume()
+		{
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			int start = line.IndexOf("DefaultAddMnpsVolume:", 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + 21, end - start - 22);
+			return System.Convert.ToInt32(line);
+		}
+
+		public string readDefaultBufferMnpsVolumeUnit()
+		{
+			StreamReader file = new StreamReader("./config.ini");
+			string line = file.ReadToEnd();
+			file.Close();
+			file.Dispose();
+			int start = line.IndexOf("DefaultBufferMnpsVolumeUnit:", 0);
+			int end = line.IndexOf("\n", start);
+			line = line.Substring(start + 28, end - start - 29);
+			return line;
+		}
+
 
 		public void setDefaultSaveDirectory(string directory)
 		{
@@ -167,17 +223,48 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setReactionWell(string newReactionWell)
+		public void setBufferName(string name)
 		{
-			this.reactionWell = newReactionWell;
+			this.bufferName = name;
 			saveConfigurations();
 		}
 
-		public void setSample(string newSample)
+		public void setMnpsName(string name)
 		{
-			this.sample = newSample;
+			this.mnpsName = name;
 			saveConfigurations();
 		}
+
+		public void setPreloadBufferVolume(int volume)
+		{
+			this.preloadBufferVolume = volume;
+			saveConfigurations();
+		}
+
+		public void setPreloadBufferVolumeUnit(string unit)
+		{
+			this.preloadBufferVolumeUnit = unit;
+			saveConfigurations();
+		}
+
+		public void setDefaultAddBufferVolume(int volume)
+		{
+			this.defaultAddBufferVolume = volume;
+			saveConfigurations();
+		}
+
+		public void setDefaultAddMnpsVolume(int volume)
+		{
+			this.defaultAddMnpsVolume = volume;
+			saveConfigurations();
+		}
+
+		public void setDefaultBufferMnpsVolumeUnit(string unit)
+		{
+			this.defaultBufferMnpsVolumeUnit = unit;
+			saveConfigurations();
+		}
+
 
 		public string getDefaultSaveDirectory()
 		{
@@ -194,14 +281,39 @@ namespace SpintronicsGUI
 			return this.sensorMultiplexerValues;
 		}
 
-		public string getReactionWell()
+		public string getBufferName()
 		{
-			return this.reactionWell;
+			return this.bufferName;
 		}
 
-		public string getSample()
+		public string getMnpsName()
 		{
-			return this.sample;
+			return this.mnpsName;
+		}
+
+		public int getPreloadBufferVolume()
+		{
+			return this.preloadBufferVolume;
+		}
+
+		public string getPreloadBufferVolumeUnit()
+		{
+			return this.preloadBufferVolumeUnit;
+		}
+
+		public int getDefaultAddBufferVolume()
+		{
+			return this.defaultAddBufferVolume;
+		}
+
+		public int getDefaultAddMnpsVolume()
+		{
+			return this.defaultAddMnpsVolume;
+		}
+
+		public string getDefaultBufferMnpsVolumeUnit()
+		{
+			return this.defaultBufferMnpsVolumeUnit;
 		}
 	}
 }
