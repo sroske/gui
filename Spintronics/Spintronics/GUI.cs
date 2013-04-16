@@ -1177,7 +1177,7 @@ namespace SpintronicsGUI
 			{
 				if(!openFile.FileName.Contains("init.txt"))
 				{
-					MessageBox.Show("That is not a valid run file");
+					MessageBox.Show("That is not a valid init.txt file");
 					return;
 				}
 				try {
@@ -1224,10 +1224,6 @@ namespace SpintronicsGUI
 						int nullCount = 0;
 						if ((line = htFile.ReadLine()) != null)
 						{
-
-							line.Replace("\t", "");
-							line.Replace("\n", "");
-							line.Replace("\r", "");
 							for (int j = 0; ; j++)
 							{
 								if (line == "")
