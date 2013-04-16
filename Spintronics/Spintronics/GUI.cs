@@ -39,6 +39,7 @@ namespace SpintronicsGUI
 		TextWriter dataFile3 = null;
 		bool printLogText = true;
 		bool running = false;
+		bool resultsSaved = true;
 		SensorAssignment sensorAssignment = SensorAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
@@ -740,8 +741,9 @@ namespace SpintronicsGUI
 
 			this.globalCycle = 0;
 			this.tareIndex = 0;
-			this.mostRecentAddBufferCycle = 0;
 			this.tareIndexTextbox.Text = "0";
+			this.mostRecentAddBufferCycle = 0;
+			this.resultsSaved = false;
 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
@@ -813,46 +815,6 @@ namespace SpintronicsGUI
 				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
 													"Minimum is " + this.configFile.postProcessingCount + " cycles, " +
 													"only " + (this.globalCycle - this.mostRecentAddBufferCycle) + " occurred";
-			}
-		}
-
-		private void saveRunFilesAs(object sender, EventArgs e)
-		{
-			if (this.running)
-			{
-				MessageBox.Show("Please stop the current run before saving files");
-				return;
-			}
-			if (this.runFilesDirectory == null)
-			{
-				MessageBox.Show("Please complete a run before saving files");
-				return;
-			}
-
-			SaveFileDialog saveFile = new SaveFileDialog();
-			saveFile.FileName = this.reactionWellTextBox.Text + "(" + this.sampleTextBox.Text + ")";
-			saveFile.FileName = saveFile.FileName.Replace('\\', '_');
-			saveFile.FileName = saveFile.FileName.Replace('/', '_');
-			saveFile.InitialDirectory = this.configFile.defaultSaveDirectory;
-			if (saveFile.ShowDialog() == DialogResult.OK)
-			{
-				try {
-					string newDefaultDirectory = saveFile.FileName;
-					int last = newDefaultDirectory.LastIndexOf("\\");
-					newDefaultDirectory = newDefaultDirectory.Substring(0, last);
-					this.configFile.setDefaultSaveDirectory(newDefaultDirectory);
-					Directory.CreateDirectory(saveFile.FileName);
-					File.Copy(this.runFilesDirectory + "/HT.txt", saveFile.FileName + "/HT.txt");
-					File.Copy(this.runFilesDirectory + "/LT.txt", saveFile.FileName + "/LT.txt");
-					File.Copy(this.runFilesDirectory + "/CT.txt", saveFile.FileName + "/CT.txt");
-					File.Copy(this.runFilesDirectory + "/init.txt", saveFile.FileName + "/init.txt");
-				} catch (FileNotFoundException) {
-					MessageBox.Show("Error while saving files: One or more files could not be found");
-				} catch (UnauthorizedAccessException) {
-					MessageBox.Show("Error while saving files: One or more files could not be accessed due to lack of authorization");
-				} catch (Exception ex) {
-					MessageBox.Show("Error while saving files:" + ex.Message);
-				}
 			}
 		}
 
@@ -1146,9 +1108,210 @@ namespace SpintronicsGUI
 			}
 		}
 
+		/*
+		 * This opens a Save dialog and saves the data for the current run
+		 */
+		private void saveRunFilesAsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (this.running)
+			{
+				MessageBox.Show("Please stop the current run before saving files");
+				return;
+			}
+			if (this.runFilesDirectory == null)
+			{
+				MessageBox.Show("Please complete a run before saving files");
+				return;
+			}
+
+			SaveFileDialog saveFile = new SaveFileDialog();
+			saveFile.FileName = this.reactionWellTextBox.Text + "(" + this.sampleTextBox.Text + ")";
+			saveFile.FileName = saveFile.FileName.Replace('\\', '_');
+			saveFile.FileName = saveFile.FileName.Replace('/', '_');
+			saveFile.InitialDirectory = this.configFile.defaultSaveDirectory;
+			if (saveFile.ShowDialog() == DialogResult.OK)
+			{
+				try {
+					string newDefaultDirectory = saveFile.FileName;
+					int last = newDefaultDirectory.LastIndexOf("\\");
+					newDefaultDirectory = newDefaultDirectory.Substring(0, last);
+					this.configFile.setDefaultSaveDirectory(newDefaultDirectory);
+					Directory.CreateDirectory(saveFile.FileName);
+					File.Copy(this.runFilesDirectory + "/HT.txt", saveFile.FileName + "/HT.txt");
+					File.Copy(this.runFilesDirectory + "/LT.txt", saveFile.FileName + "/LT.txt");
+					File.Copy(this.runFilesDirectory + "/CT.txt", saveFile.FileName + "/CT.txt");
+					File.Copy(this.runFilesDirectory + "/init.txt", saveFile.FileName + "/init.txt");
+					this.resultsSaved = true;
+				} catch (FileNotFoundException) {
+					MessageBox.Show("Error while saving files: One or more files could not be found");
+				} catch (UnauthorizedAccessException) {
+					MessageBox.Show("Error while saving files: One or more files could not be accessed due to lack of authorization");
+				} catch (Exception ex) {
+					MessageBox.Show("Error while saving files:" + ex.Message);
+				}
+			}
+		}
+
+		/*
+		 * This begins post-processing on a data set
+		 */
 		private void postProcessingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show("Post processing!");
+		}
+
+		private void openRunToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!this.resultsSaved)
+			{
+				if (MessageBox.Show("Save results first?", "Save", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+				{
+					this.saveRunFilesAsToolStripMenuItem.PerformClick();
+				}
+			}
+
+			OpenFileDialog openFile = new OpenFileDialog();
+			openFile.InitialDirectory = this.configFile.defaultSaveDirectory;
+			openFile.Multiselect = false;
+			if (openFile.ShowDialog() == DialogResult.OK)
+			{
+				if(!openFile.FileName.Contains("init.txt"))
+				{
+					MessageBox.Show("That is not a valid run file");
+					return;
+				}
+				try {
+					string initFileName = openFile.FileName;
+					int last = initFileName.LastIndexOf("\\");
+					string htFileName = initFileName.Substring(0, last+1) + "HT.txt";
+					string ltFileName = initFileName.Substring(0, last+1) + "LT.txt";
+					string ctFileName = initFileName.Substring(0, last+1) + "CT.txt";
+					StreamReader initFile = new StreamReader(initFileName);
+					StreamReader htFile = new StreamReader(htFileName);
+					StreamReader ltFile = new StreamReader(ltFileName);
+					StreamReader ctFile = new StreamReader(ctFileName);
+					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+					{
+						foreach (Chart c in t.Controls.OfType<Chart>())
+						{
+							c.ChartAreas[0].AxisX.Minimum = globalCycle;
+							foreach (Series s in c.Series)
+							{
+								s.Points.Clear();
+								s.Points.AddXY(globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
+								s.Points.Last().MarkerStyle = MarkerStyle.Circle;
+							}
+						}
+					}
+					this.globalCycle = 0;
+					this.mostRecentAddBufferCycle = 0;
+					this.tareIndex = 0;
+					this.tareIndexTextbox.Text = "0";
+					string line;
+					while ((line = initFile.ReadLine()) != null)
+					{
+						if(line.Contains("MNPs"))
+						{
+							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line[0]);
+						}
+					}
+					htFile.ReadLine();
+					ltFile.ReadLine();
+					ctFile.ReadLine();
+					for (int i = 0; ; i++)
+					{
+						globalCycle++;
+						int nullCount = 0;
+						if ((line = htFile.ReadLine()) != null)
+						{
+
+							line.Replace("\t", "");
+							line.Replace("\n", "");
+							line.Replace("\r", "");
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+								if (j >= 9)
+								{
+									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									//if (i != 0)
+									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									line = line.Remove(0, 12);
+								}
+								else
+								{
+									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									//if (i != 0)
+									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									line = line.Remove(0, 11);
+								}
+							}
+						}
+						else
+							nullCount++;
+						if ((line = ltFile.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+								if (j >= 9)
+								{
+									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									//if (i != 0)
+									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									line = line.Remove(0, 12);
+								}
+								else
+								{
+									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									//if (i != 0)
+									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									line = line.Remove(0, 11);
+								}
+							}
+						}
+						else
+							nullCount++;
+						if ((line = ctFile.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+								if (j >= 9)
+								{
+									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									//if (i != 0)
+									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									line = line.Remove(0, 12);
+								}
+								else
+								{
+									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									//if (i != 0)
+									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									line = line.Remove(0, 11);
+								}
+							}
+						}
+						else
+							nullCount++;
+						if (nullCount >= 3)
+							break;
+					}
+					recalculateData();
+				} catch (FileNotFoundException) {
+
+				}
+			}
 		}
 	}
 }
