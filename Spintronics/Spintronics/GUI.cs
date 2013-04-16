@@ -747,6 +747,7 @@ namespace SpintronicsGUI
 			this.resultsSaved = false;
 
 			this.stopRunButton.Enabled = true;
+			this.stopRunToolStripMenuItem.Enabled = true;
 			this.addBufferButton.Enabled = true;
 			this.addMnpButton.Enabled = true;
 
@@ -824,6 +825,7 @@ namespace SpintronicsGUI
 			}
 
 			this.stopRunButton.Enabled = false;
+			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
 			this.addBufferButton.Enabled = false;
 		}

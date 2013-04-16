@@ -358,35 +358,36 @@ namespace SpintronicsGUI
 			// startRunToolStripMenuItem
 			// 
 			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.startRunToolStripMenuItem.Text = "Start New";
 			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
 			// 
 			// stopRunToolStripMenuItem
 			// 
+			this.stopRunToolStripMenuItem.Enabled = false;
 			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.stopRunToolStripMenuItem.Text = "Stop";
 			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
 			// 
 			// saveRunFilesAsToolStripMenuItem
 			// 
 			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveRunFilesAsToolStripMenuItem.Text = "Save Files As...";
 			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAsToolStripMenuItem_Click);
 			// 
 			// openRunToolStripMenuItem
 			// 
 			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.openRunToolStripMenuItem.Text = "Open";
 			this.openRunToolStripMenuItem.Click += new System.EventHandler(this.openRunToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
