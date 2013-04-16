@@ -238,6 +238,8 @@ namespace SpintronicsGUI
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.postProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -334,6 +336,7 @@ namespace SpintronicsGUI
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
@@ -356,34 +359,34 @@ namespace SpintronicsGUI
 			// startRunToolStripMenuItem
 			// 
 			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.startRunToolStripMenuItem.Text = "Start New";
 			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
 			// 
 			// stopRunToolStripMenuItem
 			// 
 			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopRunToolStripMenuItem.Text = "Stop";
 			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
 			// 
 			// saveRunFilesAsToolStripMenuItem
 			// 
 			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.saveRunFilesAsToolStripMenuItem.Text = "Save Files As...";
 			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAs);
 			// 
 			// openRunToolStripMenuItem
 			// 
 			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.openRunToolStripMenuItem.Text = "Open";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
@@ -397,9 +400,26 @@ namespace SpintronicsGUI
 			// preferencesToolStripMenuItem
 			// 
 			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.preferencesToolStripMenuItem.Text = "Preferences";
 			this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
+			// 
+			// toolsToolStripMenuItem
+			// 
+			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.postProcessingToolStripMenuItem});
+			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+			this.toolsToolStripMenuItem.Text = "Tools";
+			// 
+			// postProcessingToolStripMenuItem
+			// 
+			this.postProcessingToolStripMenuItem.Enabled = false;
+			this.postProcessingToolStripMenuItem.Name = "postProcessingToolStripMenuItem";
+			this.postProcessingToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.postProcessingToolStripMenuItem.Text = "Post Processing";
+			this.postProcessingToolStripMenuItem.ToolTipText = "Please start a run before doing any post-processing";
+			this.postProcessingToolStripMenuItem.Click += new System.EventHandler(this.postProcessingToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -2381,6 +2401,8 @@ namespace SpintronicsGUI
 		private TextBox sampleTextBox;
 		private Label addBufferUnitLabel;
 		private Label addMnpUnitLabel;
+		private ToolStripMenuItem toolsToolStripMenuItem;
+		private ToolStripMenuItem postProcessingToolStripMenuItem;
 	}
 }
 

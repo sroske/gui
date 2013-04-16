@@ -46,6 +46,7 @@ namespace SpintronicsGUI
 		int tareIndex = 0;
 		int recalculate = 1;
 		int cycleSensorCount = 0;
+		int mostRecentAddBufferCycle = 0;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 
 		public GUI(string comPort)
@@ -731,9 +732,19 @@ namespace SpintronicsGUI
 				return;
 			}
 
-			globalCycle = 0;
-			tareIndex = 0;
+			if ((this.reactionWellTextBox.Text == "") || (this.sampleTextBox.Text == ""))
+			{
+				MessageBox.Show("Please enter values for Reaction Well and Sample");
+				return;
+			}
+
+			this.globalCycle = 0;
+			this.tareIndex = 0;
+			this.mostRecentAddBufferCycle = 0;
 			this.tareIndexTextbox.Text = "0";
+
+			this.postProcessingToolStripMenuItem.Enabled = false;
+			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
 
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
@@ -749,7 +760,7 @@ namespace SpintronicsGUI
 				}
 			}
 			createRunFiles();
-			globalCycle++;
+			this.globalCycle++;
 			try {
 				float[] data = new float[5];
 				byte[] payload = new byte[20];
@@ -782,20 +793,26 @@ namespace SpintronicsGUI
 				MessageBox.Show("There is not currently a run in progress");
 				return;
 			}
-			try {
-				byte[] payload = new byte[20];
-				Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
-				printPacket(stopPacket, PacketCommDirection.Out);
-				protocolHandler.HandlePacket(stopPacket, serialPort);
-				this.bufferingLabel.Visible = false;
-				this.bufferingProgressBar.Visible = false;
-				this.running = false;
-			} catch (System.ArgumentNullException) {
-				MessageBox.Show("Please enter a value for all fields");
-			} catch (System.FormatException) {
-				MessageBox.Show("Please enter a valid number for all fields");
-			} catch (System.OverflowException) {
-				MessageBox.Show("Please enter a valid number in the range X to X for all fields");
+
+			byte[] payload = new byte[20];
+			Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
+			printPacket(stopPacket, PacketCommDirection.Out);
+			protocolHandler.HandlePacket(stopPacket, serialPort);
+			this.bufferingLabel.Visible = false;
+			this.bufferingProgressBar.Visible = false;
+			this.running = false;
+			if (((this.globalCycle - this.mostRecentAddBufferCycle) >= this.configFile.postProcessingCount) &&
+				(this.mostRecentAddBufferCycle > 0))
+			{
+				this.postProcessingToolStripMenuItem.Enabled = true;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
+			}
+			else
+			{
+				this.postProcessingToolStripMenuItem.Enabled = false;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
+													"Minimum is " + this.configFile.postProcessingCount + " cycles, " +
+													"only " + (this.globalCycle - this.mostRecentAddBufferCycle) + " occurred";
 			}
 		}
 
@@ -944,11 +961,13 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please add an amount to the MNP text box");
 				return;
 			}
-			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
+			this.initFile.WriteLine(this.globalCycle + "\t\tAdd " +
 							this.addMnpVolumeTextBox.Text + " " +
 							this.configFile.defaultVolumeUnit + " MNPs (" +
 							this.configFile.mnpsName + ")");
 			this.initFile.Flush();
+
+			this.mostRecentAddBufferCycle = this.globalCycle;
 		}
 
 		/*
@@ -1125,6 +1144,11 @@ namespace SpintronicsGUI
 			{
 				MessageBox.Show("Please stop the run before attempting to adjust configurations");
 			}
+		}
+
+		private void postProcessingToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("Post processing!");
 		}
 	}
 }
