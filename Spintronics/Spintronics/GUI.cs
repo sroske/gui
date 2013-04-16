@@ -922,7 +922,7 @@ namespace SpintronicsGUI
 					if (add)
 					{
 						StripLine line = new StripLine();
-						line.Text = "Buffer Added";
+						line.Text = "Buffer";
 						line.TextOrientation = TextOrientation.Horizontal;
 						line.IntervalOffset = this.globalCycle - 1;
 						c.ChartAreas[0].AxisX.StripLines.Add(line);
@@ -962,7 +962,7 @@ namespace SpintronicsGUI
 					if (add)
 					{
 						StripLine line = new StripLine();
-						line.Text = "\nMNPs Added";
+						line.Text = "\nMNPs";
 						line.TextOrientation = TextOrientation.Horizontal;
 						line.IntervalOffset = this.globalCycle - 1;
 						c.ChartAreas[0].AxisX.StripLines.Add(line);
