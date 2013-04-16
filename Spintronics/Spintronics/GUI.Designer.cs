@@ -291,7 +291,6 @@ namespace SpintronicsGUI
 			this.startRunButton = new System.Windows.Forms.Button();
 			this.adjustedChart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.stopRunButton = new System.Windows.Forms.Button();
-			this.timeTareButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.rawChart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -359,35 +358,35 @@ namespace SpintronicsGUI
 			// startRunToolStripMenuItem
 			// 
 			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.startRunToolStripMenuItem.Text = "Start New";
 			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
 			// 
 			// stopRunToolStripMenuItem
 			// 
 			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopRunToolStripMenuItem.Text = "Stop";
 			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
 			// 
 			// saveRunFilesAsToolStripMenuItem
 			// 
 			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.saveRunFilesAsToolStripMenuItem.Text = "Save Files As...";
 			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAsToolStripMenuItem_Click);
 			// 
 			// openRunToolStripMenuItem
 			// 
 			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.openRunToolStripMenuItem.Text = "Open";
 			this.openRunToolStripMenuItem.Click += new System.EventHandler(this.openRunToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
@@ -994,7 +993,7 @@ namespace SpintronicsGUI
 			// startRunButton
 			// 
 			this.startRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.startRunButton.Location = new System.Drawing.Point(271, 531);
+			this.startRunButton.Location = new System.Drawing.Point(271, 537);
 			this.startRunButton.Name = "startRunButton";
 			this.startRunButton.Size = new System.Drawing.Size(92, 23);
 			this.startRunButton.TabIndex = 1;
@@ -1177,24 +1176,14 @@ namespace SpintronicsGUI
 			// stopRunButton
 			// 
 			this.stopRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.stopRunButton.Location = new System.Drawing.Point(365, 531);
+			this.stopRunButton.Enabled = false;
+			this.stopRunButton.Location = new System.Drawing.Point(369, 537);
 			this.stopRunButton.Name = "stopRunButton";
 			this.stopRunButton.Size = new System.Drawing.Size(92, 23);
 			this.stopRunButton.TabIndex = 1;
 			this.stopRunButton.Text = "Stop";
 			this.stopRunButton.UseVisualStyleBackColor = true;
 			this.stopRunButton.Click += new System.EventHandler(this.stopRun);
-			// 
-			// timeTareButton
-			// 
-			this.timeTareButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.timeTareButton.Location = new System.Drawing.Point(271, 560);
-			this.timeTareButton.Name = "timeTareButton";
-			this.timeTareButton.Size = new System.Drawing.Size(92, 23);
-			this.timeTareButton.TabIndex = 16;
-			this.timeTareButton.Text = "Tare Time";
-			this.timeTareButton.UseVisualStyleBackColor = true;
-			this.timeTareButton.Click += new System.EventHandler(this.timeTareButton_Click);
 			// 
 			// tabControl1
 			// 
@@ -2176,6 +2165,7 @@ namespace SpintronicsGUI
 			// addMnpButton
 			// 
 			this.addMnpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.addMnpButton.Enabled = false;
 			this.addMnpButton.Location = new System.Drawing.Point(830, 555);
 			this.addMnpButton.Name = "addMnpButton";
 			this.addMnpButton.Size = new System.Drawing.Size(75, 23);
@@ -2187,6 +2177,7 @@ namespace SpintronicsGUI
 			// addBufferButton
 			// 
 			this.addBufferButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.addBufferButton.Enabled = false;
 			this.addBufferButton.Location = new System.Drawing.Point(830, 525);
 			this.addBufferButton.Name = "addBufferButton";
 			this.addBufferButton.Size = new System.Drawing.Size(75, 23);
@@ -2214,7 +2205,7 @@ namespace SpintronicsGUI
 			// reactionWellLabel
 			// 
 			this.reactionWellLabel.AutoSize = true;
-			this.reactionWellLabel.Location = new System.Drawing.Point(9, 123);
+			this.reactionWellLabel.Location = new System.Drawing.Point(9, 86);
 			this.reactionWellLabel.Name = "reactionWellLabel";
 			this.reactionWellLabel.Size = new System.Drawing.Size(74, 13);
 			this.reactionWellLabel.TabIndex = 56;
@@ -2222,15 +2213,15 @@ namespace SpintronicsGUI
 			// 
 			// reactionWellTextBox
 			// 
-			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 140);
+			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 102);
 			this.reactionWellTextBox.Name = "reactionWellTextBox";
-			this.reactionWellTextBox.Size = new System.Drawing.Size(85, 20);
+			this.reactionWellTextBox.Size = new System.Drawing.Size(113, 20);
 			this.reactionWellTextBox.TabIndex = 57;
 			// 
 			// sampleLabel
 			// 
 			this.sampleLabel.AutoSize = true;
-			this.sampleLabel.Location = new System.Drawing.Point(107, 123);
+			this.sampleLabel.Location = new System.Drawing.Point(12, 125);
 			this.sampleLabel.Name = "sampleLabel";
 			this.sampleLabel.Size = new System.Drawing.Size(42, 13);
 			this.sampleLabel.TabIndex = 58;
@@ -2238,9 +2229,9 @@ namespace SpintronicsGUI
 			// 
 			// sampleTextBox
 			// 
-			this.sampleTextBox.Location = new System.Drawing.Point(109, 139);
+			this.sampleTextBox.Location = new System.Drawing.Point(11, 141);
 			this.sampleTextBox.Name = "sampleTextBox";
-			this.sampleTextBox.Size = new System.Drawing.Size(86, 20);
+			this.sampleTextBox.Size = new System.Drawing.Size(111, 20);
 			this.sampleTextBox.TabIndex = 59;
 			// 
 			// addBufferUnitLabel
@@ -2285,7 +2276,6 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.referenceTareCheckbox);
 			this.Controls.Add(this.amplitudeTareCheckbox);
 			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.timeTareButton);
 			this.Controls.Add(this.startRunButton);
 			this.Controls.Add(this.stopRunButton);
 			this.Controls.Add(this.groupBox1);
@@ -2372,7 +2362,6 @@ namespace SpintronicsGUI
 		private System.Windows.Forms.Label sensorsLabel7;
 		private System.Windows.Forms.Button selectAllButton;
 		private System.Windows.Forms.Button invertSelectionButton;
-		private System.Windows.Forms.Button timeTareButton;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;

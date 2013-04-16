@@ -33,7 +33,7 @@ namespace SpintronicsGUI
 		ProtocolHandler protocolHandler = new ProtocolHandler();
 		Microcontroller microcontroller;
 		string runFilesDirectory;
-		TextWriter initFile = null;
+		TextWriter logFile = null;
 		TextWriter dataFile1 = null;
 		TextWriter dataFile2 = null;
 		TextWriter dataFile3 = null;
@@ -92,6 +92,7 @@ namespace SpintronicsGUI
 			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);
 			this.addBufferUnitLabel.Text = this.configFile.defaultVolumeUnit;
 			this.addMnpUnitLabel.Text = this.configFile.defaultVolumeUnit;
+			this.reactionWellTextBox.Focus();
 		}
 
 		private void GUI_KeyDown(object sender, KeyEventArgs e)
@@ -745,6 +746,10 @@ namespace SpintronicsGUI
 			this.mostRecentAddBufferCycle = 0;
 			this.resultsSaved = false;
 
+			this.stopRunButton.Enabled = true;
+			this.addBufferButton.Enabled = true;
+			this.addMnpButton.Enabled = true;
+
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
 
@@ -803,6 +808,7 @@ namespace SpintronicsGUI
 			this.bufferingLabel.Visible = false;
 			this.bufferingProgressBar.Visible = false;
 			this.running = false;
+
 			if (((this.globalCycle - this.mostRecentAddBufferCycle) >= this.configFile.postProcessingCount) &&
 				(this.mostRecentAddBufferCycle > 0))
 			{
@@ -816,19 +822,10 @@ namespace SpintronicsGUI
 													"Minimum is " + this.configFile.postProcessingCount + " cycles, " +
 													"only " + (this.globalCycle - this.mostRecentAddBufferCycle) + " occurred";
 			}
-		}
 
-		/*
-		 * This tares the graph and sets new visible limits
-		 */
-		private void timeTareButton_Click(object sender, EventArgs e)
-		{
-			if (globalCycle == 0)
-				return;
-
-			this.tareIndexTextbox.Text = System.Convert.ToString(globalCycle - 1);
-			this.tareIndexTextbox.Focus();
-			this.timeTareButton.Focus();
+			this.stopRunButton.Enabled = false;
+			this.addMnpButton.Enabled = false;
+			this.addBufferButton.Enabled = false;
 		}
 
 		/*
@@ -904,11 +901,32 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please add an amount to the Buffer text box");
 				return;
 			}
-			this.initFile.WriteLine(globalCycle + "\t\tAdd " +
+			this.logFile.WriteLine(globalCycle + "\t\tAdd " +
 							this.addBufferVolumeTextBox.Text + " " +
 							this.configFile.defaultVolumeUnit + " Buffer (" +
 							this.configFile.bufferName + ")");
-			this.initFile.Flush();
+			this.logFile.Flush();
+
+			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+			{
+				foreach (Chart c in t.Controls.OfType<Chart>())
+				{
+					bool add = true;
+					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
+					{
+						if (l.IntervalOffset == (this.globalCycle - 1))
+							add = false;
+					}
+					if (add)
+					{
+						StripLine line = new StripLine();
+						line.Text = "Buffer Added";
+						line.TextOrientation = TextOrientation.Horizontal;
+						line.IntervalOffset = this.globalCycle - 1;
+						c.ChartAreas[0].AxisX.StripLines.Add(line);
+					}
+				}
+			}
 		}
 
 		private void addMnpButton_Click(object sender, EventArgs e)
@@ -923,13 +941,32 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please add an amount to the MNP text box");
 				return;
 			}
-			this.initFile.WriteLine(this.globalCycle + "\t\tAdd " +
+			this.logFile.WriteLine(this.globalCycle + "\t\tAdd " +
 							this.addMnpVolumeTextBox.Text + " " +
 							this.configFile.defaultVolumeUnit + " MNPs (" +
 							this.configFile.mnpsName + ")");
-			this.initFile.Flush();
+			this.logFile.Flush();
 
-			this.mostRecentAddBufferCycle = this.globalCycle;
+			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+			{
+				foreach (Chart c in t.Controls.OfType<Chart>())
+				{
+					bool add = true;
+					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
+					{
+						if(l.IntervalOffset == (this.globalCycle - 1))
+							add = false;
+					}
+					if (add)
+					{
+						StripLine line = new StripLine();
+						line.Text = "\nMNPs Added";
+						line.TextOrientation = TextOrientation.Horizontal;
+						line.IntervalOffset = this.globalCycle - 1;
+						c.ChartAreas[0].AxisX.StripLines.Add(line);
+					}
+				}
+			}
 		}
 
 		/*
@@ -1003,20 +1040,20 @@ namespace SpintronicsGUI
 				System.IO.Directory.CreateDirectory(runFilesDirectory);
 
 				string logFileNameBase = runFilesDirectory + "/";
-				initFile = new StreamWriter(logFileNameBase + "init.txt");
+				logFile = new StreamWriter(logFileNameBase + "log.txt");
 				dataFile1 = new StreamWriter(logFileNameBase + "HT.txt");
 				dataFile2 = new StreamWriter(logFileNameBase + "LT.txt");
 				dataFile3 = new StreamWriter(logFileNameBase + "CT.txt");
 
-				initFile.WriteLine("Reaction Well:\t" + this.reactionWellTextBox.Text);
-				initFile.WriteLine("Sample:\t\t" + this.sampleTextBox.Text + "\n");
-				initFile.WriteLine("Cycle\t\tDetails");
-				initFile.WriteLine("*********************************************");
-				initFile.WriteLine(globalCycle + "\t\tPreload " +
+				logFile.WriteLine("Reaction Well:\t" + this.reactionWellTextBox.Text);
+				logFile.WriteLine("Sample:\t\t" + this.sampleTextBox.Text + "\n");
+				logFile.WriteLine("Cycle\t\tDetails");
+				logFile.WriteLine("*********************************************");
+				logFile.WriteLine(globalCycle + "\t\tPreload " +
 							 this.configFile.preloadBufferVolume + " " +
 							 this.configFile.defaultVolumeUnit + " Buffer (" +
 							 this.configFile.bufferName + ")");
-				initFile.Flush();
+				logFile.Flush();
 				for (int i = 1; i <= 30; i++)
 				{
 					if (i == 16)
@@ -1140,7 +1177,7 @@ namespace SpintronicsGUI
 					File.Copy(this.runFilesDirectory + "/HT.txt", saveFile.FileName + "/HT.txt");
 					File.Copy(this.runFilesDirectory + "/LT.txt", saveFile.FileName + "/LT.txt");
 					File.Copy(this.runFilesDirectory + "/CT.txt", saveFile.FileName + "/CT.txt");
-					File.Copy(this.runFilesDirectory + "/init.txt", saveFile.FileName + "/init.txt");
+					File.Copy(this.runFilesDirectory + "/log.txt", saveFile.FileName + "/log.txt");
 					this.resultsSaved = true;
 				} catch (FileNotFoundException) {
 					MessageBox.Show("Error while saving files: One or more files could not be found");
@@ -1160,6 +1197,9 @@ namespace SpintronicsGUI
 			MessageBox.Show("Post processing!");
 		}
 
+		/*
+		 * This starts the Open dialog and loads the opened run files into the charts for viewing
+		 */
 		private void openRunToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (!this.resultsSaved)
@@ -1175,7 +1215,7 @@ namespace SpintronicsGUI
 			openFile.Multiselect = false;
 			if (openFile.ShowDialog() == DialogResult.OK)
 			{
-				if(!openFile.FileName.Contains("init.txt"))
+				if(!openFile.FileName.Contains("log.txt"))
 				{
 					MessageBox.Show("That is not a valid init.txt file");
 					return;
@@ -1233,14 +1273,12 @@ namespace SpintronicsGUI
 								if (j >= 9)
 								{
 									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									//if (i != 0)
 									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
 									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									//if (i != 0)
 									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
@@ -1259,14 +1297,12 @@ namespace SpintronicsGUI
 								if (j >= 9)
 								{
 									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									//if (i != 0)
 									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
 									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									//if (i != 0)
 									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
@@ -1285,14 +1321,12 @@ namespace SpintronicsGUI
 								if (j >= 9)
 								{
 									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									//if (i != 0)
 									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
 									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									//if (i != 0)
 									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
