@@ -1115,6 +1115,7 @@ namespace SpintronicsGUI
 					configFile.setCoilDcOffset(preferenceWindow.coilDcOffset);
 					configFile.setCoilDcOffsetUnit(preferenceWindow.coilDcOffsetUnit);
 					configFile.setMeasurementPeriod(preferenceWindow.measurementPeriod);
+					configFile.setPostProcessingCount(preferenceWindow.postProcessingCount);
 					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
 					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
 				}

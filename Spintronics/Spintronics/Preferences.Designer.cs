@@ -134,11 +134,16 @@ namespace SpintronicsGUI
 			this.bufferNameLabel = new System.Windows.Forms.Label();
 			this.bufferNameTextBox = new System.Windows.Forms.TextBox();
 			this.revertLogInformationButton = new System.Windows.Forms.Button();
+			this.postProcessingTabPage = new System.Windows.Forms.TabPage();
+			this.revertPostProcessingButton = new System.Windows.Forms.Button();
+			this.postProcessingCountTextBox = new System.Windows.Forms.TextBox();
+			this.postProcessingCountLabel = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
 			this.pinMultiplexerValuesTabPage.SuspendLayout();
 			this.logInformationTabPage.SuspendLayout();
+			this.postProcessingTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// doneButton
@@ -167,6 +172,7 @@ namespace SpintronicsGUI
 			this.tabControl1.Controls.Add(this.measurementParametersTabPage);
 			this.tabControl1.Controls.Add(this.pinMultiplexerValuesTabPage);
 			this.tabControl1.Controls.Add(this.logInformationTabPage);
+			this.tabControl1.Controls.Add(this.postProcessingTabPage);
 			this.tabControl1.Location = new System.Drawing.Point(13, 12);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -1114,7 +1120,46 @@ namespace SpintronicsGUI
 			this.revertLogInformationButton.TabIndex = 1;
 			this.revertLogInformationButton.Text = "Revert";
 			this.revertLogInformationButton.UseVisualStyleBackColor = true;
-			this.revertLogInformationButton.Click += new System.EventHandler(this.revertLogInformation_Click);
+			this.revertLogInformationButton.Click += new System.EventHandler(this.revertLogInformationButton_Click);
+			// 
+			// postProcessingTabPage
+			// 
+			this.postProcessingTabPage.Controls.Add(this.revertPostProcessingButton);
+			this.postProcessingTabPage.Controls.Add(this.postProcessingCountTextBox);
+			this.postProcessingTabPage.Controls.Add(this.postProcessingCountLabel);
+			this.postProcessingTabPage.Location = new System.Drawing.Point(4, 22);
+			this.postProcessingTabPage.Name = "postProcessingTabPage";
+			this.postProcessingTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.postProcessingTabPage.Size = new System.Drawing.Size(524, 227);
+			this.postProcessingTabPage.TabIndex = 4;
+			this.postProcessingTabPage.Text = "Post Processing";
+			this.postProcessingTabPage.UseVisualStyleBackColor = true;
+			// 
+			// revertPostProcessingButton
+			// 
+			this.revertPostProcessingButton.Location = new System.Drawing.Point(6, 198);
+			this.revertPostProcessingButton.Name = "revertPostProcessingButton";
+			this.revertPostProcessingButton.Size = new System.Drawing.Size(75, 23);
+			this.revertPostProcessingButton.TabIndex = 2;
+			this.revertPostProcessingButton.Text = "Revert";
+			this.revertPostProcessingButton.UseVisualStyleBackColor = true;
+			this.revertPostProcessingButton.Click += new System.EventHandler(this.revertPostProcessingButton_Click);
+			// 
+			// postProcessingCountTextBox
+			// 
+			this.postProcessingCountTextBox.Location = new System.Drawing.Point(26, 34);
+			this.postProcessingCountTextBox.Name = "postProcessingCountTextBox";
+			this.postProcessingCountTextBox.Size = new System.Drawing.Size(100, 20);
+			this.postProcessingCountTextBox.TabIndex = 1;
+			// 
+			// postProcessingCountLabel
+			// 
+			this.postProcessingCountLabel.AutoSize = true;
+			this.postProcessingCountLabel.Location = new System.Drawing.Point(23, 17);
+			this.postProcessingCountLabel.Name = "postProcessingCountLabel";
+			this.postProcessingCountLabel.Size = new System.Drawing.Size(191, 13);
+			this.postProcessingCountLabel.TabIndex = 0;
+			this.postProcessingCountLabel.Text = "Number of Samples to Use for Average";
 			// 
 			// Preferences
 			// 
@@ -1135,6 +1180,8 @@ namespace SpintronicsGUI
 			this.pinMultiplexerValuesTabPage.PerformLayout();
 			this.logInformationTabPage.ResumeLayout(false);
 			this.logInformationTabPage.PerformLayout();
+			this.postProcessingTabPage.ResumeLayout(false);
+			this.postProcessingTabPage.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1245,5 +1292,9 @@ namespace SpintronicsGUI
 		private TextBox coilDcOffsetUnitTextBox;
 		private TextBox coilAmplitudeUnitTextBox;
 		private TextBox wheatstoneAmplitudeUnitTextBox;
+		private TabPage postProcessingTabPage;
+		private TextBox postProcessingCountTextBox;
+		private Label postProcessingCountLabel;
+		private Button revertPostProcessingButton;
 	}
 }

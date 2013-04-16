@@ -27,6 +27,7 @@ namespace SpintronicsGUI
 		public float coilDcOffset = 0;
 		public string coilDcOffsetUnit = "V";
 		public float measurementPeriod = 1;
+		public int postProcessingCount = 10;
 
 		public Configuration()
 		{
@@ -57,6 +58,7 @@ namespace SpintronicsGUI
 				this.coilDcOffset = readFloatConfiguration("CoilDcOffset");
 				this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
 				this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
+				this.postProcessingCount = readIntConfiguration("PostProcessingCount");
 			} catch (IOException) {
 
 			} catch (UnauthorizedAccessException) {
@@ -92,6 +94,7 @@ namespace SpintronicsGUI
 				file.WriteLine("CoilDcOffset:" + this.coilDcOffset);
 				file.WriteLine("CoilDcOffsetUnit:" + this.coilDcOffsetUnit);
 				file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
+				file.WriteLine("PostProcessingCount:" + this.postProcessingCount);
 				file.Flush();
 				file.Close();
 				file.Dispose();
@@ -284,6 +287,12 @@ namespace SpintronicsGUI
 		public void setMeasurementPeriod(float period)
 		{
 			this.measurementPeriod = period;
+			saveConfigurations();
+		}
+
+		public void setPostProcessingCount(int count)
+		{
+			this.postProcessingCount = count;
 			saveConfigurations();
 		}
 	}

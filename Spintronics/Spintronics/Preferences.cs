@@ -29,6 +29,7 @@ namespace SpintronicsGUI
 		public float coilDcOffset;
 		public string coilDcOffsetUnit;
 		public float measurementPeriod;
+		public int postProcessingCount;
 
 		public Preferences(Configuration config)
 		{
@@ -50,6 +51,7 @@ namespace SpintronicsGUI
 			this.coilDcOffset = config.coilDcOffset;
 			this.coilDcOffsetUnit = config.coilDcOffsetUnit;
 			this.measurementPeriod = config.measurementPeriod;
+			this.postProcessingCount = config.postProcessingCount;
 			populateFields();
 		}
 
@@ -85,6 +87,7 @@ namespace SpintronicsGUI
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
 			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
+			this.postProcessingCountTextBox.Text = System.Convert.ToString(this.postProcessingCount);
 		}
 
 		private bool saveGeneralTabPreferences()
@@ -199,7 +202,7 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private void revertLogInformation_Click(object sender, EventArgs e)
+		private void revertLogInformationButton_Click(object sender, EventArgs e)
 		{
 			this.bufferNameTextBox.Text = this.bufferName;
 			this.mnpsNameTextBox.Text = this.mnpsName;
@@ -207,6 +210,28 @@ namespace SpintronicsGUI
 			this.defaultAddBufferVolumeTextBox.Text = System.Convert.ToString(this.defaultAddBufferVolume);
 			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
 			this.defaultVolumeUnitComboBox.SelectedItem = this.defaultVolumeUnit;
+		}
+
+		private bool savePostProcessingTabPreferences()
+		{
+			try {
+				this.postProcessingCount = System.Convert.ToInt32(this.postProcessingCountTextBox.Text);
+				return true;
+			} catch (ArgumentNullException) {
+				MessageBox.Show("Please enter a value for all fields");
+				return false;
+			} catch (FormatException) {
+				MessageBox.Show("Please enter valid value for all fields");
+				return false;
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter valid value for all fields");
+				return false;
+			}
+		}
+
+		private void revertPostProcessingButton_Click(object sender, EventArgs e)
+		{
+			this.postProcessingCountTextBox.Text = System.Convert.ToString(this.postProcessingCount);
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
@@ -218,6 +243,8 @@ namespace SpintronicsGUI
 			if (!savePinAssignmentsTabPreferences())
 				return;
 			if (!saveLogInformationTabPreferences())
+				return;
+			if (!savePostProcessingTabPreferences())
 				return;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
