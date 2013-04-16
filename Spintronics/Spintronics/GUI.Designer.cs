@@ -2224,6 +2224,7 @@ namespace SpintronicsGUI
 			// 
 			// addBufferUnitLabel
 			// 
+			this.addBufferUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addBufferUnitLabel.AutoSize = true;
 			this.addBufferUnitLabel.Location = new System.Drawing.Point(782, 532);
 			this.addBufferUnitLabel.Name = "addBufferUnitLabel";
@@ -2233,6 +2234,7 @@ namespace SpintronicsGUI
 			// 
 			// addMnpUnitLabel
 			// 
+			this.addMnpUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addMnpUnitLabel.AutoSize = true;
 			this.addMnpUnitLabel.Location = new System.Drawing.Point(782, 560);
 			this.addMnpUnitLabel.Name = "addMnpUnitLabel";

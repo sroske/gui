@@ -171,7 +171,7 @@ namespace SpintronicsGUI
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(532, 253);
-			this.tabControl1.TabIndex = 2;
+			this.tabControl1.TabIndex = 0;
 			// 
 			// generalTabPage
 			// 
@@ -755,7 +755,7 @@ namespace SpintronicsGUI
 			this.revertPinAssignmentsButton.Location = new System.Drawing.Point(6, 198);
 			this.revertPinAssignmentsButton.Name = "revertPinAssignmentsButton";
 			this.revertPinAssignmentsButton.Size = new System.Drawing.Size(75, 23);
-			this.revertPinAssignmentsButton.TabIndex = 32;
+			this.revertPinAssignmentsButton.TabIndex = 1;
 			this.revertPinAssignmentsButton.Text = "Revert";
 			this.revertPinAssignmentsButton.UseVisualStyleBackColor = true;
 			this.revertPinAssignmentsButton.Click += new System.EventHandler(this.revertPinAssignmentsButton_Click);
@@ -765,84 +765,84 @@ namespace SpintronicsGUI
 			this.textBox30.Location = new System.Drawing.Point(447, 145);
 			this.textBox30.Name = "textBox30";
 			this.textBox30.Size = new System.Drawing.Size(40, 20);
-			this.textBox30.TabIndex = 30;
+			this.textBox30.TabIndex = 0;
 			// 
 			// textBox29
 			// 
 			this.textBox29.Location = new System.Drawing.Point(401, 145);
 			this.textBox29.Name = "textBox29";
 			this.textBox29.Size = new System.Drawing.Size(40, 20);
-			this.textBox29.TabIndex = 29;
+			this.textBox29.TabIndex = 0;
 			// 
 			// textBox28
 			// 
 			this.textBox28.Location = new System.Drawing.Point(355, 145);
 			this.textBox28.Name = "textBox28";
 			this.textBox28.Size = new System.Drawing.Size(40, 20);
-			this.textBox28.TabIndex = 28;
+			this.textBox28.TabIndex = 0;
 			// 
 			// textBox27
 			// 
 			this.textBox27.Location = new System.Drawing.Point(309, 145);
 			this.textBox27.Name = "textBox27";
 			this.textBox27.Size = new System.Drawing.Size(40, 20);
-			this.textBox27.TabIndex = 27;
+			this.textBox27.TabIndex = 0;
 			// 
 			// textBox26
 			// 
 			this.textBox26.Location = new System.Drawing.Point(263, 145);
 			this.textBox26.Name = "textBox26";
 			this.textBox26.Size = new System.Drawing.Size(40, 20);
-			this.textBox26.TabIndex = 26;
+			this.textBox26.TabIndex = 0;
 			// 
 			// textBox25
 			// 
 			this.textBox25.Location = new System.Drawing.Point(217, 145);
 			this.textBox25.Name = "textBox25";
 			this.textBox25.Size = new System.Drawing.Size(40, 20);
-			this.textBox25.TabIndex = 25;
+			this.textBox25.TabIndex = 0;
 			// 
 			// textBox24
 			// 
 			this.textBox24.Location = new System.Drawing.Point(171, 145);
 			this.textBox24.Name = "textBox24";
 			this.textBox24.Size = new System.Drawing.Size(40, 20);
-			this.textBox24.TabIndex = 24;
+			this.textBox24.TabIndex = 0;
 			// 
 			// textBox23
 			// 
 			this.textBox23.Location = new System.Drawing.Point(125, 145);
 			this.textBox23.Name = "textBox23";
 			this.textBox23.Size = new System.Drawing.Size(40, 20);
-			this.textBox23.TabIndex = 23;
+			this.textBox23.TabIndex = 0;
 			// 
 			// textBox12
 			// 
 			this.textBox12.Location = new System.Drawing.Point(79, 89);
 			this.textBox12.Name = "textBox12";
 			this.textBox12.Size = new System.Drawing.Size(40, 20);
-			this.textBox12.TabIndex = 22;
+			this.textBox12.TabIndex = 0;
 			// 
 			// textBox13
 			// 
 			this.textBox13.Location = new System.Drawing.Point(125, 89);
 			this.textBox13.Name = "textBox13";
 			this.textBox13.Size = new System.Drawing.Size(40, 20);
-			this.textBox13.TabIndex = 21;
+			this.textBox13.TabIndex = 0;
 			// 
 			// textBox14
 			// 
 			this.textBox14.Location = new System.Drawing.Point(171, 89);
 			this.textBox14.Name = "textBox14";
 			this.textBox14.Size = new System.Drawing.Size(40, 20);
-			this.textBox14.TabIndex = 20;
+			this.textBox14.TabIndex = 0;
 			// 
 			// textBox15
 			// 
 			this.textBox15.Location = new System.Drawing.Point(217, 89);
 			this.textBox15.Name = "textBox15";
 			this.textBox15.Size = new System.Drawing.Size(40, 20);
-			this.textBox15.TabIndex = 19;
+			this.textBox15.TabIndex = 0;
 			// 
 			// textBox16
 			// 
@@ -850,126 +850,126 @@ namespace SpintronicsGUI
 			this.textBox16.Location = new System.Drawing.Point(263, 89);
 			this.textBox16.Name = "textBox16";
 			this.textBox16.Size = new System.Drawing.Size(40, 20);
-			this.textBox16.TabIndex = 18;
+			this.textBox16.TabIndex = 0;
 			// 
 			// textBox17
 			// 
 			this.textBox17.Location = new System.Drawing.Point(309, 89);
 			this.textBox17.Name = "textBox17";
 			this.textBox17.Size = new System.Drawing.Size(40, 20);
-			this.textBox17.TabIndex = 17;
+			this.textBox17.TabIndex = 0;
 			// 
 			// textBox18
 			// 
 			this.textBox18.Location = new System.Drawing.Point(355, 89);
 			this.textBox18.Name = "textBox18";
 			this.textBox18.Size = new System.Drawing.Size(40, 20);
-			this.textBox18.TabIndex = 16;
+			this.textBox18.TabIndex = 0;
 			// 
 			// textBox19
 			// 
 			this.textBox19.Location = new System.Drawing.Point(401, 89);
 			this.textBox19.Name = "textBox19";
 			this.textBox19.Size = new System.Drawing.Size(40, 20);
-			this.textBox19.TabIndex = 15;
+			this.textBox19.TabIndex = 0;
 			// 
 			// textBox20
 			// 
 			this.textBox20.Location = new System.Drawing.Point(447, 89);
 			this.textBox20.Name = "textBox20";
 			this.textBox20.Size = new System.Drawing.Size(40, 20);
-			this.textBox20.TabIndex = 14;
+			this.textBox20.TabIndex = 0;
 			// 
 			// textBox21
 			// 
 			this.textBox21.Location = new System.Drawing.Point(33, 145);
 			this.textBox21.Name = "textBox21";
 			this.textBox21.Size = new System.Drawing.Size(40, 20);
-			this.textBox21.TabIndex = 13;
+			this.textBox21.TabIndex = 0;
 			// 
 			// textBox22
 			// 
 			this.textBox22.Location = new System.Drawing.Point(79, 145);
 			this.textBox22.Name = "textBox22";
 			this.textBox22.Size = new System.Drawing.Size(40, 20);
-			this.textBox22.TabIndex = 12;
+			this.textBox22.TabIndex = 0;
 			// 
 			// textBox11
 			// 
 			this.textBox11.Location = new System.Drawing.Point(33, 89);
 			this.textBox11.Name = "textBox11";
 			this.textBox11.Size = new System.Drawing.Size(40, 20);
-			this.textBox11.TabIndex = 11;
+			this.textBox11.TabIndex = 0;
 			// 
 			// textBox10
 			// 
 			this.textBox10.Location = new System.Drawing.Point(447, 31);
 			this.textBox10.Name = "textBox10";
 			this.textBox10.Size = new System.Drawing.Size(40, 20);
-			this.textBox10.TabIndex = 10;
+			this.textBox10.TabIndex = 0;
 			// 
 			// textBox09
 			// 
 			this.textBox09.Location = new System.Drawing.Point(401, 31);
 			this.textBox09.Name = "textBox09";
 			this.textBox09.Size = new System.Drawing.Size(40, 20);
-			this.textBox09.TabIndex = 9;
+			this.textBox09.TabIndex = 0;
 			// 
 			// textBox08
 			// 
 			this.textBox08.Location = new System.Drawing.Point(355, 31);
 			this.textBox08.Name = "textBox08";
 			this.textBox08.Size = new System.Drawing.Size(40, 20);
-			this.textBox08.TabIndex = 8;
+			this.textBox08.TabIndex = 0;
 			// 
 			// textBox07
 			// 
 			this.textBox07.Location = new System.Drawing.Point(309, 31);
 			this.textBox07.Name = "textBox07";
 			this.textBox07.Size = new System.Drawing.Size(40, 20);
-			this.textBox07.TabIndex = 7;
+			this.textBox07.TabIndex = 0;
 			// 
 			// textBox06
 			// 
 			this.textBox06.Location = new System.Drawing.Point(263, 31);
 			this.textBox06.Name = "textBox06";
 			this.textBox06.Size = new System.Drawing.Size(40, 20);
-			this.textBox06.TabIndex = 6;
+			this.textBox06.TabIndex = 0;
 			// 
 			// textBox05
 			// 
 			this.textBox05.Location = new System.Drawing.Point(217, 31);
 			this.textBox05.Name = "textBox05";
 			this.textBox05.Size = new System.Drawing.Size(40, 20);
-			this.textBox05.TabIndex = 5;
+			this.textBox05.TabIndex = 0;
 			// 
 			// textBox04
 			// 
 			this.textBox04.Location = new System.Drawing.Point(171, 31);
 			this.textBox04.Name = "textBox04";
 			this.textBox04.Size = new System.Drawing.Size(40, 20);
-			this.textBox04.TabIndex = 4;
+			this.textBox04.TabIndex = 0;
 			// 
 			// textBox03
 			// 
 			this.textBox03.Location = new System.Drawing.Point(125, 31);
 			this.textBox03.Name = "textBox03";
 			this.textBox03.Size = new System.Drawing.Size(40, 20);
-			this.textBox03.TabIndex = 3;
+			this.textBox03.TabIndex = 0;
 			// 
 			// textBox02
 			// 
 			this.textBox02.Location = new System.Drawing.Point(79, 31);
 			this.textBox02.Name = "textBox02";
 			this.textBox02.Size = new System.Drawing.Size(40, 20);
-			this.textBox02.TabIndex = 2;
+			this.textBox02.TabIndex = 0;
 			// 
 			// textBox01
 			// 
 			this.textBox01.Location = new System.Drawing.Point(33, 31);
 			this.textBox01.Name = "textBox01";
 			this.textBox01.Size = new System.Drawing.Size(40, 20);
-			this.textBox01.TabIndex = 1;
+			this.textBox01.TabIndex = 0;
 			// 
 			// label1
 			// 
@@ -1031,7 +1031,7 @@ namespace SpintronicsGUI
 			this.defaultAddMnpsVolumeTextBox.Location = new System.Drawing.Point(237, 74);
 			this.defaultAddMnpsVolumeTextBox.Name = "defaultAddMnpsVolumeTextBox";
 			this.defaultAddMnpsVolumeTextBox.Size = new System.Drawing.Size(100, 20);
-			this.defaultAddMnpsVolumeTextBox.TabIndex = 13;
+			this.defaultAddMnpsVolumeTextBox.TabIndex = 0;
 			// 
 			// defaultAddMnpsVolumeLabel
 			// 
@@ -1047,7 +1047,7 @@ namespace SpintronicsGUI
 			this.defaultAddBufferVolumeTextBox.Location = new System.Drawing.Point(237, 36);
 			this.defaultAddBufferVolumeTextBox.Name = "defaultAddBufferVolumeTextBox";
 			this.defaultAddBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
-			this.defaultAddBufferVolumeTextBox.TabIndex = 10;
+			this.defaultAddBufferVolumeTextBox.TabIndex = 0;
 			// 
 			// defaultAddBufferVolumeLabel
 			// 
@@ -1063,7 +1063,7 @@ namespace SpintronicsGUI
 			this.preloadBufferVolumeTextBox.Location = new System.Drawing.Point(3, 113);
 			this.preloadBufferVolumeTextBox.Name = "preloadBufferVolumeTextBox";
 			this.preloadBufferVolumeTextBox.Size = new System.Drawing.Size(100, 20);
-			this.preloadBufferVolumeTextBox.TabIndex = 7;
+			this.preloadBufferVolumeTextBox.TabIndex = 0;
 			// 
 			// preloadBufferVolumeLabel
 			// 
@@ -1079,7 +1079,7 @@ namespace SpintronicsGUI
 			this.mnpsNameTextBox.Location = new System.Drawing.Point(3, 74);
 			this.mnpsNameTextBox.Name = "mnpsNameTextBox";
 			this.mnpsNameTextBox.Size = new System.Drawing.Size(100, 20);
-			this.mnpsNameTextBox.TabIndex = 5;
+			this.mnpsNameTextBox.TabIndex = 0;
 			// 
 			// mnpsNameLabel
 			// 
@@ -1104,7 +1104,7 @@ namespace SpintronicsGUI
 			this.bufferNameTextBox.Location = new System.Drawing.Point(3, 35);
 			this.bufferNameTextBox.Name = "bufferNameTextBox";
 			this.bufferNameTextBox.Size = new System.Drawing.Size(100, 20);
-			this.bufferNameTextBox.TabIndex = 2;
+			this.bufferNameTextBox.TabIndex = 0;
 			// 
 			// revertLogInformationButton
 			// 

@@ -39,65 +39,83 @@ namespace SpintronicsGUI
 				writeConfigFileValues();
 			}
 
-			this.defaultSaveDirectory = readStringConfiguration("DefaultSaveDirectory");
-			this.sensorMultiplexerValues = readSensorMultiplexerValues();
-			this.bufferName = readStringConfiguration("BufferName");
-			this.mnpsName = readStringConfiguration("MnpsName");
-			this.preloadBufferVolume = readIntConfiguration("PreloadBufferVolume");
-			this.defaultAddBufferVolume = readIntConfiguration("DefaultAddBufferVolume");
-			this.defaultAddMnpsVolume = readIntConfiguration("DefaultAddMnpsVolume");
-			this.defaultVolumeUnit = readStringConfiguration("DefaultVolumeUnit");
-			this.wheatstoneAmplitude = readFloatConfiguration("WheatstoneAmplitude");
-			this.wheatstoneAmplitudeUnit = readStringConfiguration("WheatstoneAmplitudeUnit");
-			this.wheatstoneFrequency = readFloatConfiguration("WheatstoneFrequency");
-			this.coilAmplitude = readFloatConfiguration("CoilAmplitude");
-			this.coilAmplitudeUnit = readStringConfiguration("CoilAmplitudeUnit");
-			this.coilFrequency = readFloatConfiguration("CoilFrequency");
-			this.coilDcOffset = readFloatConfiguration("CoilDcOffset");
-			this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
-			this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
+			try {
+				this.defaultSaveDirectory = readStringConfiguration("DefaultSaveDirectory");
+				this.sensorMultiplexerValues = readSensorMultiplexerValues();
+				this.bufferName = readStringConfiguration("BufferName");
+				this.mnpsName = readStringConfiguration("MnpsName");
+				this.preloadBufferVolume = readIntConfiguration("PreloadBufferVolume");
+				this.defaultAddBufferVolume = readIntConfiguration("DefaultAddBufferVolume");
+				this.defaultAddMnpsVolume = readIntConfiguration("DefaultAddMnpsVolume");
+				this.defaultVolumeUnit = readStringConfiguration("DefaultVolumeUnit");
+				this.wheatstoneAmplitude = readFloatConfiguration("WheatstoneAmplitude");
+				this.wheatstoneAmplitudeUnit = readStringConfiguration("WheatstoneAmplitudeUnit");
+				this.wheatstoneFrequency = readFloatConfiguration("WheatstoneFrequency");
+				this.coilAmplitude = readFloatConfiguration("CoilAmplitude");
+				this.coilAmplitudeUnit = readStringConfiguration("CoilAmplitudeUnit");
+				this.coilFrequency = readFloatConfiguration("CoilFrequency");
+				this.coilDcOffset = readFloatConfiguration("CoilDcOffset");
+				this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
+				this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
+			} catch (IOException) {
+
+			} catch (UnauthorizedAccessException) {
+
+			}
 		}
 
 		private void writeConfigFileValues()
 		{
-			StreamWriter file = new StreamWriter("./config.ini");
-			file.WriteLine("DefaultSaveDirectory:" + this.defaultSaveDirectory);
-			file.WriteLine("TempFoldersToKeep:" + this.tempFoldersToKeep);
-			file.Write("SensorMultiplexerValues:");
-			for (int i = 0; i < sensorMultiplexerValues.Length; i++)
-			{
-				file.Write("-" + sensorMultiplexerValues[i]);
-			}
-			file.Write("-\n");
-			file.WriteLine("BufferName:" + this.bufferName);
-			file.WriteLine("MnpsName:" + this.mnpsName);
-			file.WriteLine("PreloadBufferVolume:" + this.preloadBufferVolume);
-			file.WriteLine("DefaultAddBufferVolume:" + this.defaultAddBufferVolume);
-			file.WriteLine("DefaultAddMnpsVolume:" + this.defaultAddMnpsVolume);
-			file.WriteLine("DefaultVolumeUnit:" + this.defaultVolumeUnit);
+			try {
+				StreamWriter file = new StreamWriter("./config.ini");
+				file.WriteLine("DefaultSaveDirectory:" + this.defaultSaveDirectory);
+				file.WriteLine("TempFoldersToKeep:" + this.tempFoldersToKeep);
+				file.Write("SensorMultiplexerValues:");
+				for (int i = 0; i < sensorMultiplexerValues.Length; i++)
+				{
+					file.Write("-" + sensorMultiplexerValues[i]);
+				}
+				file.Write("-\n");
+				file.WriteLine("BufferName:" + this.bufferName);
+				file.WriteLine("MnpsName:" + this.mnpsName);
+				file.WriteLine("PreloadBufferVolume:" + this.preloadBufferVolume);
+				file.WriteLine("DefaultAddBufferVolume:" + this.defaultAddBufferVolume);
+				file.WriteLine("DefaultAddMnpsVolume:" + this.defaultAddMnpsVolume);
+				file.WriteLine("DefaultVolumeUnit:" + this.defaultVolumeUnit);
 
-			file.WriteLine("WheatstoneAmplitude:" + this.wheatstoneAmplitude);
-			file.WriteLine("WheatstoneAmplitudeUnit:" + this.wheatstoneAmplitudeUnit);
-			file.WriteLine("WheatstoneFrequency:" + this.wheatstoneFrequency);
-			file.WriteLine("CoilAmplitude:" + this.coilAmplitude);
-			file.WriteLine("CoilAmplitudeUnit:" + this.coilAmplitudeUnit);
-			file.WriteLine("CoilFrequency:" + this.coilFrequency);
-			file.WriteLine("CoilDcOffset:" + this.coilDcOffset);
-			file.WriteLine("CoilDcOffsetUnit:" + this.coilDcOffsetUnit);
-			file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
-			file.Flush();
-			file.Close();
-			file.Dispose();
+				file.WriteLine("WheatstoneAmplitude:" + this.wheatstoneAmplitude);
+				file.WriteLine("WheatstoneAmplitudeUnit:" + this.wheatstoneAmplitudeUnit);
+				file.WriteLine("WheatstoneFrequency:" + this.wheatstoneFrequency);
+				file.WriteLine("CoilAmplitude:" + this.coilAmplitude);
+				file.WriteLine("CoilAmplitudeUnit:" + this.coilAmplitudeUnit);
+				file.WriteLine("CoilFrequency:" + this.coilFrequency);
+				file.WriteLine("CoilDcOffset:" + this.coilDcOffset);
+				file.WriteLine("CoilDcOffsetUnit:" + this.coilDcOffsetUnit);
+				file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
+				file.Flush();
+				file.Close();
+				file.Dispose();
+			} catch (UnauthorizedAccessException) {
+				
+			} catch (IOException) {
+				
+			}
 		}
 
 
 		public void saveConfigurations()
 		{
-			FileStream configFile;
-			configFile = File.Create("./config.ini");
-			configFile.Close();
-			configFile.Dispose();
-			writeConfigFileValues();
+			try {
+				FileStream configFile;
+				configFile = File.Create("./config.ini");
+				configFile.Close();
+				configFile.Dispose();
+				writeConfigFileValues();
+			} catch (UnauthorizedAccessException) {
+				
+			} catch (IOException) {
+				
+			}
 		}
 
 
