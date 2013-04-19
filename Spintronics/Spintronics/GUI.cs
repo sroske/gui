@@ -48,6 +48,7 @@ namespace SpintronicsGUI
 		int recalculate = 1;
 		int cycleSensorCount = 0;
 		int mostRecentAddBufferCycle = 0;
+		int enableAddBufferAndMnpAtCycle;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 
 		public GUI(string comPort)
@@ -173,15 +174,10 @@ namespace SpintronicsGUI
 					}
 				}
 
-				if (globalCycle > configFile.postProcessingCount)
+				if (globalCycle >= this.enableAddBufferAndMnpAtCycle)
 				{
 					this.addBufferButton.Enabled = true;
 					this.addMnpButton.Enabled = true;
-				}
-				else
-				{
-					this.addBufferButton.Enabled = false;
-					this.addMnpButton.Enabled = false;
 				}
 
 				cycleSensorCount = sensorId;
@@ -759,6 +755,7 @@ namespace SpintronicsGUI
 
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
+			this.enableAddBufferAndMnpAtCycle = configFile.postProcessingCount;
 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
@@ -820,18 +817,22 @@ namespace SpintronicsGUI
 			this.bufferingProgressBar.Visible = false;
 			this.running = false;
 
-			if (((this.globalCycle - this.mostRecentAddBufferCycle) >= this.configFile.postProcessingCount) &&
-				(this.mostRecentAddBufferCycle > 0))
+			if(this.mostRecentAddBufferCycle == 0)
 			{
-				this.postProcessingToolStripMenuItem.Enabled = true;
-				this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
+				this.postProcessingToolStripMenuItem.Enabled = false;
+				this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
 			}
-			else
+			else if ((this.globalCycle - this.mostRecentAddBufferCycle) < this.configFile.postProcessingCount)
 			{
 				this.postProcessingToolStripMenuItem.Enabled = false;
 				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
 													"Minimum is " + this.configFile.postProcessingCount + " cycles, " +
 													"only " + (this.globalCycle - this.mostRecentAddBufferCycle) + " occurred";
+			}
+			else
+			{
+				this.postProcessingToolStripMenuItem.Enabled = true;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
 			}
 
 			this.stopRunButton.Enabled = false;
@@ -923,24 +924,19 @@ namespace SpintronicsGUI
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
-					bool add = true;
-					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
-					{
-						if ((l.IntervalOffset == (this.globalCycle)) && (l.Text.Contains("Buffer")))
-							add = false;
-					}
-					if (add)
-					{
-						StripLine line = new StripLine();
-						line.Text = "Buffer";
-						line.TextOrientation = TextOrientation.Horizontal;
-						line.IntervalOffset = this.globalCycle;
-						line.StripWidth = 1;
-						line.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
-						c.ChartAreas[0].AxisX.StripLines.Add(line);
-					}
+					StripLine line = new StripLine();
+					line.Text = "Buffer";
+					line.TextOrientation = TextOrientation.Horizontal;
+					line.IntervalOffset = this.globalCycle;
+					line.StripWidth = 1;
+					line.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
+					c.ChartAreas[0].AxisX.StripLines.Add(line);
 				}
 			}
+
+			this.addBufferButton.Enabled = false;
+			this.addMnpButton.Enabled = false;
+			this.enableAddBufferAndMnpAtCycle = globalCycle + 1;
 		}
 
 		private void addMnpButton_Click(object sender, EventArgs e)
@@ -965,24 +961,21 @@ namespace SpintronicsGUI
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
-					bool add = true;
-					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
-					{
-						if((l.IntervalOffset == (this.globalCycle)) && (l.Text.Contains("MNPs")))
-							add = false;
-					}
-					if (add)
-					{
-						StripLine line = new StripLine();
-						line.Text = "\nMNPs";
-						line.TextOrientation = TextOrientation.Horizontal;
-						line.IntervalOffset = this.globalCycle;
-						line.StripWidth = 1;
-						line.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
-						c.ChartAreas[0].AxisX.StripLines.Add(line);
-					}
+					StripLine line = new StripLine();
+					line.Text = "\nMNPs";
+					line.TextOrientation = TextOrientation.Horizontal;
+					line.IntervalOffset = this.globalCycle;
+					line.StripWidth = 1;
+					line.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
+					c.ChartAreas[0].AxisX.StripLines.Add(line);
 				}
 			}
+
+			this.mostRecentAddBufferCycle = this.globalCycle;
+
+			this.addBufferButton.Enabled = false;
+			this.addMnpButton.Enabled = false;
+			this.enableAddBufferAndMnpAtCycle = globalCycle + 1;
 		}
 
 		/*
@@ -1157,7 +1150,8 @@ namespace SpintronicsGUI
 			}
 			else
 			{
-				MessageBox.Show("Please stop the run before attempting to adjust configurations");
+				Preferences preferenceWindow = new Preferences(configFile, readOnlySetting: true);
+				preferenceWindow.ShowDialog();
 			}
 		}
 
@@ -1168,7 +1162,7 @@ namespace SpintronicsGUI
 		{
 			if (this.running)
 			{
-				MessageBox.Show("Please stop the current run before saving files");
+				MessageBox.Show("Please stop before saving files");
 				return;
 			}
 			if (this.runFilesDirectory == null)
@@ -1247,24 +1241,24 @@ namespace SpintronicsGUI
 					StreamReader htFile = new StreamReader(htFileName);
 					StreamReader ltFile = new StreamReader(ltFileName);
 					StreamReader ctFile = new StreamReader(ctFileName);
-					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
-					{
-						foreach (Chart c in t.Controls.OfType<Chart>())
-						{
-							c.ChartAreas[0].AxisX.Minimum = globalCycle;
-							c.ChartAreas[0].AxisX.StripLines.Clear();
-							foreach (Series s in c.Series)
-							{
-								s.Points.Clear();
-								s.Points.AddXY(globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
-								s.Points.Last().MarkerStyle = MarkerStyle.Circle;
-							}
-						}
-					}
 					this.globalCycle = 0;
 					this.mostRecentAddBufferCycle = 0;
 					this.tareIndex = 0;
 					this.tareIndexTextbox.Text = "0";
+					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+					{
+						foreach (Chart c in t.Controls.OfType<Chart>())
+						{
+							c.ChartAreas[0].AxisX.Minimum = this.globalCycle;
+							c.ChartAreas[0].AxisX.StripLines.Clear();
+							foreach (Series s in c.Series)
+							{
+								s.Points.Clear();
+								s.Points.AddXY(this.globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
+								s.Points.Last().MarkerStyle = MarkerStyle.Circle;
+							}
+						}
+					}
 					string line;
 					htFile.ReadLine();
 					ltFile.ReadLine();
@@ -1283,13 +1277,13 @@ namespace SpintronicsGUI
 									continue;
 								if (j >= 9)
 								{
-									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
-									rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
@@ -1307,13 +1301,13 @@ namespace SpintronicsGUI
 									continue;
 								if (j >= 9)
 								{
-									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
-									rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
@@ -1331,13 +1325,13 @@ namespace SpintronicsGUI
 									continue;
 								if (j >= 9)
 								{
-									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+									this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
 									line = line.Remove(0, 12);
 								}
 								else
 								{
-									rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
+									this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
 									line = line.Remove(0, 11);
 								}
@@ -1400,11 +1394,23 @@ namespace SpintronicsGUI
 							}
 						}
 					}
+					this.globalCycle++;
 					recalculateData();
 				} catch (FileNotFoundException) {
 
 				}
 			}
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (this.running)
+			{
+				MessageBox.Show("Please stop before exiting");
+				return;
+			}
+
+			this.Close();
 		}
 	}
 }

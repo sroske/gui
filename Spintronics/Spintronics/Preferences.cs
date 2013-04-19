@@ -12,6 +12,8 @@ namespace SpintronicsGUI
 {
 	public partial class Preferences : Form
 	{
+		private bool readOnly = false;
+
 		public int tempFoldersToKeep;
 		public int[] sensorMultiplexerValues;
 		public string bufferName;
@@ -31,9 +33,11 @@ namespace SpintronicsGUI
 		public float measurementPeriod;
 		public int postProcessingCount;
 
-		public Preferences(Configuration config)
+		public Preferences(Configuration config, bool readOnlySetting = false)
 		{
 			InitializeComponent();
+			this.readOnly = readOnlySetting;
+
 			this.tempFoldersToKeep = config.tempFoldersToKeep;
 			this.sensorMultiplexerValues = config.sensorMultiplexerValues;
 			this.bufferName = config.bufferName;
@@ -53,6 +57,17 @@ namespace SpintronicsGUI
 			this.measurementPeriod = config.measurementPeriod;
 			this.postProcessingCount = config.postProcessingCount;
 			populateFields();
+
+			if (this.readOnly)
+			{
+				foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+				{
+					foreach (Control c in t.Controls)
+					{
+						c.Enabled = false;
+					}
+				}
+			}
 		}
 
 		private void populateFields()
@@ -236,6 +251,9 @@ namespace SpintronicsGUI
 
 		private void doneButton_Click(object sender, EventArgs e)
 		{
+			if (this.readOnly)
+				this.Close();
+
 			if (!saveGeneralTabPreferences())
 				return;
 			if (!saveMeasurementParametersTabPreferences())
