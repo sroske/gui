@@ -173,6 +173,17 @@ namespace SpintronicsGUI
 					}
 				}
 
+				if (globalCycle > configFile.postProcessingCount)
+				{
+					this.addBufferButton.Enabled = true;
+					this.addMnpButton.Enabled = true;
+				}
+				else
+				{
+					this.addBufferButton.Enabled = false;
+					this.addMnpButton.Enabled = false;
+				}
+
 				cycleSensorCount = sensorId;
 				if (sensorId >= adjustedChart1.Series.Count)
 					globalCycle++;
@@ -748,8 +759,6 @@ namespace SpintronicsGUI
 
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
-			this.addBufferButton.Enabled = true;
-			this.addMnpButton.Enabled = true;
 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
@@ -759,6 +768,7 @@ namespace SpintronicsGUI
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
 					c.ChartAreas[0].AxisX.Minimum = globalCycle;
+					c.ChartAreas[0].AxisX.StripLines.Clear();
 					foreach (Series s in c.Series)
 					{
 						s.Points.Clear();
@@ -916,7 +926,7 @@ namespace SpintronicsGUI
 					bool add = true;
 					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
 					{
-						if (l.IntervalOffset == (this.globalCycle - 1))
+						if ((l.IntervalOffset == (this.globalCycle)) && (l.Text.Contains("Buffer")))
 							add = false;
 					}
 					if (add)
@@ -924,7 +934,9 @@ namespace SpintronicsGUI
 						StripLine line = new StripLine();
 						line.Text = "Buffer";
 						line.TextOrientation = TextOrientation.Horizontal;
-						line.IntervalOffset = this.globalCycle - 1;
+						line.IntervalOffset = this.globalCycle;
+						line.StripWidth = 1;
+						line.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
 						c.ChartAreas[0].AxisX.StripLines.Add(line);
 					}
 				}
@@ -956,7 +968,7 @@ namespace SpintronicsGUI
 					bool add = true;
 					foreach (StripLine l in c.ChartAreas[0].AxisX.StripLines.ToArray())
 					{
-						if(l.IntervalOffset == (this.globalCycle - 1))
+						if((l.IntervalOffset == (this.globalCycle)) && (l.Text.Contains("MNPs")))
 							add = false;
 					}
 					if (add)
@@ -964,7 +976,9 @@ namespace SpintronicsGUI
 						StripLine line = new StripLine();
 						line.Text = "\nMNPs";
 						line.TextOrientation = TextOrientation.Horizontal;
-						line.IntervalOffset = this.globalCycle - 1;
+						line.IntervalOffset = this.globalCycle;
+						line.StripWidth = 1;
+						line.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
 						c.ChartAreas[0].AxisX.StripLines.Add(line);
 					}
 				}
@@ -1219,16 +1233,17 @@ namespace SpintronicsGUI
 			{
 				if(!openFile.FileName.Contains("log.txt"))
 				{
-					MessageBox.Show("That is not a valid init.txt file");
+					MessageBox.Show("That is not a valid log.txt file");
 					return;
 				}
 				try {
-					string initFileName = openFile.FileName;
-					int last = initFileName.LastIndexOf("\\");
-					string htFileName = initFileName.Substring(0, last+1) + "HT.txt";
-					string ltFileName = initFileName.Substring(0, last+1) + "LT.txt";
-					string ctFileName = initFileName.Substring(0, last+1) + "CT.txt";
-					StreamReader initFile = new StreamReader(initFileName);
+					string logFileName = openFile.FileName;
+					int startOfFileName = logFileName.LastIndexOf("\\");
+					this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
+					string htFileName = logFileName.Substring(0, startOfFileName+1) + "HT.txt";
+					string ltFileName = logFileName.Substring(0, startOfFileName+1) + "LT.txt";
+					string ctFileName = logFileName.Substring(0, startOfFileName+1) + "CT.txt";
+					StreamReader logFile = new StreamReader(logFileName);
 					StreamReader htFile = new StreamReader(htFileName);
 					StreamReader ltFile = new StreamReader(ltFileName);
 					StreamReader ctFile = new StreamReader(ctFileName);
@@ -1237,6 +1252,7 @@ namespace SpintronicsGUI
 						foreach (Chart c in t.Controls.OfType<Chart>())
 						{
 							c.ChartAreas[0].AxisX.Minimum = globalCycle;
+							c.ChartAreas[0].AxisX.StripLines.Clear();
 							foreach (Series s in c.Series)
 							{
 								s.Points.Clear();
@@ -1250,13 +1266,6 @@ namespace SpintronicsGUI
 					this.tareIndex = 0;
 					this.tareIndexTextbox.Text = "0";
 					string line;
-					while ((line = initFile.ReadLine()) != null)
-					{
-						if(line.Contains("MNPs"))
-						{
-							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line[0]);
-						}
-					}
 					htFile.ReadLine();
 					ltFile.ReadLine();
 					ctFile.ReadLine();
@@ -1338,6 +1347,58 @@ namespace SpintronicsGUI
 							nullCount++;
 						if (nullCount >= 3)
 							break;
+					}
+					while ((line = logFile.ReadLine()) != null)
+					{
+						if (line.Contains("Reaction Well:"))
+						{
+							line = line.Replace("\t", "");
+							int first = line.IndexOf(":");
+							string me = line.Substring(first + 1, line.Length - first - 1);
+							this.reactionWellTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
+						}
+						if (line.Contains("Sample:"))
+						{
+							line = line.Replace("\t", "");
+							int first = line.IndexOf(":");
+							string me = line.Substring(first + 1, line.Length - first - 1);
+							this.sampleTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
+						}
+						if(line.Contains("Buffer"))
+						{
+							if (line.Contains("Preload"))
+								continue;
+							foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+							{
+								foreach (Chart c in t.Controls.OfType<Chart>())
+								{
+									StripLine strip = new StripLine();
+									strip.Text = "Buffer";
+									strip.TextOrientation = TextOrientation.Horizontal;
+									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, 1));
+									strip.StripWidth = 1;
+									strip.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
+									c.ChartAreas[0].AxisX.StripLines.Add(strip);
+								}
+							}
+						}
+						if (line.Contains("MNPs"))
+						{
+							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line[0]);
+							foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+							{
+								foreach (Chart c in t.Controls.OfType<Chart>())
+								{
+									StripLine strip = new StripLine();
+									strip.Text = "\nMNPs";
+									strip.TextOrientation = TextOrientation.Horizontal;
+									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, 1));
+									strip.StripWidth = 1;
+									strip.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
+									c.ChartAreas[0].AxisX.StripLines.Add(strip);
+								}
+							}
+						}
 					}
 					recalculateData();
 				} catch (FileNotFoundException) {
