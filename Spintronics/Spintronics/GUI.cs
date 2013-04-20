@@ -755,7 +755,7 @@ namespace SpintronicsGUI
 
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
-			this.enableAddBufferAndMnpAtCycle = configFile.postProcessingCount;
+			this.enableAddBufferAndMnpAtCycle = configFile.postProcessingCount + 1;
 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
@@ -1369,7 +1369,8 @@ namespace SpintronicsGUI
 									StripLine strip = new StripLine();
 									strip.Text = "Buffer";
 									strip.TextOrientation = TextOrientation.Horizontal;
-									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, 1));
+									int end = line.IndexOf("\t");
+									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, end));
 									strip.StripWidth = 1;
 									strip.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
 									c.ChartAreas[0].AxisX.StripLines.Add(strip);
@@ -1386,7 +1387,8 @@ namespace SpintronicsGUI
 									StripLine strip = new StripLine();
 									strip.Text = "\nMNPs";
 									strip.TextOrientation = TextOrientation.Horizontal;
-									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, 1));
+									int end = line.IndexOf("\t");
+									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, end));
 									strip.StripWidth = 1;
 									strip.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
 									c.ChartAreas[0].AxisX.StripLines.Add(strip);
