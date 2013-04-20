@@ -29,6 +29,7 @@ namespace SpintronicsGUI
 		public float measurementPeriod = 1;
 		public int sampleAverageCount = 10;
 		public int diffusionCount = 10;
+		public int postProcessingFiles = 2; // 0: LT only, 1: HT only, 2: Both
 
 		public Configuration()
 		{
@@ -61,6 +62,7 @@ namespace SpintronicsGUI
 				this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
 				this.sampleAverageCount = readIntConfiguration("SampleAverageCount");
 				this.diffusionCount = readIntConfiguration("DiffusionCount");
+				this.postProcessingFiles = readIntConfiguration("PostProcessingFiles");
 			} catch (IOException) {
 
 			} catch (UnauthorizedAccessException) {
@@ -98,6 +100,7 @@ namespace SpintronicsGUI
 				file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
 				file.WriteLine("SampleAverageCount:" + this.sampleAverageCount);
 				file.WriteLine("DiffusionCount:" + this.diffusionCount);
+				file.WriteLine("PostProcessingFiles:" + this.postProcessingFiles);
 				file.Flush();
 				file.Close();
 				file.Dispose();
@@ -302,6 +305,12 @@ namespace SpintronicsGUI
 		public void setDiffusionCount(int count)
 		{
 			this.diffusionCount = count;
+			saveConfigurations();
+		}
+
+		public void setPostProcessingFiles(int choice)
+		{
+			this.postProcessingFiles = choice;
 			saveConfigurations();
 		}
 	}

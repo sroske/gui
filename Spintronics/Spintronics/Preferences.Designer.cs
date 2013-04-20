@@ -140,6 +140,9 @@ namespace SpintronicsGUI
 			this.revertPostProcessingButton = new System.Windows.Forms.Button();
 			this.sampleAverageCountTextBox = new System.Windows.Forms.TextBox();
 			this.sampleAverageCountLabel = new System.Windows.Forms.Label();
+			this.postProcessingFilesLabel = new System.Windows.Forms.Label();
+			this.ltPostProcessingFileCheckBox = new System.Windows.Forms.CheckBox();
+			this.htPostProcessingFileCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -1126,6 +1129,9 @@ namespace SpintronicsGUI
 			// 
 			// postProcessingTabPage
 			// 
+			this.postProcessingTabPage.Controls.Add(this.htPostProcessingFileCheckBox);
+			this.postProcessingTabPage.Controls.Add(this.ltPostProcessingFileCheckBox);
+			this.postProcessingTabPage.Controls.Add(this.postProcessingFilesLabel);
 			this.postProcessingTabPage.Controls.Add(this.diffusionCountTextBox);
 			this.postProcessingTabPage.Controls.Add(this.diffusionCountLabel);
 			this.postProcessingTabPage.Controls.Add(this.revertPostProcessingButton);
@@ -1180,6 +1186,35 @@ namespace SpintronicsGUI
 			this.sampleAverageCountLabel.Size = new System.Drawing.Size(191, 13);
 			this.sampleAverageCountLabel.TabIndex = 0;
 			this.sampleAverageCountLabel.Text = "Number of Samples to Use for Average";
+			// 
+			// postProcessingFilesLabel
+			// 
+			this.postProcessingFilesLabel.AutoSize = true;
+			this.postProcessingFilesLabel.Location = new System.Drawing.Point(26, 101);
+			this.postProcessingFilesLabel.Name = "postProcessingFilesLabel";
+			this.postProcessingFilesLabel.Size = new System.Drawing.Size(156, 13);
+			this.postProcessingFilesLabel.TabIndex = 5;
+			this.postProcessingFilesLabel.Text = "Files to Use for Post Processing";
+			// 
+			// ltPostProcessingFileCheckBox
+			// 
+			this.ltPostProcessingFileCheckBox.AutoSize = true;
+			this.ltPostProcessingFileCheckBox.Location = new System.Drawing.Point(29, 118);
+			this.ltPostProcessingFileCheckBox.Name = "ltPostProcessingFileCheckBox";
+			this.ltPostProcessingFileCheckBox.Size = new System.Drawing.Size(39, 17);
+			this.ltPostProcessingFileCheckBox.TabIndex = 6;
+			this.ltPostProcessingFileCheckBox.Text = "LT";
+			this.ltPostProcessingFileCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// htPostProcessingFileCheckBox
+			// 
+			this.htPostProcessingFileCheckBox.AutoSize = true;
+			this.htPostProcessingFileCheckBox.Location = new System.Drawing.Point(74, 118);
+			this.htPostProcessingFileCheckBox.Name = "htPostProcessingFileCheckBox";
+			this.htPostProcessingFileCheckBox.Size = new System.Drawing.Size(41, 17);
+			this.htPostProcessingFileCheckBox.TabIndex = 7;
+			this.htPostProcessingFileCheckBox.Text = "HT";
+			this.htPostProcessingFileCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// Preferences
 			// 
@@ -1318,5 +1353,8 @@ namespace SpintronicsGUI
 		private Button revertPostProcessingButton;
 		private TextBox diffusionCountTextBox;
 		private Label diffusionCountLabel;
+		private CheckBox htPostProcessingFileCheckBox;
+		private CheckBox ltPostProcessingFileCheckBox;
+		private Label postProcessingFilesLabel;
 	}
 }

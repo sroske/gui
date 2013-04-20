@@ -33,6 +33,7 @@ namespace SpintronicsGUI
 		public float measurementPeriod;
 		public int sampleAverageCount;
 		public int diffusionCount;
+		public int postProcessingFiles;
 
 		public Preferences(Configuration config, bool readOnlySetting = false)
 		{
@@ -58,6 +59,7 @@ namespace SpintronicsGUI
 			this.measurementPeriod = config.measurementPeriod;
 			this.sampleAverageCount = config.sampleAverageCount;
 			this.diffusionCount = config.diffusionCount;
+			this.postProcessingFiles = config.postProcessingFiles;
 			populateFields();
 
 			if (this.readOnly)
@@ -106,6 +108,25 @@ namespace SpintronicsGUI
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
 			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
+			switch (this.postProcessingFiles)
+			{
+				case 0:
+					this.ltPostProcessingFileCheckBox.Checked = true;
+					this.htPostProcessingFileCheckBox.Checked = false;
+					break;
+				case 1:
+					this.ltPostProcessingFileCheckBox.Checked = false;
+					this.htPostProcessingFileCheckBox.Checked = true;
+					break;
+				case 2:
+					this.ltPostProcessingFileCheckBox.Checked = true;
+					this.htPostProcessingFileCheckBox.Checked = true;
+					break;
+				default:
+					this.ltPostProcessingFileCheckBox.Checked = false;
+					this.htPostProcessingFileCheckBox.Checked = false;
+					break;
+			}
 		}
 
 		private bool saveGeneralTabPreferences()
@@ -235,6 +256,17 @@ namespace SpintronicsGUI
 			try {
 				this.sampleAverageCount = System.Convert.ToInt32(this.sampleAverageCountTextBox.Text);
 				this.diffusionCount = System.Convert.ToInt32(this.diffusionCountTextBox.Text);
+				if (this.ltPostProcessingFileCheckBox.Checked && this.htPostProcessingFileCheckBox.Checked)
+					this.postProcessingFiles = 2;
+				else if (this.ltPostProcessingFileCheckBox.Checked)
+					this.postProcessingFiles = 0;
+				else if (this.htPostProcessingFileCheckBox.Checked)
+					this.postProcessingFiles = 1;
+				else
+				{
+					MessageBox.Show("You must have either LT or HT selected for post processing");
+					return false;
+				}
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
@@ -252,6 +284,25 @@ namespace SpintronicsGUI
 		{
 			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
 			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
+			switch (this.postProcessingFiles)
+			{
+				case 0:
+					this.ltPostProcessingFileCheckBox.Checked = true;
+					this.htPostProcessingFileCheckBox.Checked = false;
+					break;
+				case 1:
+					this.ltPostProcessingFileCheckBox.Checked = false;
+					this.htPostProcessingFileCheckBox.Checked = true;
+					break;
+				case 2:
+					this.ltPostProcessingFileCheckBox.Checked = true;
+					this.htPostProcessingFileCheckBox.Checked = true;
+					break;
+				default:
+					this.ltPostProcessingFileCheckBox.Checked = false;
+					this.htPostProcessingFileCheckBox.Checked = false;
+					break;
+			}
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)

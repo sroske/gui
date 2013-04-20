@@ -83,6 +83,12 @@
     <Compile Include="GUI.Designer.cs">
       <DependentUpon>GUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="PostProcessingResults.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PostProcessingResults.Designer.cs">
+      <DependentUpon>PostProcessingResults.cs</DependentUpon>
+    </Compile>
     <Compile Include="Preferences.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,6 +106,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InputTextForm.resx">
       <DependentUpon>InputTextForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostProcessingResults.resx">
+      <DependentUpon>PostProcessingResults.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>

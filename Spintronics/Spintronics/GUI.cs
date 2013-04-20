@@ -1150,6 +1150,7 @@ namespace SpintronicsGUI
 					configFile.setMeasurementPeriod(preferenceWindow.measurementPeriod);
 					configFile.setSampleAverageCount(preferenceWindow.sampleAverageCount);
 					configFile.setDiffusionCount(preferenceWindow.diffusionCount);
+					configFile.setPostProcessingFiles(preferenceWindow.postProcessingFiles);
 					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
 					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
 				}
@@ -1211,7 +1212,6 @@ namespace SpintronicsGUI
 		 */
 		private void postProcessingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			//this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
 			string logFileName = this.runFilesDirectory + "\\log.txt";
 			string htFileName = this.runFilesDirectory + "\\HT.txt";
 			string ltFileName = this.runFilesDirectory + "\\LT.txt";
@@ -1252,39 +1252,79 @@ namespace SpintronicsGUI
 			}
 			for (int i = startPreCycle; i < endPreCycle + 1; i++)
 			{
-				line = ctFile.ReadLine();
-				for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+				if ((configFile.postProcessingFiles == 0) || (configFile.postProcessingFiles == 2))
 				{
-					if (sensor < 9)
-						beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
-					else
-						beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
-					line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					line = ltFile.ReadLine();
+					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
+				}
+				else if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
+				{
+					line = htFile.ReadLine();
+					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
 				}
 			}
 			for (int i = 0; i < beforeAverage.Length; i++)
 			{
-				beforeAverage[i] /= configFile.sampleAverageCount;
+				if (configFile.postProcessingFiles == 2)
+					beforeAverage[i] /= (configFile.sampleAverageCount * 2);
+				else
+					beforeAverage[i] /= configFile.sampleAverageCount;
 			}
 
-			ctFile.ReadLine(); // Skip the MNPs-added cycle
+			ltFile.ReadLine(); // Skip the MNPs-added cycle
+			htFile.ReadLine(); // Skip the MNPs-added cycle
 
 			for (int i = startPostCycle; i < endPostCycle + 1; i++)
 			{
-				line = ctFile.ReadLine();
-				for (int sensor = 0; sensor < afterAverage.Length; sensor++)
+				if ((configFile.postProcessingFiles == 0) || (configFile.postProcessingFiles == 2))
 				{
-					if (sensor < 9)
-						afterAverage[sensor] += double.Parse(line.Substring(0, 10));
-					else
-						afterAverage[sensor] += double.Parse(line.Substring(0, 11));
-					line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					line = ltFile.ReadLine();
+					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							afterAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							afterAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
+				}
+				else if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
+				{
+					line = htFile.ReadLine();
+					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							afterAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							afterAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
 				}
 			}
 			for (int i = 0; i < afterAverage.Length; i++)
 			{
-				afterAverage[i] /= (configFile.sampleAverageCount + configFile.diffusionCount);
+				if (configFile.postProcessingFiles == 2)
+					afterAverage[i] /= ((configFile.sampleAverageCount + configFile.diffusionCount) * 2);
+				else
+					afterAverage[i] /= (configFile.sampleAverageCount + configFile.diffusionCount);
 			}
+
+			PostProcessingResults postProcessingResultsWindow = new PostProcessingResults(beforeAverage, afterAverage);
+			postProcessingResultsWindow.ShowDialog();
 		}
 
 		/*
@@ -1501,6 +1541,8 @@ namespace SpintronicsGUI
 						this.postProcessingToolStripMenuItem.Enabled = true;
 						this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
 					}
+
+					globalCycle += 2; // Increment the global cycle again in case recalculateData() is called again
 				} catch (FileNotFoundException) {
 
 				}

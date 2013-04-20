@@ -32,3 +32,4 @@ C:\git\GUI\Spintronics\Spintronics\obj\x86\Release\GenerateResource.read.1.tlog
 C:\git\GUI\Spintronics\Spintronics\obj\x86\Release\GenerateResource.write.1.tlog
 C:\git\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.exe
 C:\git\GUI\Spintronics\Spintronics\obj\x86\Release\Spintronics.pdb
+D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Release\SpintronicsGUI.PostProcessingResults.resources
