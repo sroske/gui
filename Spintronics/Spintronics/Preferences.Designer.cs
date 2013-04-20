@@ -135,9 +135,11 @@ namespace SpintronicsGUI
 			this.bufferNameTextBox = new System.Windows.Forms.TextBox();
 			this.revertLogInformationButton = new System.Windows.Forms.Button();
 			this.postProcessingTabPage = new System.Windows.Forms.TabPage();
+			this.diffusionCountTextBox = new System.Windows.Forms.TextBox();
+			this.diffusionCountLabel = new System.Windows.Forms.Label();
 			this.revertPostProcessingButton = new System.Windows.Forms.Button();
-			this.postProcessingCountTextBox = new System.Windows.Forms.TextBox();
-			this.postProcessingCountLabel = new System.Windows.Forms.Label();
+			this.sampleAverageCountTextBox = new System.Windows.Forms.TextBox();
+			this.sampleAverageCountLabel = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -1124,9 +1126,11 @@ namespace SpintronicsGUI
 			// 
 			// postProcessingTabPage
 			// 
+			this.postProcessingTabPage.Controls.Add(this.diffusionCountTextBox);
+			this.postProcessingTabPage.Controls.Add(this.diffusionCountLabel);
 			this.postProcessingTabPage.Controls.Add(this.revertPostProcessingButton);
-			this.postProcessingTabPage.Controls.Add(this.postProcessingCountTextBox);
-			this.postProcessingTabPage.Controls.Add(this.postProcessingCountLabel);
+			this.postProcessingTabPage.Controls.Add(this.sampleAverageCountTextBox);
+			this.postProcessingTabPage.Controls.Add(this.sampleAverageCountLabel);
 			this.postProcessingTabPage.Location = new System.Drawing.Point(4, 22);
 			this.postProcessingTabPage.Name = "postProcessingTabPage";
 			this.postProcessingTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -1134,6 +1138,22 @@ namespace SpintronicsGUI
 			this.postProcessingTabPage.TabIndex = 4;
 			this.postProcessingTabPage.Text = "Post Processing";
 			this.postProcessingTabPage.UseVisualStyleBackColor = true;
+			// 
+			// diffusionCountTextBox
+			// 
+			this.diffusionCountTextBox.Location = new System.Drawing.Point(29, 78);
+			this.diffusionCountTextBox.Name = "diffusionCountTextBox";
+			this.diffusionCountTextBox.Size = new System.Drawing.Size(100, 20);
+			this.diffusionCountTextBox.TabIndex = 4;
+			// 
+			// diffusionCountLabel
+			// 
+			this.diffusionCountLabel.AutoSize = true;
+			this.diffusionCountLabel.Location = new System.Drawing.Point(26, 61);
+			this.diffusionCountLabel.Name = "diffusionCountLabel";
+			this.diffusionCountLabel.Size = new System.Drawing.Size(119, 13);
+			this.diffusionCountLabel.TabIndex = 3;
+			this.diffusionCountLabel.Text = "Diffusion Cycles to Wait";
 			// 
 			// revertPostProcessingButton
 			// 
@@ -1145,21 +1165,21 @@ namespace SpintronicsGUI
 			this.revertPostProcessingButton.UseVisualStyleBackColor = true;
 			this.revertPostProcessingButton.Click += new System.EventHandler(this.revertPostProcessingButton_Click);
 			// 
-			// postProcessingCountTextBox
+			// sampleAverageCountTextBox
 			// 
-			this.postProcessingCountTextBox.Location = new System.Drawing.Point(26, 34);
-			this.postProcessingCountTextBox.Name = "postProcessingCountTextBox";
-			this.postProcessingCountTextBox.Size = new System.Drawing.Size(100, 20);
-			this.postProcessingCountTextBox.TabIndex = 0;
+			this.sampleAverageCountTextBox.Location = new System.Drawing.Point(26, 34);
+			this.sampleAverageCountTextBox.Name = "sampleAverageCountTextBox";
+			this.sampleAverageCountTextBox.Size = new System.Drawing.Size(100, 20);
+			this.sampleAverageCountTextBox.TabIndex = 0;
 			// 
-			// postProcessingCountLabel
+			// sampleAverageCountLabel
 			// 
-			this.postProcessingCountLabel.AutoSize = true;
-			this.postProcessingCountLabel.Location = new System.Drawing.Point(23, 17);
-			this.postProcessingCountLabel.Name = "postProcessingCountLabel";
-			this.postProcessingCountLabel.Size = new System.Drawing.Size(191, 13);
-			this.postProcessingCountLabel.TabIndex = 0;
-			this.postProcessingCountLabel.Text = "Number of Samples to Use for Average";
+			this.sampleAverageCountLabel.AutoSize = true;
+			this.sampleAverageCountLabel.Location = new System.Drawing.Point(23, 17);
+			this.sampleAverageCountLabel.Name = "sampleAverageCountLabel";
+			this.sampleAverageCountLabel.Size = new System.Drawing.Size(191, 13);
+			this.sampleAverageCountLabel.TabIndex = 0;
+			this.sampleAverageCountLabel.Text = "Number of Samples to Use for Average";
 			// 
 			// Preferences
 			// 
@@ -1293,8 +1313,10 @@ namespace SpintronicsGUI
 		private TextBox coilAmplitudeUnitTextBox;
 		private TextBox wheatstoneAmplitudeUnitTextBox;
 		private TabPage postProcessingTabPage;
-		private TextBox postProcessingCountTextBox;
-		private Label postProcessingCountLabel;
+		private TextBox sampleAverageCountTextBox;
+		private Label sampleAverageCountLabel;
 		private Button revertPostProcessingButton;
+		private TextBox diffusionCountTextBox;
+		private Label diffusionCountLabel;
 	}
 }

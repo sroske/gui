@@ -755,7 +755,7 @@ namespace SpintronicsGUI
 
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
-			this.enableAddBufferAndMnpAtCycle = configFile.postProcessingCount + 1;
+			this.enableAddBufferAndMnpAtCycle = configFile.sampleAverageCount + 1;
 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
@@ -822,12 +822,12 @@ namespace SpintronicsGUI
 				this.postProcessingToolStripMenuItem.Enabled = false;
 				this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
 			}
-			else if ((this.globalCycle - this.mostRecentAddBufferCycle) < this.configFile.postProcessingCount)
+			else if ((this.globalCycle - this.mostRecentAddBufferCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
 			{
 				this.postProcessingToolStripMenuItem.Enabled = false;
 				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
-													"Minimum is " + this.configFile.postProcessingCount + " cycles, " +
-													"only " + (this.globalCycle - this.mostRecentAddBufferCycle) + " occurred";
+													"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
+													"only " + (this.globalCycle - this.mostRecentAddBufferCycle - 1) + " occurred";
 			}
 			else
 			{
@@ -902,6 +902,9 @@ namespace SpintronicsGUI
 			}
 		}
 
+		/*
+		 * This handles the user adding a buffer to the sensor sample
+		 */
 		private void addBufferButton_Click(object sender, EventArgs e)
 		{
 			if (!this.running)
@@ -939,6 +942,9 @@ namespace SpintronicsGUI
 			this.enableAddBufferAndMnpAtCycle = globalCycle + 1;
 		}
 
+		/*
+		 * This handles the user adding MNPs to the sensor sample
+		 */
 		private void addMnpButton_Click(object sender, EventArgs e)
 		{
 			if (!this.running)
@@ -979,7 +985,7 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This pritns out GUI-microcontroller packets
+		 * This prints out GUI-microcontroller packets
 		 */
 		private void printPacket(Packet packet, PacketCommDirection direction)
 		{
@@ -1142,7 +1148,8 @@ namespace SpintronicsGUI
 					configFile.setCoilDcOffset(preferenceWindow.coilDcOffset);
 					configFile.setCoilDcOffsetUnit(preferenceWindow.coilDcOffsetUnit);
 					configFile.setMeasurementPeriod(preferenceWindow.measurementPeriod);
-					configFile.setPostProcessingCount(preferenceWindow.postProcessingCount);
+					configFile.setSampleAverageCount(preferenceWindow.sampleAverageCount);
+					configFile.setDiffusionCount(preferenceWindow.diffusionCount);
 					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
 					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
 				}
@@ -1204,7 +1211,80 @@ namespace SpintronicsGUI
 		 */
 		private void postProcessingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Post processing!");
+			//this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
+			string logFileName = this.runFilesDirectory + "\\log.txt";
+			string htFileName = this.runFilesDirectory + "\\HT.txt";
+			string ltFileName = this.runFilesDirectory + "\\LT.txt";
+			string ctFileName = this.runFilesDirectory + "\\CT.txt";
+			StreamReader logFile = new StreamReader(logFileName);
+			StreamReader htFile = new StreamReader(htFileName);
+			StreamReader ltFile = new StreamReader(ltFileName);
+			StreamReader ctFile = new StreamReader(ctFileName);
+			double[] beforeAverage = new double[29];
+			for (int i = 0; i < beforeAverage.Length; i++)
+			{
+				beforeAverage[i] = 0.0;
+			}
+			double[] afterAverage = new double[29];
+			for (int i = 0; i < afterAverage.Length; i++)
+			{
+				afterAverage[i] = 0.0;
+			}
+			int cycle = 0;
+			string line;
+			while ((line = logFile.ReadLine()) != null)
+			{
+				if (line.Contains("MNPs"))
+				{
+					int end = line.IndexOf("\t");
+					cycle = System.Convert.ToInt32(line.Substring(0, end));
+				}
+			}
+			int startPreCycle = cycle - configFile.sampleAverageCount;
+			int endPreCycle = cycle - 1;
+			int startPostCycle = cycle + 1;
+			int endPostCycle = cycle + configFile.sampleAverageCount + configFile.diffusionCount;
+			for (int i = 0; i < startPreCycle; i++)
+			{
+				htFile.ReadLine();
+				ltFile.ReadLine();
+				ctFile.ReadLine();
+			}
+			for (int i = startPreCycle; i < endPreCycle + 1; i++)
+			{
+				line = ctFile.ReadLine();
+				for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+				{
+					if (sensor < 9)
+						beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
+					else
+						beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+					line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+				}
+			}
+			for (int i = 0; i < beforeAverage.Length; i++)
+			{
+				beforeAverage[i] /= configFile.sampleAverageCount;
+			}
+
+			ctFile.ReadLine(); // Skip the MNPs-added cycle
+
+			for (int i = startPostCycle; i < endPostCycle + 1; i++)
+			{
+				line = ctFile.ReadLine();
+				for (int sensor = 0; sensor < afterAverage.Length; sensor++)
+				{
+					if (sensor < 9)
+						afterAverage[sensor] += double.Parse(line.Substring(0, 10));
+					else
+						afterAverage[sensor] += double.Parse(line.Substring(0, 11));
+					line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+				}
+			}
+			for (int i = 0; i < afterAverage.Length; i++)
+			{
+				afterAverage[i] /= (configFile.sampleAverageCount + configFile.diffusionCount);
+			}
 		}
 
 		/*
@@ -1263,9 +1343,9 @@ namespace SpintronicsGUI
 					htFile.ReadLine();
 					ltFile.ReadLine();
 					ctFile.ReadLine();
+					globalCycle++;
 					for (int i = 0; ; i++)
 					{
-						globalCycle++;
 						int nullCount = 0;
 						if ((line = htFile.ReadLine()) != null)
 						{
@@ -1341,6 +1421,8 @@ namespace SpintronicsGUI
 							nullCount++;
 						if (nullCount >= 3)
 							break;
+						else
+							globalCycle++;
 					}
 					while ((line = logFile.ReadLine()) != null)
 					{
@@ -1362,6 +1444,7 @@ namespace SpintronicsGUI
 						{
 							if (line.Contains("Preload"))
 								continue;
+							int end = line.IndexOf("\t");
 							foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 							{
 								foreach (Chart c in t.Controls.OfType<Chart>())
@@ -1369,7 +1452,6 @@ namespace SpintronicsGUI
 									StripLine strip = new StripLine();
 									strip.Text = "Buffer";
 									strip.TextOrientation = TextOrientation.Horizontal;
-									int end = line.IndexOf("\t");
 									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, end));
 									strip.StripWidth = 1;
 									strip.BackColor = Color.FromArgb(0xDD, 0xDD, 0xDD);
@@ -1379,7 +1461,8 @@ namespace SpintronicsGUI
 						}
 						if (line.Contains("MNPs"))
 						{
-							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line[0]);
+							int end = line.IndexOf("\t");
+							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line.Substring(0, end));
 							foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 							{
 								foreach (Chart c in t.Controls.OfType<Chart>())
@@ -1387,7 +1470,6 @@ namespace SpintronicsGUI
 									StripLine strip = new StripLine();
 									strip.Text = "\nMNPs";
 									strip.TextOrientation = TextOrientation.Horizontal;
-									int end = line.IndexOf("\t");
 									strip.IntervalOffset = System.Convert.ToInt32(line.Substring(0, end));
 									strip.StripWidth = 1;
 									strip.BackColor = Color.FromArgb(0x99, 0x99, 0x99);
@@ -1396,14 +1478,38 @@ namespace SpintronicsGUI
 							}
 						}
 					}
-					this.globalCycle++;
-					recalculateData();
+
+					globalCycle++;		// Because recalculateData() operates in the scope of the VISIBLE charts, we need to cheat and say we're
+					recalculateData();	// a cycle ahead so we can view all of our available data (note: we'll see more data points than we did when we saved the files)
+					globalCycle -= 2;		// Reverse our hack, and subtract one more for our failure to check if the last data lines we parsed were complete or not
+									// (i.e. if we would have incremented globalCycle normally)
+
+					if (this.mostRecentAddBufferCycle == 0)
+					{
+						this.postProcessingToolStripMenuItem.Enabled = false;
+						this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
+					}
+					else if ((this.globalCycle - this.mostRecentAddBufferCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
+					{
+						this.postProcessingToolStripMenuItem.Enabled = false;
+						this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
+															"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
+															"only " + (this.globalCycle - this.mostRecentAddBufferCycle - 1) + " occurred";
+					}
+					else
+					{
+						this.postProcessingToolStripMenuItem.Enabled = true;
+						this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
+					}
 				} catch (FileNotFoundException) {
 
 				}
 			}
 		}
 
+		/*
+		 * This exits the GUI if we aren't running
+		 */
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (this.running)

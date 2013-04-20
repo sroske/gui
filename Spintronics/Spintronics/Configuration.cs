@@ -27,7 +27,8 @@ namespace SpintronicsGUI
 		public float coilDcOffset = 0;
 		public string coilDcOffsetUnit = "V";
 		public float measurementPeriod = 1;
-		public int postProcessingCount = 10;
+		public int sampleAverageCount = 10;
+		public int diffusionCount = 10;
 
 		public Configuration()
 		{
@@ -58,7 +59,8 @@ namespace SpintronicsGUI
 				this.coilDcOffset = readFloatConfiguration("CoilDcOffset");
 				this.coilDcOffsetUnit = readStringConfiguration("CoilDcOffsetUnit");
 				this.measurementPeriod = readFloatConfiguration("MeasurementPeriod");
-				this.postProcessingCount = readIntConfiguration("PostProcessingCount");
+				this.sampleAverageCount = readIntConfiguration("SampleAverageCount");
+				this.diffusionCount = readIntConfiguration("DiffusionCount");
 			} catch (IOException) {
 
 			} catch (UnauthorizedAccessException) {
@@ -94,7 +96,8 @@ namespace SpintronicsGUI
 				file.WriteLine("CoilDcOffset:" + this.coilDcOffset);
 				file.WriteLine("CoilDcOffsetUnit:" + this.coilDcOffsetUnit);
 				file.WriteLine("MeasurementPeriod:" + this.measurementPeriod);
-				file.WriteLine("PostProcessingCount:" + this.postProcessingCount);
+				file.WriteLine("SampleAverageCount:" + this.sampleAverageCount);
+				file.WriteLine("DiffusionCount:" + this.diffusionCount);
 				file.Flush();
 				file.Close();
 				file.Dispose();
@@ -290,9 +293,15 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setPostProcessingCount(int count)
+		public void setSampleAverageCount(int count)
 		{
-			this.postProcessingCount = count;
+			this.sampleAverageCount = count;
+			saveConfigurations();
+		}
+
+		public void setDiffusionCount(int count)
+		{
+			this.diffusionCount = count;
 			saveConfigurations();
 		}
 	}

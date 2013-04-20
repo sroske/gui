@@ -31,7 +31,8 @@ namespace SpintronicsGUI
 		public float coilDcOffset;
 		public string coilDcOffsetUnit;
 		public float measurementPeriod;
-		public int postProcessingCount;
+		public int sampleAverageCount;
+		public int diffusionCount;
 
 		public Preferences(Configuration config, bool readOnlySetting = false)
 		{
@@ -55,7 +56,8 @@ namespace SpintronicsGUI
 			this.coilDcOffset = config.coilDcOffset;
 			this.coilDcOffsetUnit = config.coilDcOffsetUnit;
 			this.measurementPeriod = config.measurementPeriod;
-			this.postProcessingCount = config.postProcessingCount;
+			this.sampleAverageCount = config.sampleAverageCount;
+			this.diffusionCount = config.diffusionCount;
 			populateFields();
 
 			if (this.readOnly)
@@ -102,7 +104,8 @@ namespace SpintronicsGUI
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
 			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
-			this.postProcessingCountTextBox.Text = System.Convert.ToString(this.postProcessingCount);
+			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
+			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
 		}
 
 		private bool saveGeneralTabPreferences()
@@ -230,7 +233,8 @@ namespace SpintronicsGUI
 		private bool savePostProcessingTabPreferences()
 		{
 			try {
-				this.postProcessingCount = System.Convert.ToInt32(this.postProcessingCountTextBox.Text);
+				this.sampleAverageCount = System.Convert.ToInt32(this.sampleAverageCountTextBox.Text);
+				this.diffusionCount = System.Convert.ToInt32(this.diffusionCountTextBox.Text);
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
@@ -246,7 +250,8 @@ namespace SpintronicsGUI
 
 		private void revertPostProcessingButton_Click(object sender, EventArgs e)
 		{
-			this.postProcessingCountTextBox.Text = System.Convert.ToString(this.postProcessingCount);
+			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
+			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
