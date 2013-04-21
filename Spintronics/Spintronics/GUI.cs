@@ -1032,6 +1032,38 @@ namespace SpintronicsGUI
 		private void createRunFiles()
 		{
 			try {
+				try {
+					logFile.Close();
+					dataFile1.Close();
+					dataFile2.Close();
+					dataFile3.Close();
+				} catch (Exception) {
+
+				}
+
+				string[] tempDirectories;
+				try {
+					tempDirectories = System.IO.Directory.GetDirectories("./temp");
+				} catch (Exception) {
+					tempDirectories = null;
+				}
+				if(tempDirectories != null)
+				{
+					if ((configFile.tempFoldersToKeep != -1) && (tempDirectories.Length >= configFile.tempFoldersToKeep))
+					{
+						for (int i = 0; (i < tempDirectories.Length) && (i < (tempDirectories.Length - configFile.tempFoldersToKeep + 1)); i++)
+						{
+							try {
+								Directory.Delete(tempDirectories[i], true);
+							} catch (UnauthorizedAccessException) {
+
+							} catch (IOException) {
+
+							}
+						}
+					}
+				}
+
 				string timestamp = "";
 				timestamp += DateTime.Now.Year + "-";
 				timestamp += DateTime.Now.Month + "-";

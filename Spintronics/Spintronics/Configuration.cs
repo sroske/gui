@@ -44,6 +44,7 @@ namespace SpintronicsGUI
 
 			try {
 				this.defaultSaveDirectory = readStringConfiguration("DefaultSaveDirectory");
+				this.tempFoldersToKeep = readIntConfiguration("TempFoldersToKeep");
 				this.sensorMultiplexerValues = readSensorMultiplexerValues();
 				this.bufferName = readStringConfiguration("BufferName");
 				this.mnpsName = readStringConfiguration("MnpsName");
