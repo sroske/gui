@@ -1061,7 +1061,7 @@ namespace SpintronicsGUI
 				{
 					if (i == 15)
 						continue;
-					if (i < 10)
+					if (i < 9)
 					{
 						dataFile1.Write("Sensor   " + (i + 1) + "\t");
 						dataFile2.Write("Sensor   " + (i + 1) + "\t");

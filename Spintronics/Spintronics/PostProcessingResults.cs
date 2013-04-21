@@ -169,7 +169,7 @@ namespace SpintronicsGUI
 					{
 						if (i == 15)
 							continue;
-						if(i < 10)
+						if(i < 9)
 							postProcessingFile.Write("Sensor   " + (i + 1) + "\t");
 						else
 							postProcessingFile.Write("Sensor  " + (i + 1) + "\t");
@@ -200,6 +200,11 @@ namespace SpintronicsGUI
 		}
 
 		private void closeButton_Click(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
+		private void PostProcessingResults_FormClosed(object sender, EventArgs e)
 		{
 			if (!hasSaved)
 			{
