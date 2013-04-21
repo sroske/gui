@@ -458,13 +458,13 @@ namespace SpintronicsGUI
 						string name;
 						switch (sensor)
 						{
-							case 1: name = "1-7d"; break;
-							case 2: name = "2-7c"; break;
+							case 1: name = "1-0d"; break;
+							case 2: name = "2-0c"; break;
 							case 3: name = "3-6d"; break;
 							case 4: name = "4-6c"; break;
 							case 5: name = "5-5d"; break;
 							case 6: name = "6-5c"; break;
-							case 7: name = "7-1e"; break;
+							case 7: name = "7-0e"; break;
 							case 8: name = "8-4d"; break;
 							case 9: name = "9-4c"; break;
 							case 10: name = "10-3d"; break;
@@ -486,8 +486,8 @@ namespace SpintronicsGUI
 							case 26: name = "26-5a"; break;
 							case 27: name = "27-6b"; break;
 							case 28: name = "28-6a"; break;
-							case 29: name = "29-7b"; break;
-							case 30: name = "30-7a"; break;
+							case 29: name = "29-0b"; break;
+							case 30: name = "30-0a"; break;
 							default: name = ""; break;
 						}
 						c.Series.FindByName(System.Convert.ToString(sensor)).LegendText = name;
@@ -503,36 +503,36 @@ namespace SpintronicsGUI
 						string name;
 						switch (sensor)
 						{
-							case 1: name = "1-1a"; break;
-							case 2: name = "2-1b"; break;
-							case 3: name = "3-2a"; break;
-							case 4: name = "4-2b"; break;
-							case 5: name = "5-3a"; break;
+							case 1: name = "1-0a"; break;
+							case 2: name = "2-0b"; break;
+							case 3: name = "3-1a"; break;
+							case 4: name = "4-1b"; break;
+							case 5: name = "5-2a"; break;
 							case 6: name = "6-3b"; break;
-							case 7: name = "7-1e"; break;
-							case 8: name = "8-4a"; break;
-							case 9: name = "9-4b"; break;
-							case 10: name = "10-5a"; break;
-							case 11: name = "11-5b"; break;
-							case 12: name = "12-6a"; break;
-							case 13: name = "13-6b"; break;
-							case 14: name = "14-7a"; break;
-							case 15: name = "15-7b"; break;
+							case 7: name = "7-0e"; break;
+							case 8: name = "8-3a"; break;
+							case 9: name = "9-3b"; break;
+							case 10: name = "10-4a"; break;
+							case 11: name = "11-4b"; break;
+							case 12: name = "12-5a"; break;
+							case 13: name = "13-5b"; break;
+							case 14: name = "14-6a"; break;
+							case 15: name = "15-6b"; break;
 							case 16: name = "16"; break;
-							case 17: name = "17-7c"; break;
-							case 18: name = "18-7d"; break;
-							case 19: name = "19-6c"; break;
-							case 20: name = "20-6d"; break;
-							case 21: name = "21-5c"; break;
-							case 22: name = "22-5d"; break;
-							case 23: name = "23-4c"; break;
-							case 24: name = "24-4d"; break;
-							case 25: name = "25-3c"; break;
-							case 26: name = "26-3d"; break;
-							case 27: name = "27-2c"; break;
-							case 28: name = "28-2d"; break;
-							case 29: name = "29-1c"; break;
-							case 30: name = "30-1d"; break;
+							case 17: name = "17-6c"; break;
+							case 18: name = "18-6d"; break;
+							case 19: name = "19-5c"; break;
+							case 20: name = "20-5d"; break;
+							case 21: name = "21-4c"; break;
+							case 22: name = "22-4d"; break;
+							case 23: name = "23-3c"; break;
+							case 24: name = "24-3d"; break;
+							case 25: name = "25-2c"; break;
+							case 26: name = "26-2d"; break;
+							case 27: name = "27-1c"; break;
+							case 28: name = "28-1d"; break;
+							case 29: name = "29-0c"; break;
+							case 30: name = "30-0d"; break;
 							default: name = ""; break;
 						}
 						c.Series.FindByName(System.Convert.ToString(sensor)).LegendText = name;
@@ -726,6 +726,28 @@ namespace SpintronicsGUI
 					c.Checked = !c.Checked;
 					c.Checked = !c.Checked;
 				}
+			}
+			if (this.sensorAssignment == SensorAssignment.A)
+			{
+				this.sensorsLabel1.Text = "1";
+				this.sensorsLabel2.Text = "2";
+				this.sensorsLabel3.Text = "3";
+				this.sensorsLabel4.Text = "4";
+				this.sensorsLabel5.Text = "5";
+				this.sensorsLabel6.Text = "6";
+				this.sensorsLabel7.Text = "0";
+				this.s07_07.Location = new System.Drawing.Point(118, 173);
+			}
+			else
+			{
+				this.sensorsLabel1.Text = "0";
+				this.sensorsLabel2.Text = "1";
+				this.sensorsLabel3.Text = "2";
+				this.sensorsLabel4.Text = "3";
+				this.sensorsLabel5.Text = "4";
+				this.sensorsLabel6.Text = "5";
+				this.sensorsLabel7.Text = "6";
+				this.s07_07.Location = new System.Drawing.Point(118, 53);
 			}
 			recalculate = 1;
 		}
@@ -1242,8 +1264,8 @@ namespace SpintronicsGUI
 			}
 			int startPreCycle = cycle - configFile.sampleAverageCount;
 			int endPreCycle = cycle - 1;
-			int startPostCycle = cycle + 1;
-			int endPostCycle = cycle + configFile.sampleAverageCount + configFile.diffusionCount;
+			int startPostCycle = cycle + configFile.diffusionCount + 1;
+			int endPostCycle = startPostCycle + configFile.sampleAverageCount - 1;
 			for (int i = 0; i < startPreCycle; i++)
 			{
 				htFile.ReadLine();
@@ -1252,7 +1274,7 @@ namespace SpintronicsGUI
 			}
 			for (int i = startPreCycle; i < endPreCycle + 1; i++)
 			{
-				if ((configFile.postProcessingFiles == 0) || (configFile.postProcessingFiles == 2))
+				if (configFile.postProcessingFiles == 0)
 				{
 					line = ltFile.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
@@ -1264,8 +1286,29 @@ namespace SpintronicsGUI
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
-				else if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
+				else if (configFile.postProcessingFiles == 1)
 				{
+					line = htFile.ReadLine();
+					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
+				}
+				else
+				{
+					line = ltFile.ReadLine();
+					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
+					{
+						if (sensor < 9)
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
+						else
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+					}
 					line = htFile.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
@@ -1322,8 +1365,58 @@ namespace SpintronicsGUI
 				else
 					afterAverage[i] /= (configFile.sampleAverageCount + configFile.diffusionCount);
 			}
+			double beforeTotal = 0.0;
+			double afterTotal = 0.0;
+			int count = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
+				{
+					if (getSensorNumber(c.Name) == referenceSensors[i])
+					{
+						try {
+							if (c.Checked)
+							{
+								if (referenceSensors[i] < 16)
+								{
+									beforeTotal += beforeAverage[referenceSensors[i] - 1];
+									afterTotal += afterAverage[referenceSensors[i] - 1];
+								}
+								else
+								{
+									beforeTotal += beforeAverage[referenceSensors[i] - 2];
+									afterTotal += afterAverage[referenceSensors[i] - 2];
+								}
+								count++;
+							}
+						} catch (ArgumentNullException) {
 
-			PostProcessingResults postProcessingResultsWindow = new PostProcessingResults(beforeAverage, afterAverage);
+						} catch (ArgumentOutOfRangeException) {
+
+						}
+					}
+				}
+			}
+
+			if (count > 0)
+			{
+				beforeTotal /= count;
+				afterTotal /= count;
+			}
+			else
+			{
+				beforeTotal = 0.0;
+				afterTotal = 0.0;
+			}
+
+			for (int i = 0; i < beforeAverage.Length; i++)
+			{
+				beforeAverage[i] -= beforeTotal;
+				afterAverage[i] -= afterTotal;
+			}
+
+			PostProcessingResults postProcessingResultsWindow = new PostProcessingResults(beforeAverage, afterAverage, this.runFilesDirectory,
+																this.reactionWellTextBox.Text, this.sampleTextBox.Text);
 			postProcessingResultsWindow.ShowDialog();
 		}
 
@@ -1350,8 +1443,14 @@ namespace SpintronicsGUI
 					MessageBox.Show("That is not a valid log.txt file");
 					return;
 				}
-				try {
+				try
+				{
 					string logFileName = openFile.FileName;
+
+					string newString = logFileName.Substring(0, logFileName.LastIndexOf("\\"));
+					int last = newString.LastIndexOf("\\");
+					this.configFile.setDefaultSaveDirectory(logFileName.Substring(0, last));
+
 					int startOfFileName = logFileName.LastIndexOf("\\");
 					this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
 					string htFileName = logFileName.Substring(0, startOfFileName+1) + "HT.txt";
