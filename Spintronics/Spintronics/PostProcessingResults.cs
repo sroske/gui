@@ -20,8 +20,8 @@ namespace SpintronicsGUI
 
 		enum AxisAssignment
 		{
-			Sensor,
-			CountRow
+			SensorNumber,
+			SensorName
 		}
 
 		double[] preResults;
@@ -30,7 +30,7 @@ namespace SpintronicsGUI
 							"3d_5a", "3c_5b", "2d_6a", "2c_6b", "1d_7a", "1c_7b", "1b_7c", "1a_7a", "2b_6c", "2a_6d", "3b_5c",
 							"3a_5d", "4b_4c", "4a_4d", "5b_3c", "5a_3d", "6b_2c", "6a_2d", "7b_1c", "7a_1d"};
 		SensorAssignment sensorAssignment = SensorAssignment.A;
-		AxisAssignment axisAssignment = AxisAssignment.Sensor;
+		AxisAssignment axisAssignment = AxisAssignment.SensorNumber;
 
 		public PostProcessingResults(double[] pre, double[] post)
 		{
@@ -40,7 +40,7 @@ namespace SpintronicsGUI
 			postResults = post;
 
 			this.sensorAssignmentARadioButton.Checked = true;
-			this.sensorOnXAxisRadioButton.Checked = true;
+			this.sensorNumberRadioButton.Checked = true;
 
 			addDataToGraph();
 		}
@@ -54,15 +54,17 @@ namespace SpintronicsGUI
 
 			for(int i = 0; i < preResults.Length; i++)
 			{
-				if (this.axisAssignment == AxisAssignment.Sensor)
+				if (this.axisAssignment == AxisAssignment.SensorNumber)
 				{
 					this.chart1.Series[i].Points.AddXY((i + 1), (postResults[i] - preResults[i]));
 					this.chart1.Series[i].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					this.chart1.Series[i].Points.Last().ToolTip = "";
 				}
 				else
 				{
-					this.chart1.Series[i].Points.AddXY((getSensorColumn(i + 1) * 7) + getSensorRow(i + 1), (postResults[i] - preResults[i]));
+					this.chart1.Series[i].Points.AddXY(((getSensorColumn(i + 1) - 1) * 7) + getSensorRow(i + 1), (postResults[i] - preResults[i]));
 					this.chart1.Series[i].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					this.chart1.Series[i].Points.Last().ToolTip = "" + getSensorRow(i + 1) + getSensorColumnLetter(i + 1);
 				}
 			}
 		}
@@ -79,10 +81,16 @@ namespace SpintronicsGUI
 
 		private void sensorOnXAxisRadioButton_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.sensorOnXAxisRadioButton.Checked)
-				this.axisAssignment = AxisAssignment.Sensor;
+			if (this.sensorNumberRadioButton.Checked)
+			{
+				this.axisAssignment = AxisAssignment.SensorNumber;
+				this.chart1.ChartAreas[0].AxisX.Title = "Sensor Number";
+			}
 			else
-				this.axisAssignment = AxisAssignment.CountRow;
+			{
+				this.axisAssignment = AxisAssignment.SensorName;
+				this.chart1.ChartAreas[0].AxisX.Title = "Sensor Name";
+			}
 
 			addDataToGraph();
 		}
@@ -105,6 +113,14 @@ namespace SpintronicsGUI
 				return 4;
 			else
 				return 5;
+		}
+
+		private string getSensorColumnLetter(int sensor)
+		{
+			if (this.sensorAssignment == SensorAssignment.A)
+				return sensorProperties[sensor - 1].Substring(1, 1);
+			else
+				return sensorProperties[sensor - 1].Substring(4, 1);
 		}
 
 		private int getSensorRow(int sensor)

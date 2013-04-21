@@ -358,7 +358,7 @@ namespace SpintronicsGUI
 			// startRunToolStripMenuItem
 			// 
 			this.startRunToolStripMenuItem.Name = "startRunToolStripMenuItem";
-			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.startRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.startRunToolStripMenuItem.Text = "Start New";
 			this.startRunToolStripMenuItem.Click += new System.EventHandler(this.startRun);
 			// 
@@ -366,28 +366,28 @@ namespace SpintronicsGUI
 			// 
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.stopRunToolStripMenuItem.Name = "stopRunToolStripMenuItem";
-			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopRunToolStripMenuItem.Text = "Stop";
 			this.stopRunToolStripMenuItem.Click += new System.EventHandler(this.stopRun);
 			// 
 			// saveRunFilesAsToolStripMenuItem
 			// 
 			this.saveRunFilesAsToolStripMenuItem.Name = "saveRunFilesAsToolStripMenuItem";
-			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveRunFilesAsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.saveRunFilesAsToolStripMenuItem.Text = "Save Files As...";
 			this.saveRunFilesAsToolStripMenuItem.Click += new System.EventHandler(this.saveRunFilesAsToolStripMenuItem_Click);
 			// 
 			// openRunToolStripMenuItem
 			// 
 			this.openRunToolStripMenuItem.Name = "openRunToolStripMenuItem";
-			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openRunToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.openRunToolStripMenuItem.Text = "Open Log";
 			this.openRunToolStripMenuItem.Click += new System.EventHandler(this.openRunToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -940,45 +940,45 @@ namespace SpintronicsGUI
 			this.sensorsLabelB.AutoSize = true;
 			this.sensorsLabelB.Location = new System.Drawing.Point(58, 27);
 			this.sensorsLabelB.Name = "sensorsLabelB";
-			this.sensorsLabelB.Size = new System.Drawing.Size(14, 13);
+			this.sensorsLabelB.Size = new System.Drawing.Size(13, 13);
 			this.sensorsLabelB.TabIndex = 5;
-			this.sensorsLabelB.Text = "B";
+			this.sensorsLabelB.Text = "b";
 			// 
 			// sensorsLabelC
 			// 
 			this.sensorsLabelC.AutoSize = true;
 			this.sensorsLabelC.Location = new System.Drawing.Point(78, 27);
 			this.sensorsLabelC.Name = "sensorsLabelC";
-			this.sensorsLabelC.Size = new System.Drawing.Size(14, 13);
+			this.sensorsLabelC.Size = new System.Drawing.Size(13, 13);
 			this.sensorsLabelC.TabIndex = 4;
-			this.sensorsLabelC.Text = "C";
+			this.sensorsLabelC.Text = "c";
 			// 
 			// sensorsLabelD
 			// 
 			this.sensorsLabelD.AutoSize = true;
 			this.sensorsLabelD.Location = new System.Drawing.Point(98, 27);
 			this.sensorsLabelD.Name = "sensorsLabelD";
-			this.sensorsLabelD.Size = new System.Drawing.Size(15, 13);
+			this.sensorsLabelD.Size = new System.Drawing.Size(13, 13);
 			this.sensorsLabelD.TabIndex = 3;
-			this.sensorsLabelD.Text = "D";
+			this.sensorsLabelD.Text = "d";
 			// 
 			// sensorsLabelE
 			// 
 			this.sensorsLabelE.AutoSize = true;
 			this.sensorsLabelE.Location = new System.Drawing.Point(119, 27);
 			this.sensorsLabelE.Name = "sensorsLabelE";
-			this.sensorsLabelE.Size = new System.Drawing.Size(14, 13);
+			this.sensorsLabelE.Size = new System.Drawing.Size(13, 13);
 			this.sensorsLabelE.TabIndex = 2;
-			this.sensorsLabelE.Text = "E";
+			this.sensorsLabelE.Text = "e";
 			// 
 			// sensorsLabelA
 			// 
 			this.sensorsLabelA.AutoSize = true;
 			this.sensorsLabelA.Location = new System.Drawing.Point(38, 27);
 			this.sensorsLabelA.Name = "sensorsLabelA";
-			this.sensorsLabelA.Size = new System.Drawing.Size(14, 13);
+			this.sensorsLabelA.Size = new System.Drawing.Size(13, 13);
 			this.sensorsLabelA.TabIndex = 1;
-			this.sensorsLabelA.Text = "A";
+			this.sensorsLabelA.Text = "a";
 			// 
 			// s18_01
 			// 
