@@ -37,7 +37,6 @@ namespace SpintronicsGUI
 		TextWriter dataFile1 = null;
 		TextWriter dataFile2 = null;
 		TextWriter dataFile3 = null;
-		bool printLogText = true;
 		bool running = false;
 		bool resultsSaved = true;
 		SensorAssignment sensorAssignment = SensorAssignment.A;
@@ -1028,39 +1027,6 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This writes a text string to a file (for logging)
-		 */
-		private void writeToFile2(TextWriter file, string text, object arg0 = null, bool addNewLine = true, bool dateTimeStamp = true)
-		{
-			if (file != null)
-			{
-				if (dateTimeStamp)
-					file.Write(DateTime.Now + ": ");
-
-				if (arg0 != null)
-					file.Write(text, arg0);
-				else
-					file.Write(text);
-
-				if (addNewLine)
-					file.Write("\n");
-
-				file.Flush();
-			}
-
-			if (printLogText)
-			{
-				if (dateTimeStamp)
-					Console.Write(DateTime.Now + ": ");
-
-				Console.Write(text, arg0);
-
-				if (addNewLine)
-					Console.Write("\n");
-			}
-		}
-
-		/*
 		 * This initializes a data file by printing out the sensor name headers at the top of the file
 		 */
 		private void createRunFiles()
@@ -1091,13 +1057,22 @@ namespace SpintronicsGUI
 							 this.configFile.defaultVolumeUnit + " Buffer (" +
 							 this.configFile.bufferName + ")");
 				logFile.Flush();
-				for (int i = 1; i <= 30; i++)
+				for (int i = 0; i < 30; i++)
 				{
-					if (i == 16)
+					if (i == 15)
 						continue;
-					dataFile1.Write("Sensor   " + i + "\t");
-					dataFile2.Write("Sensor   " + i + "\t");
-					dataFile3.Write("Sensor   " + i + "\t");
+					if (i < 10)
+					{
+						dataFile1.Write("Sensor   " + (i + 1) + "\t");
+						dataFile2.Write("Sensor   " + (i + 1) + "\t");
+						dataFile3.Write("Sensor   " + (i + 1) + "\t");
+					}
+					else
+					{
+						dataFile1.Write("Sensor  " + (i + 1) + "\t");
+						dataFile2.Write("Sensor  " + (i + 1) + "\t");
+						dataFile3.Write("Sensor  " + (i + 1) + "\t");
+					}
 				}
 				dataFile1.Write("\n");
 				dataFile2.Write("\n");
@@ -1119,19 +1094,10 @@ namespace SpintronicsGUI
 		private void logData(TextWriter file, int sensor, double data)
 		{
 			string dataString = System.Convert.ToString(data);
-			if(sensor >= 10)
-			{
-				try {
-					dataString = dataString.Substring(0, 11);
-				} catch (ArgumentOutOfRangeException) {
-					dataString = dataString.PadRight(11, '0');
-				}
-			} else {
-				try {
-					dataString = dataString.Substring(0, 10);
-				} catch (ArgumentOutOfRangeException) {
-					dataString = dataString.PadRight(10, '0');
-				}
+			try {
+				dataString = dataString.Substring(0, 10);
+			} catch (ArgumentOutOfRangeException) {
+				dataString = dataString.PadRight(10, '0');
 			}
 
 			file.Write(dataString + "\t");
@@ -1494,18 +1460,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								if (j >= 9)
-								{
-									this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									line = line.Remove(0, 12);
-								}
-								else
-								{
-									this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									line = line.Remove(0, 11);
-								}
+								this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								line = line.Remove(0, 11);
 							}
 						}
 						else
@@ -1518,18 +1475,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								if (j >= 9)
-								{
-									this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									line = line.Remove(0, 12);
-								}
-								else
-								{
-									this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									line = line.Remove(0, 11);
-								}
+								this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								line = line.Remove(0, 11);
 							}
 						}
 						else
@@ -1542,18 +1490,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								if (j >= 9)
-								{
-									this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-									line = line.Remove(0, 12);
-								}
-								else
-								{
-									this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 9)));
-									line = line.Remove(0, 11);
-								}
+								this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
+								line = line.Remove(0, 11);
 							}
 						}
 						else
