@@ -256,6 +256,7 @@
 			this.chart1.Size = new System.Drawing.Size(522, 210);
 			this.chart1.TabIndex = 0;
 			this.chart1.Text = "chart1";
+			this.chart1.ChartAreas[0].AxisX.Interval = 1;
 			// 
 			// sensorAssignmentARadioButton
 			// 

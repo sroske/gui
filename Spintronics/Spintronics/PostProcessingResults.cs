@@ -58,13 +58,12 @@ namespace SpintronicsGUI
 				{
 					this.chart1.Series[i].Points.AddXY((i + 1), (postResults[i] - preResults[i]));
 					this.chart1.Series[i].Points.Last().MarkerStyle = MarkerStyle.Circle;
-					this.chart1.Series[i].Points.Last().ToolTip = "";
 				}
 				else
 				{
 					this.chart1.Series[i].Points.AddXY(((getSensorColumn(i + 1) - 1) * 7) + getSensorRow(i + 1), (postResults[i] - preResults[i]));
 					this.chart1.Series[i].Points.Last().MarkerStyle = MarkerStyle.Circle;
-					this.chart1.Series[i].Points.Last().ToolTip = "" + getSensorRow(i + 1) + getSensorColumnLetter(i + 1);
+					this.chart1.Series[i].Points.Last().AxisLabel = "" + getSensorRow(i + 1) + getSensorColumnLetter(i + 1);
 				}
 			}
 		}
