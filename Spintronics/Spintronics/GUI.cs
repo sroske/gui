@@ -80,7 +80,7 @@ namespace SpintronicsGUI
 		private void GUI_Shown(object sender, EventArgs e)
 		{
 			recalculate = 0;
-			this.reactionWellTextBox.Text = "A";
+			this.reactionWellTextBox.Text = "-A";
 			this.validateButton.PerformClick();
 			this.reactionWellTextBox.Text = "";
 			recalculate = 1;
@@ -690,12 +690,18 @@ namespace SpintronicsGUI
 				this.reactionWellTextBox.Focus();
 				return;
 			}
-			if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 1, 1).Equals("A"))
+			if (reactionWellTextBox.Text.Length == 1)
+			{
+				MessageBox.Show("Please enter a valid Reaction Well name");
+				this.reactionWellTextBox.Focus();
+				return;
+			}
+			if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 2, 2).Equals("-A"))
 			{
 				this.sensorAssignment = SensorAssignment.A;
 				this.validated = true;
 			}
-			else if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 1, 1).Equals("B"))
+			else if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 2, 2).Equals("-B"))
 			{
 				this.sensorAssignment = SensorAssignment.B;
 				this.validated = true;
