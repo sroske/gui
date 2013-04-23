@@ -28,11 +28,12 @@ namespace SpintronicsGUI
 		Microcontroller microcontroller;
 		string runFilesDirectory;
 		TextWriter logFile = null;
-		TextWriter dataFile1 = null;
-		TextWriter dataFile2 = null;
-		TextWriter dataFile3 = null;
+		TextWriter htFile = null;
+		TextWriter ltFile = null;
+		TextWriter ctFile = null;
 		bool running = false;
 		bool resultsSaved = true;
+		bool validated = false;
 		SensorAssignment sensorAssignment = SensorAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
@@ -79,7 +80,9 @@ namespace SpintronicsGUI
 		private void GUI_Shown(object sender, EventArgs e)
 		{
 			recalculate = 0;
-			this.radioButtonA.PerformClick();
+			this.reactionWellTextBox.Text = "A";
+			this.validateButton.PerformClick();
+			this.reactionWellTextBox.Text = "";
 			recalculate = 1;
 
 			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddBufferVolume);
@@ -121,9 +124,9 @@ namespace SpintronicsGUI
 				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);
 				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);
 				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);
-				logData(dataFile1, sensorId, wheatstonef1A);
-				logData(dataFile2, sensorId, wheatstonef1P);
-				logData(dataFile3, sensorId, wheatstonef2A);
+				logData(htFile, sensorId, wheatstonef1A);
+				logData(ltFile, sensorId, wheatstonef1P);
+				logData(ctFile, sensorId, wheatstonef2A);
 
 				if (globalCycle > 1)
 				{
@@ -679,19 +682,32 @@ namespace SpintronicsGUI
 		/*
 		 * This is called when the pin assignment is changed
 		 */
-		private void radioButton_Click(object sender, EventArgs e)
+		private void validateButton_Click(object sender, EventArgs e)
 		{
-			if (sender.Equals(this.radioButtonA))
+			if (reactionWellTextBox.Text == "")
 			{
-				this.radioButtonA.Checked = true;
-				this.radioButtonB.Checked = false;
+				MessageBox.Show("Please enter a Reaction Well name");
+				this.reactionWellTextBox.Focus();
+				return;
+			}
+			if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 1, 1).Equals("A"))
+			{
 				this.sensorAssignment = SensorAssignment.A;
+				this.validated = true;
+			}
+			else if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 1, 1).Equals("B"))
+			{
+				this.sensorAssignment = SensorAssignment.B;
+				this.validated = true;
 			}
 			else
 			{
-				this.radioButtonA.Checked = false;
-				this.radioButtonB.Checked = true;
-				this.sensorAssignment = SensorAssignment.B;
+				MessageBox.Show("Please enter a valid Reaction Well name.\n" +
+						    "Use the form <name>-X, where X represents\n" +
+						    "the Pin Assignment scheme and is either\n" +
+						    "'A' or 'B'");
+				this.reactionWellTextBox.Focus();
+				return;
 			}
 			int count = 0;
 			recalculate = 0;
@@ -745,6 +761,11 @@ namespace SpintronicsGUI
 			recalculate = 1;
 		}
 
+		private void reactionWellTextBox_TextChanged(object sender, EventArgs e)
+		{
+			this.validated = false;
+		}
+
 		/*
 		 * This starts a run
 		 */
@@ -755,10 +776,15 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please stop the current run before starting a new one");
 				return;
 			}
-
 			if ((this.reactionWellTextBox.Text == "") || (this.sampleTextBox.Text == ""))
 			{
 				MessageBox.Show("Please enter values for Reaction Well and Sample");
+				return;
+			}
+
+			this.validateButton.PerformClick();
+			if (!this.validated)
+			{
 				return;
 			}
 
@@ -854,6 +880,15 @@ namespace SpintronicsGUI
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
 			this.addBufferButton.Enabled = false;
+
+			try {
+				this.logFile.Close();
+				this.htFile.Close();
+				this.ltFile.Close();
+				this.ctFile.Close();
+			} catch (Exception) {
+
+			}
 		}
 
 		/*
@@ -1028,9 +1063,9 @@ namespace SpintronicsGUI
 			try {
 				try {
 					logFile.Close();
-					dataFile1.Close();
-					dataFile2.Close();
-					dataFile3.Close();
+					htFile.Close();
+					ltFile.Close();
+					ctFile.Close();
 				} catch (Exception) {
 
 				}
@@ -1070,9 +1105,9 @@ namespace SpintronicsGUI
 
 				string logFileNameBase = runFilesDirectory + "/";
 				logFile = new StreamWriter(logFileNameBase + "log.txt");
-				dataFile1 = new StreamWriter(logFileNameBase + "HT.txt");
-				dataFile2 = new StreamWriter(logFileNameBase + "LT.txt");
-				dataFile3 = new StreamWriter(logFileNameBase + "CT.txt");
+				htFile = new StreamWriter(logFileNameBase + "HT.txt");
+				ltFile = new StreamWriter(logFileNameBase + "LT.txt");
+				ctFile = new StreamWriter(logFileNameBase + "CT.txt");
 
 				logFile.WriteLine("Reaction Well:\t" + this.reactionWellTextBox.Text);
 				logFile.WriteLine("Sample:\t\t" + this.sampleTextBox.Text + "\n");
@@ -1089,23 +1124,23 @@ namespace SpintronicsGUI
 						continue;
 					if (i < 9)
 					{
-						dataFile1.Write("Sensor   " + (i + 1) + "\t");
-						dataFile2.Write("Sensor   " + (i + 1) + "\t");
-						dataFile3.Write("Sensor   " + (i + 1) + "\t");
+						htFile.Write("Sensor   " + (i + 1) + "\t");
+						ltFile.Write("Sensor   " + (i + 1) + "\t");
+						ctFile.Write("Sensor   " + (i + 1) + "\t");
 					}
 					else
 					{
-						dataFile1.Write("Sensor  " + (i + 1) + "\t");
-						dataFile2.Write("Sensor  " + (i + 1) + "\t");
-						dataFile3.Write("Sensor  " + (i + 1) + "\t");
+						htFile.Write("Sensor  " + (i + 1) + "\t");
+						ltFile.Write("Sensor  " + (i + 1) + "\t");
+						ctFile.Write("Sensor  " + (i + 1) + "\t");
 					}
 				}
-				dataFile1.Write("\n");
-				dataFile2.Write("\n");
-				dataFile3.Write("\n");
-				dataFile1.Flush();
-				dataFile2.Flush();
-				dataFile3.Flush();
+				htFile.Write("\n");
+				ltFile.Write("\n");
+				ctFile.Write("\n");
+				htFile.Flush();
+				ltFile.Flush();
+				ctFile.Flush();
 
 			} catch (Exception) {
 				DialogResult messageBoxResult = MessageBox.Show("Unable to create run files. Continue?", "Error", MessageBoxButtons.YesNo);
@@ -1193,6 +1228,21 @@ namespace SpintronicsGUI
 				return;
 			}
 
+			this.validateButton.PerformClick();
+			if (!this.validated)
+			{
+				return;
+			}
+
+			try {
+				this.logFile.Close();
+				this.htFile.Close();
+				this.ltFile.Close();
+				this.ctFile.Close();
+			} catch (Exception) {
+
+			}
+
 			SaveFileDialog saveFile = new SaveFileDialog();
 			saveFile.FileName = this.reactionWellTextBox.Text + "(" + this.sampleTextBox.Text + ")";
 			saveFile.FileName = saveFile.FileName.Replace('\\', '_');
@@ -1226,14 +1276,21 @@ namespace SpintronicsGUI
 		 */
 		private void postProcessingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			try {
+				this.logFile.Close();
+				this.htFile.Close();
+				this.ltFile.Close();
+				this.ctFile.Close();
+			} catch (Exception) {
+
+			}
+
 			string logFileName = this.runFilesDirectory + "\\log.txt";
 			string htFileName = this.runFilesDirectory + "\\HT.txt";
 			string ltFileName = this.runFilesDirectory + "\\LT.txt";
-			string ctFileName = this.runFilesDirectory + "\\CT.txt";
-			StreamReader logFile = new StreamReader(logFileName);
-			StreamReader htFile = new StreamReader(htFileName);
-			StreamReader ltFile = new StreamReader(ltFileName);
-			StreamReader ctFile = new StreamReader(ctFileName);
+			StreamReader logFileReader = new StreamReader(logFileName);
+			StreamReader htFileReader = new StreamReader(htFileName);
+			StreamReader ltFileReader = new StreamReader(ltFileName);
 			double[] beforeAverage = new double[29];
 			for (int i = 0; i < beforeAverage.Length; i++)
 			{
@@ -1246,7 +1303,7 @@ namespace SpintronicsGUI
 			}
 			int cycle = 0;
 			string line;
-			while ((line = logFile.ReadLine()) != null)
+			while ((line = logFileReader.ReadLine()) != null)
 			{
 				if (line.Contains("MNPs"))
 				{
@@ -1254,21 +1311,21 @@ namespace SpintronicsGUI
 					cycle = System.Convert.ToInt32(line.Substring(0, end));
 				}
 			}
+			logFileReader.Close();
 			int startPreCycle = cycle - configFile.sampleAverageCount;
 			int endPreCycle = cycle - 1;
 			int startPostCycle = cycle + configFile.diffusionCount + 1;
 			int endPostCycle = startPostCycle + configFile.sampleAverageCount - 1;
 			for (int i = 0; i < startPreCycle; i++)
 			{
-				htFile.ReadLine();
-				ltFile.ReadLine();
-				ctFile.ReadLine();
+				htFileReader.ReadLine();
+				ltFileReader.ReadLine();
 			}
 			for (int i = startPreCycle; i < endPreCycle + 1; i++)
 			{
 				if (configFile.postProcessingFiles == 0)
 				{
-					line = ltFile.ReadLine();
+					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1280,7 +1337,7 @@ namespace SpintronicsGUI
 				}
 				else if (configFile.postProcessingFiles == 1)
 				{
-					line = htFile.ReadLine();
+					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1292,7 +1349,7 @@ namespace SpintronicsGUI
 				}
 				else
 				{
-					line = ltFile.ReadLine();
+					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1301,7 +1358,7 @@ namespace SpintronicsGUI
 							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
-					line = htFile.ReadLine();
+					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1320,14 +1377,14 @@ namespace SpintronicsGUI
 					beforeAverage[i] /= configFile.sampleAverageCount;
 			}
 
-			ltFile.ReadLine(); // Skip the MNPs-added cycle
-			htFile.ReadLine(); // Skip the MNPs-added cycle
+			ltFileReader.ReadLine(); // Skip the MNPs-added cycle
+			htFileReader.ReadLine(); // Skip the MNPs-added cycle
 
 			for (int i = startPostCycle; i < endPostCycle + 1; i++)
 			{
 				if ((configFile.postProcessingFiles == 0) || (configFile.postProcessingFiles == 2))
 				{
-					line = ltFile.ReadLine();
+					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1339,7 +1396,7 @@ namespace SpintronicsGUI
 				}
 				else if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
 				{
-					line = htFile.ReadLine();
+					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
 					{
 						if (sensor < 9)
@@ -1350,6 +1407,8 @@ namespace SpintronicsGUI
 					}
 				}
 			}
+			htFileReader.Close();
+			ltFileReader.Close();
 			for (int i = 0; i < afterAverage.Length; i++)
 			{
 				if (configFile.postProcessingFiles == 2)
@@ -1449,10 +1508,10 @@ namespace SpintronicsGUI
 					string htFileName = logFileName.Substring(0, startOfFileName+1) + "HT.txt";
 					string ltFileName = logFileName.Substring(0, startOfFileName+1) + "LT.txt";
 					string ctFileName = logFileName.Substring(0, startOfFileName+1) + "CT.txt";
-					StreamReader logFile = new StreamReader(logFileName);
-					StreamReader htFile = new StreamReader(htFileName);
-					StreamReader ltFile = new StreamReader(ltFileName);
-					StreamReader ctFile = new StreamReader(ctFileName);
+					StreamReader logFileReader = new StreamReader(logFileName);
+					StreamReader htFileReader = new StreamReader(htFileName);
+					StreamReader ltFileReader = new StreamReader(ltFileName);
+					StreamReader ctFileReader = new StreamReader(ctFileName);
 					this.globalCycle = 0;
 					this.mostRecentAddBufferCycle = 0;
 					this.tareIndex = 0;
@@ -1472,14 +1531,14 @@ namespace SpintronicsGUI
 						}
 					}
 					string line;
-					htFile.ReadLine();
-					ltFile.ReadLine();
-					ctFile.ReadLine();
+					htFileReader.ReadLine();
+					ltFileReader.ReadLine();
+					ctFileReader.ReadLine();
 					globalCycle++;
 					for (int i = 0; ; i++)
 					{
 						int nullCount = 0;
-						if ((line = htFile.ReadLine()) != null)
+						if ((line = htFileReader.ReadLine()) != null)
 						{
 							for (int j = 0; ; j++)
 							{
@@ -1494,7 +1553,7 @@ namespace SpintronicsGUI
 						}
 						else
 							nullCount++;
-						if ((line = ltFile.ReadLine()) != null)
+						if ((line = ltFileReader.ReadLine()) != null)
 						{
 							for (int j = 0; ; j++)
 							{
@@ -1509,7 +1568,7 @@ namespace SpintronicsGUI
 						}
 						else
 							nullCount++;
-						if ((line = ctFile.ReadLine()) != null)
+						if ((line = ctFileReader.ReadLine()) != null)
 						{
 							for (int j = 0; ; j++)
 							{
@@ -1529,7 +1588,10 @@ namespace SpintronicsGUI
 						else
 							globalCycle++;
 					}
-					while ((line = logFile.ReadLine()) != null)
+					htFileReader.Close();
+					ltFileReader.Close();
+					ctFileReader.Close();
+					while ((line = logFileReader.ReadLine()) != null)
 					{
 						if (line.Contains("Reaction Well:"))
 						{
@@ -1537,6 +1599,9 @@ namespace SpintronicsGUI
 							int first = line.IndexOf(":");
 							string me = line.Substring(first + 1, line.Length - first - 1);
 							this.reactionWellTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
+							this.validateButton.PerformClick();
+							if (!this.validated)
+								return;
 						}
 						if (line.Contains("Sample:"))
 						{
@@ -1583,6 +1648,7 @@ namespace SpintronicsGUI
 							}
 						}
 					}
+					logFileReader.Close();
 
 					globalCycle++;		// Because recalculateData() operates in the scope of the VISIBLE charts, we need to cheat and say we're
 					recalculateData();	// a cycle ahead so we can view all of our available data (note: we'll see more data points than we did when we saved the files)
