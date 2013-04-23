@@ -98,6 +98,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolHandler.cs" />
+    <Compile Include="SensorAssignment.cs" />
     <EmbeddedResource Include="ComSelector.resx">
       <DependentUpon>ComSelector.cs</DependentUpon>
     </EmbeddedResource>

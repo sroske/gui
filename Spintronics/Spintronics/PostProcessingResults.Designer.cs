@@ -59,16 +59,12 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series28 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataVisualization.Charting.Series series29 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-			this.sensorAssignmentARadioButton = new System.Windows.Forms.RadioButton();
-			this.sensorAssignmentBRadioButton = new System.Windows.Forms.RadioButton();
 			this.sensorNumberRadioButton = new System.Windows.Forms.RadioButton();
 			this.sensorNameRadioButton = new System.Windows.Forms.RadioButton();
-			this.sensorAssignmentGroupBox = new System.Windows.Forms.GroupBox();
 			this.axisRepresentatoinGroupBox = new System.Windows.Forms.GroupBox();
 			this.appendAndSaveButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-			this.sensorAssignmentGroupBox.SuspendLayout();
 			this.axisRepresentatoinGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -377,31 +373,6 @@
 			this.chart1.TabIndex = 0;
 			this.chart1.Text = "chart1";
 			// 
-			// sensorAssignmentARadioButton
-			// 
-			this.sensorAssignmentARadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.sensorAssignmentARadioButton.AutoSize = true;
-			this.sensorAssignmentARadioButton.Location = new System.Drawing.Point(6, 30);
-			this.sensorAssignmentARadioButton.Name = "sensorAssignmentARadioButton";
-			this.sensorAssignmentARadioButton.Size = new System.Drawing.Size(32, 17);
-			this.sensorAssignmentARadioButton.TabIndex = 2;
-			this.sensorAssignmentARadioButton.TabStop = true;
-			this.sensorAssignmentARadioButton.Text = "A";
-			this.sensorAssignmentARadioButton.UseVisualStyleBackColor = true;
-			this.sensorAssignmentARadioButton.CheckedChanged += new System.EventHandler(this.pinAssignmentARadioButton_CheckedChanged);
-			// 
-			// sensorAssignmentBRadioButton
-			// 
-			this.sensorAssignmentBRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.sensorAssignmentBRadioButton.AutoSize = true;
-			this.sensorAssignmentBRadioButton.Location = new System.Drawing.Point(44, 30);
-			this.sensorAssignmentBRadioButton.Name = "sensorAssignmentBRadioButton";
-			this.sensorAssignmentBRadioButton.Size = new System.Drawing.Size(32, 17);
-			this.sensorAssignmentBRadioButton.TabIndex = 3;
-			this.sensorAssignmentBRadioButton.TabStop = true;
-			this.sensorAssignmentBRadioButton.Text = "B";
-			this.sensorAssignmentBRadioButton.UseVisualStyleBackColor = true;
-			// 
 			// sensorNumberRadioButton
 			// 
 			this.sensorNumberRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -427,24 +398,12 @@
 			this.sensorNameRadioButton.Text = "Sensor Name";
 			this.sensorNameRadioButton.UseVisualStyleBackColor = true;
 			// 
-			// sensorAssignmentGroupBox
-			// 
-			this.sensorAssignmentGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.sensorAssignmentGroupBox.Controls.Add(this.sensorAssignmentARadioButton);
-			this.sensorAssignmentGroupBox.Controls.Add(this.sensorAssignmentBRadioButton);
-			this.sensorAssignmentGroupBox.Location = new System.Drawing.Point(12, 411);
-			this.sensorAssignmentGroupBox.Name = "sensorAssignmentGroupBox";
-			this.sensorAssignmentGroupBox.Size = new System.Drawing.Size(119, 70);
-			this.sensorAssignmentGroupBox.TabIndex = 8;
-			this.sensorAssignmentGroupBox.TabStop = false;
-			this.sensorAssignmentGroupBox.Text = "Sensor Assignment";
-			// 
 			// axisRepresentatoinGroupBox
 			// 
 			this.axisRepresentatoinGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.axisRepresentatoinGroupBox.Controls.Add(this.sensorNumberRadioButton);
 			this.axisRepresentatoinGroupBox.Controls.Add(this.sensorNameRadioButton);
-			this.axisRepresentatoinGroupBox.Location = new System.Drawing.Point(137, 411);
+			this.axisRepresentatoinGroupBox.Location = new System.Drawing.Point(12, 411);
 			this.axisRepresentatoinGroupBox.Name = "axisRepresentatoinGroupBox";
 			this.axisRepresentatoinGroupBox.Size = new System.Drawing.Size(126, 70);
 			this.axisRepresentatoinGroupBox.TabIndex = 9;
@@ -454,7 +413,7 @@
 			// appendAndSaveButton
 			// 
 			this.appendAndSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.appendAndSaveButton.Location = new System.Drawing.Point(308, 411);
+			this.appendAndSaveButton.Location = new System.Drawing.Point(144, 411);
 			this.appendAndSaveButton.Name = "appendAndSaveButton";
 			this.appendAndSaveButton.Size = new System.Drawing.Size(138, 23);
 			this.appendAndSaveButton.TabIndex = 10;
@@ -465,7 +424,7 @@
 			// closeButton
 			// 
 			this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.closeButton.Location = new System.Drawing.Point(308, 441);
+			this.closeButton.Location = new System.Drawing.Point(144, 440);
 			this.closeButton.Name = "closeButton";
 			this.closeButton.Size = new System.Drawing.Size(138, 23);
 			this.closeButton.TabIndex = 11;
@@ -481,14 +440,11 @@
 			this.Controls.Add(this.closeButton);
 			this.Controls.Add(this.appendAndSaveButton);
 			this.Controls.Add(this.axisRepresentatoinGroupBox);
-			this.Controls.Add(this.sensorAssignmentGroupBox);
 			this.Controls.Add(this.chart1);
 			this.Name = "PostProcessingResults";
 			this.Text = "PostProcessingResults";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(PostProcessingResults_FormClosed);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PostProcessingResults_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-			this.sensorAssignmentGroupBox.ResumeLayout(false);
-			this.sensorAssignmentGroupBox.PerformLayout();
 			this.axisRepresentatoinGroupBox.ResumeLayout(false);
 			this.axisRepresentatoinGroupBox.PerformLayout();
 			this.ResumeLayout(false);
@@ -498,11 +454,8 @@
 		#endregion
 
 		private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-		private System.Windows.Forms.RadioButton sensorAssignmentARadioButton;
-		private System.Windows.Forms.RadioButton sensorAssignmentBRadioButton;
 		private System.Windows.Forms.RadioButton sensorNumberRadioButton;
 		private System.Windows.Forms.RadioButton sensorNameRadioButton;
-		private System.Windows.Forms.GroupBox sensorAssignmentGroupBox;
 		private System.Windows.Forms.GroupBox axisRepresentatoinGroupBox;
 		private System.Windows.Forms.Button appendAndSaveButton;
 		private System.Windows.Forms.Button closeButton;

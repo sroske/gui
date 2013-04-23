@@ -13,12 +13,6 @@ namespace SpintronicsGUI
 {
 	public partial class PostProcessingResults : Form
 	{
-		enum SensorAssignment
-		{
-			A,
-			B
-		}
-
 		enum AxisAssignment
 		{
 			SensorNumber,
@@ -34,10 +28,10 @@ namespace SpintronicsGUI
 		string reactionWell;
 		string sample;
 		bool hasSaved = false;
-		SensorAssignment sensorAssignment = SensorAssignment.A;
+		SensorAssignment sensorAssignment;
 		AxisAssignment axisAssignment = AxisAssignment.SensorNumber;
 
-		public PostProcessingResults(double[] pre, double[] post, string defaultSaveFileDirectory, string reaWell, string sam)
+		public PostProcessingResults(double[] pre, double[] post, string defaultSaveFileDirectory, string reaWell, string sam, SensorAssignment assignment)
 		{
 			InitializeComponent();
 
@@ -46,8 +40,8 @@ namespace SpintronicsGUI
 			this.saveFileDirectory = defaultSaveFileDirectory;
 			this.reactionWell = reaWell;
 			this.sample = sam;
+			this.sensorAssignment = assignment;
 
-			this.sensorAssignmentARadioButton.Checked = true;
 			this.sensorNumberRadioButton.Checked = true;
 
 			addDataToGraph();
@@ -87,16 +81,14 @@ namespace SpintronicsGUI
 					this.chart1.Series[i].Points.Last().ToolTip = "" + this.chart1.Series[i].Points.Last().YValues[0];
 				}
 			}
-		}
-
-		private void pinAssignmentARadioButton_CheckedChanged(object sender, EventArgs e)
-		{
-			if (this.sensorAssignmentARadioButton.Checked)
-				this.sensorAssignment = SensorAssignment.A;
-			else
-				this.sensorAssignment = SensorAssignment.B;
-
-			addDataToGraph();
+			if (this.axisAssignment == AxisAssignment.SensorNumber)
+			{
+				for (int i = 15; i < preResults.Length; i++)
+				{
+					this.chart1.Series[i].Points.First().XValue++;
+					this.chart1.Series[i].Points.Last().XValue++;
+				}
+			}
 		}
 
 		private void sensorOnXAxisRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -160,24 +152,74 @@ namespace SpintronicsGUI
 			saveFile.FileName = "post-processing";
 			if (saveFile.ShowDialog() == DialogResult.OK)
 			{
-				try {
-					StreamWriter postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
-					postProcessingFile.WriteLine("\nDate:\t\t" + DateTime.Now);
-					postProcessingFile.WriteLine("Reaction Well:\t" + this.reactionWell);
-					postProcessingFile.WriteLine("Sample:\t\t" + this.sample);
-					for (int i = 0; i < 30; i++)
-					{
-						if (i == 15)
-							continue;
-						if(i < 9)
-							postProcessingFile.Write("Sensor   " + (i + 1) + "\t");
-						else
-							postProcessingFile.Write("Sensor  " + (i + 1) + "\t");
-					}
-					postProcessingFile.Write("\n");
+				StreamWriter postProcessingFile;
+				if (!File.Exists(saveFile.FileName))
+				{
+					postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
+					postProcessingFile.Write("Date\t\t\t");
+					postProcessingFile.Write("Reaction Well\t");
+					postProcessingFile.Write("Sample\t\t");
+					string col = "a";
+					int row = 1;
 					for (int i = 0; i < 29; i++)
 					{
-						string dataString = System.Convert.ToString(postResults[i] - preResults[i]);
+						postProcessingFile.Write(row + col + "\t\t");
+
+						if (i > 22)
+						{
+							row = 0;
+							if (col == "a")
+								col = "b";
+							else if (col == "b")
+								col = "c";
+							else if (col == "c")
+								col = "d";
+							else if (i == 23)
+								col = "a";
+							else
+								col = "e";
+						}
+						else if (++row > 6)
+						{
+							row = 1;
+							if (col == "a")
+								col = "b";
+							else if (col == "b")
+								col = "c";
+							else if (col == "c")
+								col = "d";
+							else
+								col = "a";
+						}
+					}
+					postProcessingFile.Write("\n");
+				}
+				else
+				{
+					postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
+				}
+				try {
+					postProcessingFile.Write(DateTime.Now + "\t");
+					postProcessingFile.Write(this.reactionWell + "\t\t");
+					postProcessingFile.Write(this.sample + "\t\t");
+
+					double[] data = new double[preResults.Length];
+
+					for (int i = 0; i < data.Length; i++)
+					{
+						if (getSensorRow(i + 1) > 0)
+						{
+							data[((getSensorColumn(i + 1) - 1) * 6) + getSensorRow(i + 1) - 1] = postResults[i] - preResults[i];
+						}
+						else
+						{
+							data[getSensorColumn(i + 1) + 24 - 1] = postResults[i] - preResults[i];
+						}
+					}
+
+					for (int i = 0; i < data.Length; i++)
+					{
+						string dataString = System.Convert.ToString(data[i]);
 						try {
 							dataString = dataString.Substring(0, 10);
 						} catch (ArgumentOutOfRangeException) {
@@ -185,16 +227,17 @@ namespace SpintronicsGUI
 						}
 						postProcessingFile.Write(dataString + "\t");
 					}
-					postProcessingFile.Write("\n");
-					postProcessingFile.Flush();
-					postProcessingFile.Close();
 					this.hasSaved = true;
 				} catch (ArgumentException) {
 					MessageBox.Show("Error while saving files: One or more files could not be found");
 				} catch (UnauthorizedAccessException) {
 					MessageBox.Show("Error while saving files: One or more files could not be accessed due to lack of authorization");
 				} catch (Exception ex) {
-					MessageBox.Show("Error while saving files:" + ex.Message);
+					MessageBox.Show("Error while saving files: " + ex.Message);
+				} finally {
+					postProcessingFile.Write("\n");
+					postProcessingFile.Flush();
+					postProcessingFile.Close();
 				}
 			}
 		}
@@ -204,16 +247,12 @@ namespace SpintronicsGUI
 			this.Close();
 		}
 
-		private void PostProcessingResults_FormClosed(object sender, EventArgs e)
+		private void PostProcessingResults_FormClosed(object sender, CancelEventArgs e)
 		{
 			if (!hasSaved)
 			{
-				if (MessageBox.Show("Are you sure you want to close without saving?", "", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
-					this.Close();
-			}
-			else
-			{
-				this.Close();
+				if (MessageBox.Show("Are you sure you want to close without saving?", "", MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
+					e.Cancel = true;
 			}
 		}
 	}

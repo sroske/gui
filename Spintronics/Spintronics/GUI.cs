@@ -19,12 +19,6 @@ namespace SpintronicsGUI
 		Out
 	}
 
-	enum SensorAssignment
-	{
-		A,
-		B
-	}
-
 	public partial class GUI : Form
 	{
 		Configuration configFile;
@@ -1414,7 +1408,8 @@ namespace SpintronicsGUI
 			}
 
 			PostProcessingResults postProcessingResultsWindow = new PostProcessingResults(beforeAverage, afterAverage, this.runFilesDirectory,
-																this.reactionWellTextBox.Text, this.sampleTextBox.Text);
+																this.reactionWellTextBox.Text, this.sampleTextBox.Text,
+																this.sensorAssignment);
 			postProcessingResultsWindow.ShowDialog();
 		}
 
