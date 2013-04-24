@@ -199,7 +199,7 @@ namespace SpintronicsGUI
 					postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
 				}
 				try {
-					postProcessingFile.Write(DateTime.Today + "\t");
+					postProcessingFile.Write(DateTime.Today.ToShortDateString() + "\t");
 					postProcessingFile.Write(this.reactionWell + "\t");
 					postProcessingFile.Write(this.sample + "\t");
 

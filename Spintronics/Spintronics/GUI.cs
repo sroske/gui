@@ -186,14 +186,14 @@ namespace SpintronicsGUI
 				{
 					this.signalChangeProgressBar.Maximum = this.configFile.diffusionCount;
 					this.signalChangeProgressBar.Minimum = 0;
-					this.signalChangeLabel.Text = "Waiting for signal diffusion...";
+					this.signalChangeLabel.Text = "Waiting for signal change...";
 					this.finalSignalLabel.Text = "";
 					this.signalChangeProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle;
 					this.finalSignalProgressBar.Value = 0;
 				}
 				else if ((globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.diffusionCount + this.configFile.sampleAverageCount))
 				{
-					this.signalChangeLabel.Text = "Waiting for signal diffusion...Done";
+					this.signalChangeLabel.Text = "Waiting for signal change...Done";
 					this.finalSignalProgressBar.Maximum = this.configFile.sampleAverageCount;
 					this.finalSignalProgressBar.Minimum = 0;
 					this.finalSignalLabel.Text = "Averaging final signal...";
@@ -201,7 +201,7 @@ namespace SpintronicsGUI
 				}
 				else
 				{
-					this.signalChangeLabel.Text = "Waiting for signal diffusion...Done";
+					this.signalChangeLabel.Text = "Waiting for signal change...Done";
 					this.finalSignalLabel.Text = "Averaging final signal...Done";
 				}
 
@@ -743,7 +743,7 @@ namespace SpintronicsGUI
 			}
 			else
 			{
-				MessageBox.Show("Terminate REaction Well name with either '-A' or '-B' to indicate side of chip");
+				MessageBox.Show("Terminate Reaction Well name with either '-A' or '-B' to indicate side of chip");
 				this.reactionWellTextBox.Focus();
 				return;
 			}
