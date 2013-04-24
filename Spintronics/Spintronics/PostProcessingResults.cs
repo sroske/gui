@@ -156,14 +156,14 @@ namespace SpintronicsGUI
 				if (!File.Exists(saveFile.FileName))
 				{
 					postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
-					postProcessingFile.Write("Date\t\t\t");
+					postProcessingFile.Write("Date\t");
 					postProcessingFile.Write("Reaction Well\t");
-					postProcessingFile.Write("Sample\t\t");
+					postProcessingFile.Write("Sample\t");
 					string col = "a";
 					int row = 1;
 					for (int i = 0; i < 29; i++)
 					{
-						postProcessingFile.Write(row + col + "\t\t");
+						postProcessingFile.Write(row + col + "\t");
 
 						if (i > 22)
 						{
@@ -199,9 +199,9 @@ namespace SpintronicsGUI
 					postProcessingFile = new StreamWriter(File.Open(saveFile.FileName, FileMode.Append));
 				}
 				try {
-					postProcessingFile.Write(DateTime.Now + "\t");
-					postProcessingFile.Write(this.reactionWell + "\t\t");
-					postProcessingFile.Write(this.sample + "\t\t");
+					postProcessingFile.Write(DateTime.Today + "\t");
+					postProcessingFile.Write(this.reactionWell + "\t");
+					postProcessingFile.Write(this.sample + "\t");
 
 					double[] data = new double[preResults.Length];
 

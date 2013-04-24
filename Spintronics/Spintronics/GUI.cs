@@ -41,7 +41,7 @@ namespace SpintronicsGUI
 		int tareIndex = 0;
 		int recalculate = 1;
 		int cycleSensorCount = 0;
-		int mostRecentAddBufferCycle = 0;
+		int mostRecentAddMpsCycle = 0;
 		int enableAddBufferAndMnpAtCycle;
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };
 
@@ -168,6 +168,41 @@ namespace SpintronicsGUI
 						this.bufferingProgressBar.Value = 0;
 						this.bufferingLabel.Visible = false;
 					}
+				}
+
+				if (globalCycle <= this.configFile.sampleAverageCount)
+				{
+					this.initialSignalProgressBar.Maximum = 29 * this.configFile.sampleAverageCount;
+					this.initialSignalProgressBar.Minimum = 0;
+					this.initialSignalLabel.Text = "Averaging initial signal...";
+					this.initialSignalProgressBar.Value++;
+				}
+				else if (this.mostRecentAddMpsCycle == 0)
+				{
+					this.initialSignalLabel.Text = "Averaging initial signal...Done";
+					this.signalChangeLabel.Text = "Waiting for MNPs to be added...";
+				}
+				else if ((globalCycle - this.mostRecentAddMpsCycle) <= this.configFile.diffusionCount)
+				{
+					this.signalChangeProgressBar.Maximum = this.configFile.diffusionCount;
+					this.signalChangeProgressBar.Minimum = 0;
+					this.signalChangeLabel.Text = "Waiting for signal diffusion...";
+					this.finalSignalLabel.Text = "";
+					this.signalChangeProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle;
+					this.finalSignalProgressBar.Value = 0;
+				}
+				else if ((globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.diffusionCount + this.configFile.sampleAverageCount))
+				{
+					this.signalChangeLabel.Text = "Waiting for signal diffusion...Done";
+					this.finalSignalProgressBar.Maximum = this.configFile.sampleAverageCount;
+					this.finalSignalProgressBar.Minimum = 0;
+					this.finalSignalLabel.Text = "Averaging final signal...";
+					this.finalSignalProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle - this.configFile.diffusionCount;
+				}
+				else
+				{
+					this.signalChangeLabel.Text = "Waiting for signal diffusion...Done";
+					this.finalSignalLabel.Text = "Averaging final signal...Done";
 				}
 
 				if (globalCycle >= this.enableAddBufferAndMnpAtCycle)
@@ -708,10 +743,7 @@ namespace SpintronicsGUI
 			}
 			else
 			{
-				MessageBox.Show("Please enter a valid Reaction Well name.\n" +
-						    "Use the form <name>-X, where X represents\n" +
-						    "the Pin Assignment scheme and is either\n" +
-						    "'A' or 'B'");
+				MessageBox.Show("Terminate REaction Well name with either '-A' or '-B' to indicate side of chip");
 				this.reactionWellTextBox.Focus();
 				return;
 			}
@@ -797,7 +829,10 @@ namespace SpintronicsGUI
 			this.globalCycle = 0;
 			this.tareIndex = 0;
 			this.tareIndexTextbox.Text = "0";
-			this.mostRecentAddBufferCycle = 0;
+			this.mostRecentAddMpsCycle = 0;
+			this.initialSignalProgressBar.Value = 0;
+			this.signalChangeProgressBar.Value = 0;
+			this.finalSignalProgressBar.Value = 0;
 			this.resultsSaved = false;
 
 			this.stopRunButton.Enabled = true;
@@ -862,19 +897,25 @@ namespace SpintronicsGUI
 			protocolHandler.HandlePacket(stopPacket, serialPort);
 			this.bufferingLabel.Visible = false;
 			this.bufferingProgressBar.Visible = false;
+			this.initialSignalProgressBar.Value = 0;
+			this.initialSignalLabel.Text = "";
+			this.signalChangeProgressBar.Value = 0;
+			this.signalChangeLabel.Text = "";
+			this.finalSignalProgressBar.Value = 0;
+			this.finalSignalLabel.Text = "";
 			this.running = false;
 
-			if(this.mostRecentAddBufferCycle == 0)
+			if(this.mostRecentAddMpsCycle == 0)
 			{
 				this.postProcessingToolStripMenuItem.Enabled = false;
 				this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
 			}
-			else if ((this.globalCycle - this.mostRecentAddBufferCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
+			else if ((this.globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
 			{
 				this.postProcessingToolStripMenuItem.Enabled = false;
 				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
 													"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
-													"only " + (this.globalCycle - this.mostRecentAddBufferCycle - 1) + " occurred";
+													"only " + (this.globalCycle - this.mostRecentAddMpsCycle - 1) + " occurred";
 			}
 			else
 			{
@@ -1033,7 +1074,7 @@ namespace SpintronicsGUI
 				}
 			}
 
-			this.mostRecentAddBufferCycle = this.globalCycle;
+			this.mostRecentAddMpsCycle = this.globalCycle;
 
 			this.addBufferButton.Enabled = false;
 			this.addMnpButton.Enabled = false;
@@ -1519,7 +1560,7 @@ namespace SpintronicsGUI
 					StreamReader ltFileReader = new StreamReader(ltFileName);
 					StreamReader ctFileReader = new StreamReader(ctFileName);
 					this.globalCycle = 0;
-					this.mostRecentAddBufferCycle = 0;
+					this.mostRecentAddMpsCycle = 0;
 					this.tareIndex = 0;
 					this.tareIndexTextbox.Text = "0";
 					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
@@ -1638,7 +1679,7 @@ namespace SpintronicsGUI
 						if (line.Contains("MNPs"))
 						{
 							int end = line.IndexOf("\t");
-							this.mostRecentAddBufferCycle = System.Convert.ToInt32(line.Substring(0, end));
+							this.mostRecentAddMpsCycle = System.Convert.ToInt32(line.Substring(0, end));
 							foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 							{
 								foreach (Chart c in t.Controls.OfType<Chart>())
@@ -1661,17 +1702,17 @@ namespace SpintronicsGUI
 					globalCycle -= 2;		// Reverse our hack, and subtract one more for our failure to check if the last data lines we parsed were complete or not
 									// (i.e. if we would have incremented globalCycle normally)
 
-					if (this.mostRecentAddBufferCycle == 0)
+					if (this.mostRecentAddMpsCycle == 0)
 					{
 						this.postProcessingToolStripMenuItem.Enabled = false;
 						this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
 					}
-					else if ((this.globalCycle - this.mostRecentAddBufferCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
+					else if ((this.globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
 					{
 						this.postProcessingToolStripMenuItem.Enabled = false;
 						this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
 															"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
-															"only " + (this.globalCycle - this.mostRecentAddBufferCycle - 1) + " occurred";
+															"only " + (this.globalCycle - this.mostRecentAddMpsCycle - 1) + " occurred";
 					}
 					else
 					{
