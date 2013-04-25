@@ -11,6 +11,7 @@ namespace SpintronicsGUI
 	enum ProtocolState
 	{
 		Idle,
+		ConfigSent,
 		StartSent,
 		StopSent,
 		WaitForData,
@@ -32,26 +33,33 @@ namespace SpintronicsGUI
 			state = ProtocolState.Idle;
 		}
 
-        public class PacketException : Exception
-        {
-
-        }
-
-		public int HandlePacket(Packet packetIn, SerialPort serialPort, Chart chart = null, bool forceSend = false)
+		public ProtocolDirective HandlePacket(Packet packetIn, SerialPort serialPort, Chart chart = null, bool forceSend = false)
 		{
 			if (forceSend)
 			{
 				writePacket(packetIn, serialPort);
-				return (int)ProtocolDirective.DoNothing;
+				return ProtocolDirective.DoNothing;
 			}
 
 			switch (state)
 			{
 				case ProtocolState.Idle:
+					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
+					{
+						writePacket(packetIn, serialPort);
+						state = ProtocolState.ConfigSent;
+					}
 					if (packetIn.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
 					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
 						writePacket(packetIn, serialPort);
 						state = ProtocolState.StartSent;
+					}
+					break;
+
+				case ProtocolState.ConfigSent:
+					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.Microcontroller))
+					{
+						state = ProtocolState.Idle;
 					}
 					break;
 
@@ -80,7 +88,7 @@ namespace SpintronicsGUI
 						payload[0] = packetIn.payload[0];
 						Packet ackPacket = new Packet((byte)PacketType.Report | (byte)PacketSender.GUI, 1, payload);
 						writePacket(ackPacket, serialPort);
-						return (int)ProtocolDirective.AddData;
+						return ProtocolDirective.AddData;
 					}
 					else if (packetIn.command == ((byte)PacketType.Stop | (byte)PacketSender.GUI))
 					{// If we're waiting for data packets and we receive a stop packet from the GUI
@@ -96,7 +104,7 @@ namespace SpintronicsGUI
 				default:
 					break;
 			}
-			return (int)ProtocolDirective.DoNothing;
+			return ProtocolDirective.DoNothing;
 		}
 
 		private void writePacket(Packet packetToWrite, SerialPort port)

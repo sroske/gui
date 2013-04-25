@@ -973,7 +973,7 @@ namespace SpintronicsGUI
 			// startRunButton
 			// 
 			this.startRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.startRunButton.Location = new System.Drawing.Point(364, 531);
+			this.startRunButton.Location = new System.Drawing.Point(350, 522);
 			this.startRunButton.Name = "startRunButton";
 			this.startRunButton.Size = new System.Drawing.Size(92, 23);
 			this.startRunButton.TabIndex = 1;
@@ -1157,7 +1157,7 @@ namespace SpintronicsGUI
 			// 
 			this.stopRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.stopRunButton.Enabled = false;
-			this.stopRunButton.Location = new System.Drawing.Point(364, 563);
+			this.stopRunButton.Location = new System.Drawing.Point(350, 551);
 			this.stopRunButton.Name = "stopRunButton";
 			this.stopRunButton.Size = new System.Drawing.Size(92, 23);
 			this.stopRunButton.TabIndex = 1;

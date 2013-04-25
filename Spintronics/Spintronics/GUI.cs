@@ -178,19 +178,20 @@ namespace SpintronicsGUI
 
 				if (globalCycle <= this.configFile.sampleAverageCount)
 				{
-					this.initialSignalProgressBar.Maximum = 29 * this.configFile.sampleAverageCount;
+					this.initialSignalProgressBar.Maximum = this.configFile.sampleAverageCount + 1;
 					this.initialSignalProgressBar.Minimum = 0;
 					this.initialSignalLabel.Text = "Averaging initial signal...";
-					this.initialSignalProgressBar.Value++;
+					this.initialSignalProgressBar.Value = globalCycle;
 				}
 				else if (this.mostRecentAddMpsCycle == 0)
 				{
+					this.initialSignalProgressBar.Value = this.initialSignalProgressBar.Maximum;
 					this.initialSignalLabel.Text = "Averaging initial signal...Done";
 					this.signalChangeLabel.Text = "Waiting for MNPs to be added...";
 				}
 				else if ((globalCycle - this.mostRecentAddMpsCycle) <= this.configFile.diffusionCount)
 				{
-					this.signalChangeProgressBar.Maximum = this.configFile.diffusionCount;
+					this.signalChangeProgressBar.Maximum = this.configFile.diffusionCount + 1;
 					this.signalChangeProgressBar.Minimum = 0;
 					this.signalChangeLabel.Text = "Waiting for signal change...";
 					this.finalSignalLabel.Text = "";
@@ -199,15 +200,18 @@ namespace SpintronicsGUI
 				}
 				else if ((globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.diffusionCount + this.configFile.sampleAverageCount))
 				{
+					this.signalChangeProgressBar.Value = this.signalChangeProgressBar.Maximum;
 					this.signalChangeLabel.Text = "Waiting for signal change...Done";
-					this.finalSignalProgressBar.Maximum = this.configFile.sampleAverageCount;
+					this.finalSignalProgressBar.Maximum = this.configFile.sampleAverageCount + 1;
 					this.finalSignalProgressBar.Minimum = 0;
 					this.finalSignalLabel.Text = "Averaging final signal...";
 					this.finalSignalProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle - this.configFile.diffusionCount;
 				}
 				else
 				{
+					this.signalChangeProgressBar.Value = this.signalChangeProgressBar.Maximum;
 					this.signalChangeLabel.Text = "Waiting for signal change...Done";
+					this.finalSignalProgressBar.Value = this.finalSignalProgressBar.Maximum;
 					this.finalSignalLabel.Text = "Averaging final signal...Done";
 				}
 
@@ -425,8 +429,8 @@ namespace SpintronicsGUI
 						break;
 				}
 
-				int retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.adjustedChart1);
-				if(retval == (int)ProtocolDirective.AddData && this.running)
+				ProtocolDirective retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.adjustedChart1);
+				if(retval == ProtocolDirective.AddData && this.running)
 					if (InvokeRequired)
 						this.Invoke(this.myDelegate, packet);
 
