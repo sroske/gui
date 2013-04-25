@@ -71,9 +71,7 @@ namespace SpintronicsGUI
 				case MicrocontrollerState.Idle:
 					if (packet.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
 					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
-						Packet startReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Start));
-						float[] data = new float[5];
-						Buffer.BlockCopy(packet.payload, 0, data, 0, packet.payloadLength);
+						Packet startReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Start), (byte)packet.payload.Length, packet.payload);
 						writePacket(startReplyPacket);
 						Thread.Sleep(dataSpeed);
 						writePacket(createDataPacket());

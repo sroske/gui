@@ -314,7 +314,7 @@ namespace SpintronicsGUI
 			this.sampleTextBox = new System.Windows.Forms.TextBox();
 			this.addBufferUnitLabel = new System.Windows.Forms.Label();
 			this.addMnpUnitLabel = new System.Windows.Forms.Label();
-			this.validateButton = new System.Windows.Forms.Button();
+			this.validateReactionWellButton = new System.Windows.Forms.Button();
 			this.initialSignalProgressBar = new System.Windows.Forms.ProgressBar();
 			this.signalChangeProgressBar = new System.Windows.Forms.ProgressBar();
 			this.finalSignalProgressBar = new System.Windows.Forms.ProgressBar();
@@ -2235,15 +2235,15 @@ namespace SpintronicsGUI
 			this.addMnpUnitLabel.TabIndex = 61;
 			this.addMnpUnitLabel.Text = "label1";
 			// 
-			// validateButton
+			// validateReactionWellButton
 			// 
-			this.validateButton.Location = new System.Drawing.Point(132, 102);
-			this.validateButton.Name = "validateButton";
-			this.validateButton.Size = new System.Drawing.Size(75, 23);
-			this.validateButton.TabIndex = 62;
-			this.validateButton.Text = "Validate";
-			this.validateButton.UseVisualStyleBackColor = true;
-			this.validateButton.Click += new System.EventHandler(this.validateButton_Click);
+			this.validateReactionWellButton.Location = new System.Drawing.Point(132, 102);
+			this.validateReactionWellButton.Name = "validateReactionWellButton";
+			this.validateReactionWellButton.Size = new System.Drawing.Size(75, 23);
+			this.validateReactionWellButton.TabIndex = 62;
+			this.validateReactionWellButton.Text = "Validate";
+			this.validateReactionWellButton.UseVisualStyleBackColor = true;
+			this.validateReactionWellButton.Click += new System.EventHandler(this.validateReactionWellButton_Click);
 			// 
 			// initialSignalProgressBar
 			// 
@@ -2301,7 +2301,7 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.finalSignalProgressBar);
 			this.Controls.Add(this.signalChangeProgressBar);
 			this.Controls.Add(this.initialSignalProgressBar);
-			this.Controls.Add(this.validateButton);
+			this.Controls.Add(this.validateReactionWellButton);
 			this.Controls.Add(this.addMnpUnitLabel);
 			this.Controls.Add(this.addBufferUnitLabel);
 			this.Controls.Add(this.sampleTextBox);
@@ -2434,7 +2434,7 @@ namespace SpintronicsGUI
 		private Label addMnpUnitLabel;
 		private ToolStripMenuItem toolsToolStripMenuItem;
 		private ToolStripMenuItem postProcessingToolStripMenuItem;
-		private Button validateButton;
+		private Button validateReactionWellButton;
 		private ProgressBar initialSignalProgressBar;
 		private ProgressBar signalChangeProgressBar;
 		private ProgressBar finalSignalProgressBar;

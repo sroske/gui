@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define _DEBUG_
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -33,13 +35,13 @@ namespace SpintronicsGUI
 		TextWriter ctFile = null;
 		bool running = false;
 		bool resultsSaved = true;
-		bool validated = false;
+		bool reactionWellValidated = false;
 		SensorAssignment sensorAssignment = SensorAssignment.A;
 		public delegate void addNewDataPoint(Packet packet);
 		public addNewDataPoint myDelegate;
 		int globalCycle = 0;
 		int tareIndex = 0;
-		int recalculate = 1;
+		bool recalculate = true;
 		int cycleSensorCount = 0;
 		int mostRecentAddMpsCycle = 0;
 		int enableAddBufferAndMnpAtCycle;
@@ -56,18 +58,22 @@ namespace SpintronicsGUI
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
 			// Initialize COM ports
-			//serialPort = new SerialPort(comPort, 115200);
+			serialPort = new SerialPort(comPort, 115200);
+#if _DEBUG_
 			serialPort = new SerialPort("COM5", 115200);
 			debugSerial = new SerialPort("COM6", 115200);
-			serialPort.ReadTimeout = 200;
 			debugSerial.ReadTimeout = 200;
+#endif
+			serialPort.ReadTimeout = 200;
 
 			// Open COM ports
 			try {
 				serialPort.Open();
+#if _DEBUG_
 				debugSerial.Open();
-				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);
 				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);
+#endif
+				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);
 			} catch(IOException) {
 				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
 				//throw new ArgumentNullException();
@@ -79,11 +85,11 @@ namespace SpintronicsGUI
 
 		private void GUI_Shown(object sender, EventArgs e)
 		{
-			recalculate = 0;
+			recalculate = false;
 			this.reactionWellTextBox.Text = "-A";
-			this.validateButton.PerformClick();
+			this.validateReactionWellButton.PerformClick();
 			this.reactionWellTextBox.Text = "";
-			recalculate = 1;
+			recalculate = true;
 
 			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddBufferVolume);
 			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);
@@ -308,7 +314,7 @@ namespace SpintronicsGUI
 		 */
 		private void recalculateData()
 		{
-			if (recalculate != 1)
+			if (!recalculate)
 				return;
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
@@ -655,7 +661,7 @@ namespace SpintronicsGUI
 		private void selectAllButton_Click(object sender, EventArgs e)
 		{
 			int count = 0;
-			recalculate = 0;
+			recalculate = false;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
 				int i;
@@ -667,14 +673,14 @@ namespace SpintronicsGUI
 						if (!c.Checked)
 						{
 							if (count == 5)
-								recalculate = 1;
+								recalculate = true;
 							c.Checked = true;
 						}
 						else
 						{
 							if (count == 5)
 							{
-								recalculate = 1;
+								recalculate = true;
 								recalculateData();
 							}
 						}
@@ -692,7 +698,7 @@ namespace SpintronicsGUI
 		private void invertSelectionButton_Click(object sender, EventArgs e)
 		{
 			int count = 0;
-			recalculate = 0;
+			recalculate = false;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
 				int i;
@@ -702,7 +708,7 @@ namespace SpintronicsGUI
 					{
 						count++;
 						if (count == 5)
-							recalculate = 1;
+							recalculate = true;
 						c.Checked = !c.Checked;
 						break;
 					}
@@ -717,29 +723,32 @@ namespace SpintronicsGUI
 		/*
 		 * This is called when the pin assignment is changed
 		 */
-		private void validateButton_Click(object sender, EventArgs e)
+		private void validateReactionWellButton_Click(object sender, EventArgs e)
 		{
+			this.validateReactionWellButton.BackColor = Color.IndianRed;
 			if (reactionWellTextBox.Text == "")
 			{
-				MessageBox.Show("Please enter a Reaction Well name");
+				MessageBox.Show("Terminate Reaction Well name with either '-A' or '-B' to indicate side of chip");
 				this.reactionWellTextBox.Focus();
 				return;
 			}
 			if (reactionWellTextBox.Text.Length == 1)
 			{
-				MessageBox.Show("Please enter a valid Reaction Well name");
+				MessageBox.Show("Terminate Reaction Well name with either '-A' or '-B' to indicate side of chip");
 				this.reactionWellTextBox.Focus();
 				return;
 			}
 			if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 2, 2).Equals("-A"))
 			{
 				this.sensorAssignment = SensorAssignment.A;
-				this.validated = true;
+				this.reactionWellValidated = true;
+				this.validateReactionWellButton.BackColor = Color.LightGreen;
 			}
 			else if (reactionWellTextBox.Text.Substring(reactionWellTextBox.Text.Length - 2, 2).Equals("-B"))
 			{
 				this.sensorAssignment = SensorAssignment.B;
-				this.validated = true;
+				this.reactionWellValidated = true;
+				this.validateReactionWellButton.BackColor = Color.LightGreen;
 			}
 			else
 			{
@@ -748,7 +757,7 @@ namespace SpintronicsGUI
 				return;
 			}
 			int count = 0;
-			recalculate = 0;
+			recalculate = false;
 			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 			{
 				int i;
@@ -761,7 +770,7 @@ namespace SpintronicsGUI
 						c.Checked = !c.Checked;
 						if (count == 5)
 						{
-							recalculate = 1;
+							recalculate = true;
 						}
 						c.Checked = !c.Checked;
 						break;
@@ -796,12 +805,16 @@ namespace SpintronicsGUI
 				this.sensorsLabel7.Text = "6";
 				this.s07_07.Location = new System.Drawing.Point(118, 53);
 			}
-			recalculate = 1;
+			recalculate = true;
 		}
 
+		/*
+		 * This is called when the user changes the text in the Reaction Well text box
+		 */
 		private void reactionWellTextBox_TextChanged(object sender, EventArgs e)
 		{
-			this.validated = false;
+			this.reactionWellValidated = false;			// Test changed, so unvalidate,
+			this.validateReactionWellButton.BackColor = Color.IndianRed;
 		}
 
 		/*
@@ -820,8 +833,8 @@ namespace SpintronicsGUI
 				return;
 			}
 
-			this.validateButton.PerformClick();
-			if (!this.validated)
+			this.validateReactionWellButton.PerformClick();
+			if (!this.reactionWellValidated)
 			{
 				return;
 			}
@@ -860,13 +873,14 @@ namespace SpintronicsGUI
 			this.globalCycle++;
 			try {
 				float[] data = new float[5];
-				byte[] payload = new byte[20];
+				byte[] payload = new byte[21];
 				data[0] = this.configFile.wheatstoneAmplitude;
 				data[1] = this.configFile.coilAmplitude;
 				data[2] = this.configFile.wheatstoneFrequency;
 				data[3] = this.configFile.coilFrequency;
 				data[4] = this.configFile.measurementPeriod;
-				Buffer.BlockCopy(data, 0, payload, 0, payload.Length);
+				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
+				payload[20] = 0x01;
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(startPacket, PacketCommDirection.Out);
 				protocolHandler.HandlePacket(startPacket, serialPort);
@@ -905,23 +919,7 @@ namespace SpintronicsGUI
 			this.finalSignalLabel.Text = "";
 			this.running = false;
 
-			if(this.mostRecentAddMpsCycle == 0)
-			{
-				this.postProcessingToolStripMenuItem.Enabled = false;
-				this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
-			}
-			else if ((this.globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
-			{
-				this.postProcessingToolStripMenuItem.Enabled = false;
-				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
-													"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
-													"only " + (this.globalCycle - this.mostRecentAddMpsCycle - 1) + " occurred";
-			}
-			else
-			{
-				this.postProcessingToolStripMenuItem.Enabled = true;
-				this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
-			}
+			validatePostProcessing();
 
 			this.stopRunButton.Enabled = false;
 			this.stopRunToolStripMenuItem.Enabled = false;
@@ -935,6 +933,35 @@ namespace SpintronicsGUI
 				this.ctFile.Close();
 			} catch (Exception) {
 
+			}
+		}
+
+
+		private void validatePostProcessing()
+		{
+			if (this.mostRecentAddMpsCycle == 0)
+			{
+				this.postProcessingToolStripMenuItem.Enabled = false;
+				this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
+			}
+			else if (this.mostRecentAddMpsCycle <= configFile.sampleAverageCount)
+			{
+				this.postProcessingToolStripMenuItem.Enabled = false;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred before most-recent MNP add cycle\n" +
+													"Minimum is " + this.configFile.sampleAverageCount + " cycles, " +
+													"only " + (this.mostRecentAddMpsCycle - 1) + " occurred";
+			}
+			else if ((this.globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
+			{
+				this.postProcessingToolStripMenuItem.Enabled = false;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
+													"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
+													"only " + (this.globalCycle - this.mostRecentAddMpsCycle - 1) + " occurred";
+			}
+			else
+			{
+				this.postProcessingToolStripMenuItem.Enabled = true;
+				this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
 			}
 		}
 
@@ -1249,6 +1276,7 @@ namespace SpintronicsGUI
 					configFile.setPostProcessingFiles(preferenceWindow.postProcessingFiles);
 					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
 					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
+					validatePostProcessing();
 				}
 				preferenceWindow.Dispose();
 			}
@@ -1275,8 +1303,8 @@ namespace SpintronicsGUI
 				return;
 			}
 
-			this.validateButton.PerformClick();
-			if (!this.validated)
+			this.validateReactionWellButton.PerformClick();
+			if (!this.reactionWellValidated)
 			{
 				return;
 			}
@@ -1631,8 +1659,11 @@ namespace SpintronicsGUI
 						else
 							nullCount++;
 						if (nullCount >= 3)
-							break;
-						else
+						{
+							globalCycle--;		// Because we incremented global cycle before we discovered that our last line was null/empty,
+							break;			// it will be pointing to that cycle. GlobalCycle is ALWAYS pointing to the last uncompleted row
+						}					// of data points, so we need to move it back to that row (because we can't verify it had exactly
+						else					// 29 data points, one for each sensor (excluding 16)
 							globalCycle++;
 					}
 					htFileReader.Close();
@@ -1646,8 +1677,8 @@ namespace SpintronicsGUI
 							int first = line.IndexOf(":");
 							string me = line.Substring(first + 1, line.Length - first - 1);
 							this.reactionWellTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
-							this.validateButton.PerformClick();
-							if (!this.validated)
+							this.validateReactionWellButton.PerformClick();
+							if (!this.reactionWellValidated)
 								return;
 						}
 						if (line.Contains("Sample:"))
@@ -1697,30 +1728,13 @@ namespace SpintronicsGUI
 					}
 					logFileReader.Close();
 
-					globalCycle++;		// Because recalculateData() operates in the scope of the VISIBLE charts, we need to cheat and say we're
+					//globalCycle++;		// Because recalculateData() operates in the scope of the VISIBLE charts, we need to cheat and say we're
 					recalculateData();	// a cycle ahead so we can view all of our available data (note: we'll see more data points than we did when we saved the files)
-					globalCycle -= 2;		// Reverse our hack, and subtract one more for our failure to check if the last data lines we parsed were complete or not
-									// (i.e. if we would have incremented globalCycle normally)
+					//globalCycle--;		// Reverse our hack
 
-					if (this.mostRecentAddMpsCycle == 0)
-					{
-						this.postProcessingToolStripMenuItem.Enabled = false;
-						this.postProcessingToolStripMenuItem.ToolTipText = "MNPs were never added";
-					}
-					else if ((this.globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.sampleAverageCount + this.configFile.diffusionCount))
-					{
-						this.postProcessingToolStripMenuItem.Enabled = false;
-						this.postProcessingToolStripMenuItem.ToolTipText = "Not enough cycles occurred after most-recent MNP add cycle\n" +
-															"Minimum is " + (this.configFile.sampleAverageCount + this.configFile.diffusionCount) + " cycles, " +
-															"only " + (this.globalCycle - this.mostRecentAddMpsCycle - 1) + " occurred";
-					}
-					else
-					{
-						this.postProcessingToolStripMenuItem.Enabled = true;
-						this.postProcessingToolStripMenuItem.ToolTipText = "Perform post-processing on data";
-					}
+					validatePostProcessing();
 
-					globalCycle += 2; // Increment the global cycle again in case recalculateData() is called again
+					//globalCycle += 2;		// Increment the global cycle again in case recalculateData() is called again
 				} catch (FileNotFoundException) {
 
 				}

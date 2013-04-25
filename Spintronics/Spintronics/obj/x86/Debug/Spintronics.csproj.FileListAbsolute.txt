@@ -33,3 +33,17 @@ C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Properties.Resou
 C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\git\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.PostProcessingResults.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.exe
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.pdb
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.pdb
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.ComSelector.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.GUI.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.InputTextForm.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.PostProcessingResults.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Preferences.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Properties.Resources.resources
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe.config

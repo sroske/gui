@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Forms;
 
 namespace SpintronicsGUI
 {
@@ -30,6 +31,11 @@ namespace SpintronicsGUI
 		{
 			state = ProtocolState.Idle;
 		}
+
+        public class PacketException : Exception
+        {
+
+        }
 
 		public int HandlePacket(Packet packetIn, SerialPort serialPort, Chart chart = null, bool forceSend = false)
 		{
@@ -84,6 +90,7 @@ namespace SpintronicsGUI
 					break;
 
 				case ProtocolState.ErrorReceived:
+					MessageBox.Show("Error received!");
 					break;
 
 				default:

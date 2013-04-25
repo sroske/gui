@@ -16,7 +16,8 @@ namespace SpintronicsGUI
 		Start,
 		Stop,
 		Report,
-		Error
+		Error,
+		Config
 	}
 
 	enum ErrorTypes : byte
