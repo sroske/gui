@@ -23,130 +23,145 @@ namespace SpintronicsGUI
 
 	public partial class GUI : Form
 	{
-		Configuration configFile;
-		SerialPort serialPort = null;
-		SerialPort debugSerial = null;
-		ProtocolHandler protocolHandler = new ProtocolHandler();
-		Microcontroller microcontroller;
-		string runFilesDirectory;
-		TextWriter logFile = null;
-		TextWriter htFile = null;
-		TextWriter ltFile = null;
-		TextWriter ctFile = null;
-		bool running = false;
-		bool resultsSaved = true;
-		bool reactionWellValidated = false;
-		SensorAssignment sensorAssignment = SensorAssignment.A;
-		public delegate void addNewDataPoint(Packet packet);
-		public addNewDataPoint myDelegate;
-		int globalCycle = 0;
-		int tareIndex = 0;
-		bool recalculate = true;
-		int cycleSensorCount = 0;
-		int mostRecentAddMpsCycle = 0;
-		int enableAddBufferAndMnpAtCycle;
-		int[] referenceSensors = { 1, 2, 7, 29, 30 };
+		Configuration configFile;							// File containing user configurations
+		SerialPort serialPort = null;							// Main microcontroller COM port
+		SerialPort debugSerial = null;						// COM port used for debugging with microcontroller emulator
+		ProtocolHandler protocolHandler = new ProtocolHandler();		// Protocol handler object
+		Microcontroller microcontroller;						// Microcontroller emulator (debugging only)
+		string runFilesDirectory;							// String containing the directory of the current run files
+		TextWriter logFile = null;							// Log file writer
+		TextWriter htFile = null;							// HT file writer
+		TextWriter ltFile = null;							// LT file writer
+		TextWriter ctFile = null;							// CT file writer
+		bool running = false;								// Tells us whether or not a run is in progress
+		bool resultsSaved = true;							// Tells us if the current results have been saved
+		bool reactionWellValidated = false;						// Tells us if the Reaction Well name is valid
+		SensorAssignment sensorAssignment = SensorAssignment.A;		// Tells us the sensor pin assignments for the physical sensor array being used
+		public delegate void addNewDataPoint(Packet packet);			// Delegate for adding packets
+		public addNewDataPoint myDelegate;						// See above
+		int globalCycle = 0;								// The global cycle pointer; This always points to the cycle CURRENTLY BEING ACQUIRED AND RECORDED
+		int tareIndex = 0;								// The global tare index (what is the first cycle of data the user can see)
+		bool recalculate = true;							// Tells us if we should recalculate the adjusted chart points
+		int cycleSensorCount = 0;							// Keeps track of the latest sensor we've received data for
+		int mostRecentAddMpsCycle = 0;						// Keeps track of the latest cycle MNPs were added
+		int enableAddBufferAndMnpAtCycle;						// Tells us when to re-enable the Add Buffer and Add MNPs buttons
+		int[] referenceSensors = { 1, 2, 7, 29, 30 };				// Array containing the integer numbers of the reference sensors (they don't change)
 
+		/*
+		 * This is the constructor for the GUI that takes in a COM port name (e.g. "COM1")
+		 */
 		public GUI(string comPort)
 		{
-			InitializeComponent();
+			InitializeComponent();											// Initialize GUI controls
 
-			configFile = new Configuration();
+			configFile = new Configuration();									// Create configuration object (automatically populated; see Configuration.cs)
 
 			// Initialize delegate for adding new data to the graph
-			// (this is because of stupid threading stuff; just nod and move on)
+			// (this is because of threading rules)
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
 			// Initialize COM ports
-			serialPort = new SerialPort(comPort, 115200);
-#if _DEBUG_
-			serialPort = new SerialPort("COM5", 115200);
+#if _DEBUG_																// If we're debugging (and thus don't have an actual microcontroller),
+			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
 			debugSerial = new SerialPort("COM6", 115200);
 			debugSerial.ReadTimeout = 200;
+#else																	// Otherwise, start with the COM port name passed in (see Program.cs)
+			serialPort = new SerialPort(comPort, 115200);
 #endif
-			serialPort.ReadTimeout = 200;
+			serialPort.ReadTimeout = 200;										// Always set the main COM port ReadTimeout property to 200 milliseconds
 
 			// Open COM ports
 			try {
-				serialPort.Open();
-#if _DEBUG_
-				debugSerial.Open();
-				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);
+				serialPort.Open();										// Open the main COM port
+#if _DEBUG_																// If we're debugging,
+				debugSerial.Open();										// open the debug COM port,
+				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
 #endif
-				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);
+				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
 			} catch(IOException) {
 				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
-				//throw new ArgumentNullException();
+				throw new ArgumentNullException();
 			} catch(UnauthorizedAccessException) {
 				MessageBox.Show("Please make sure COM port is not already in use");
-				//throw new UnauthorizedAccessException();
+				throw new UnauthorizedAccessException();
 			}
 		}
 
+		/*
+		 * This is called when the GUI first starts up
+		 */
 		private void GUI_Shown(object sender, EventArgs e)
 		{
-			recalculate = false;
-			this.reactionWellTextBox.Text = "-A";
-			this.validateReactionWellButton.PerformClick();
-			this.reactionWellTextBox.Text = "";
-			recalculate = true;
+			recalculate = false;													// This is the first time the GUI is being shown, and thus we have no data,
+			this.reactionWellTextBox.Text = "-A";										// so validate the name in the Reaction Well text box (which we set to an
+			this.validateReactionWellButton.PerformClick();									// assuredly-correct '-A') and force a click of the Validate button. This will
+			this.reactionWellTextBox.Text = "";											// serve to initialize all of our check boxes and will not recalculate our non-
+			recalculate = true;													// existent data.
 
-			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddBufferVolume);
-			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);
-			this.addBufferUnitLabel.Text = this.configFile.defaultVolumeUnit;
-			this.addMnpUnitLabel.Text = this.configFile.defaultVolumeUnit;
-			this.reactionWellTextBox.Focus();
+			this.addBufferVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddBufferVolume);	// Set the default buffer volume,
+			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);		// MNPs volume,
+			this.addBufferUnitLabel.Text = this.configFile.defaultVolumeUnit;						// buffer unit,
+			this.addMnpUnitLabel.Text = this.configFile.defaultVolumeUnit;						// and MNPs unit texts according to our configuration file
+			this.reactionWellTextBox.Focus();											// Put focus on the Reaction Well text box
 		}
 
+		/*
+		 * This is called whenever a key is pressed (handles shortcuts)
+		 */
 		private void GUI_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Control && (e.KeyCode == Keys.S))
 			{
-				this.saveRunFilesAsToolStripMenuItem.PerformClick();
+				this.saveRunFilesAsToolStripMenuItem.PerformClick();		// Ctrl + S
 			}
 
-			if (e.Control && (e.KeyCode == Keys.N))
+			if (e.Control && (e.KeyCode == Keys.N))					// Ctrl + N
 			{
 				this.startRunButton.PerformClick();
 			}
 		}
 
+		/*
+		 * This will add new data points to the GUI
+		 */
 		private void addNewDataPointMethod(Packet packet)
 		{
 			try
-			{
-				int sensorId = packet.payload[0];
-				float wheatstonef1A = System.BitConverter.ToSingle(packet.payload, 1);
-				float wheatstonef1P = System.BitConverter.ToSingle(packet.payload, 5);
-				float wheatstonef2A = System.BitConverter.ToSingle(packet.payload, 9);
-				float wheatstonef2P = System.BitConverter.ToSingle(packet.payload, 13);
-				float wheatstonef1Mf2A = System.BitConverter.ToSingle(packet.payload, 17);
-				float wheatstonef1Mf2P = System.BitConverter.ToSingle(packet.payload, 21);
-				float wheatstonef1Pf2A = System.BitConverter.ToSingle(packet.payload, 25);
-				float wheatstonef1Pf2P = System.BitConverter.ToSingle(packet.payload, 29);
-				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);
-				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);
+			{																				// (For all locations/specifications of data packets, see Coomunications document)
+				int sensorId = packet.payload[0];														// Get the sensor ID
+				float wheatstonef1A = System.BitConverter.ToSingle(packet.payload, 1);								// Get float #1
+				float wheatstonef1P = System.BitConverter.ToSingle(packet.payload, 5);								// Get float #2
+				float wheatstonef2A = System.BitConverter.ToSingle(packet.payload, 9);								// Get float #3
+				float wheatstonef2P = System.BitConverter.ToSingle(packet.payload, 13);								// Get float #4
+				float wheatstonef1Mf2A = System.BitConverter.ToSingle(packet.payload, 17);							// Get float #5
+				float wheatstonef1Mf2P = System.BitConverter.ToSingle(packet.payload, 21);							// Get float #6
+				float wheatstonef1Pf2A = System.BitConverter.ToSingle(packet.payload, 25);							// Get float #7
+				float wheatstonef1Pf2P = System.BitConverter.ToSingle(packet.payload, 29);							// Get float #8
+				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);							// Get float #9
+				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);							// Get float #10
 
-				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);
-				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);
-				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);
-				logData(htFile, sensorId, wheatstonef1A);
-				logData(ltFile, sensorId, wheatstonef1P);
-				logData(ctFile, sensorId, wheatstonef2A);
+				// Add the data to the hidden charts and write them to the files
+				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);				// Add data to raw chart #1
+				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);				// Add data to raw chart #2
+				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);				// Add data to raw chart #3
+				logData(htFile, sensorId, wheatstonef1A);													// Log the data in the appropriate file (these will be stored in 'temp' directory until saved)
+				logData(ltFile, sensorId, wheatstonef1P);													// See above
+				logData(ctFile, sensorId, wheatstonef2A);													// See above
 
-				if (globalCycle > 1)
+				// Add the data to the visible charts
+				if (globalCycle > 1)																// If globalCycle is greater than 1 (i.e. we're done buffering),
 				{
-					wheatstonef1A = (float)rawChart1.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+					wheatstonef1A = (float)rawChart1.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];				// grab the data points,
 					wheatstonef1P = (float)rawChart2.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
 					wheatstonef2A = (float)rawChart3.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
 
-					if (this.amplitudeTareCheckbox.Checked)
+					if (this.amplitudeTareCheckbox.Checked)												// if box is checked, subtract the sensor's amplitude value from cycle pointed at by tareIndex
 					{
 						wheatstonef1A -= (float)rawChart1.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 						wheatstonef1P -= (float)rawChart2.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 						wheatstonef2A -= (float)rawChart3.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 
-						if (this.referenceTareCheckbox.Checked)
+						if (this.referenceTareCheckbox.Checked)											// if box is checked, subtract the average of the CHECKED reference sensors
 						{
 							wheatstonef1A -= (float)getReferenceAverage(this.rawChart1, (globalCycle - 1));
 							wheatstonef1P -= (float)getReferenceAverage(this.rawChart2, (globalCycle - 1));
@@ -154,8 +169,8 @@ namespace SpintronicsGUI
 						}
 					}
 
-					adjustedChart1.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1A);
-					adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					adjustedChart1.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1A);	// Add the data points,
+					adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;					// and set their chart markers to circles
 					adjustedChart2.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1P);
 					adjustedChart2.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
 					adjustedChart3.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef2A);
@@ -163,33 +178,34 @@ namespace SpintronicsGUI
 				}
 				else
 				{
-					this.bufferingProgressBar.Maximum = 30;
-					this.bufferingProgressBar.Minimum = 0;
-					this.bufferingProgressBar.Visible = true;
-					this.bufferingLabel.Visible = true;
-					this.bufferingProgressBar.Value = sensorId;
+					this.bufferingProgressBar.Maximum = 30;												// If we aren't done buffering, set the maximum to 30 cycles (buffering limit),
+					this.bufferingProgressBar.Minimum = 0;												// set the minimum to 0,
+					this.bufferingProgressBar.Visible = true;												// make its label visible,
+					this.bufferingLabel.Visible = true;													// make the bar visible,
+					this.bufferingProgressBar.Value = sensorId;											// and set its value to the latest sensor ID (once it hits 30, we're done buffering)
 					if(sensorId == 30)
 					{
-						this.bufferingProgressBar.Visible = false;
-						this.bufferingProgressBar.Value = 0;
-						this.bufferingLabel.Visible = false;
+						this.bufferingProgressBar.Visible = false;										// If we're done buffering, make the bar invisible,
+						this.bufferingProgressBar.Value = 0;											// reset its value,
+						this.bufferingLabel.Visible = false;											// and make its label invisible
 					}
 				}
 
-				if (globalCycle <= this.configFile.sampleAverageCount)
+				// Update the run status bars
+				if (globalCycle <= this.configFile.sampleAverageCount)										// Waiting for first cycles to finish (averaging)
 				{
 					this.initialSignalProgressBar.Maximum = this.configFile.sampleAverageCount + 1;
 					this.initialSignalProgressBar.Minimum = 0;
 					this.initialSignalLabel.Text = "Averaging initial signal...";
 					this.initialSignalProgressBar.Value = globalCycle;
 				}
-				else if (this.mostRecentAddMpsCycle == 0)
+				else if (this.mostRecentAddMpsCycle == 0)													// Waiting for MNPs to be added
 				{
 					this.initialSignalProgressBar.Value = this.initialSignalProgressBar.Maximum;
 					this.initialSignalLabel.Text = "Averaging initial signal...Done";
 					this.signalChangeLabel.Text = "Waiting for MNPs to be added...";
 				}
-				else if ((globalCycle - this.mostRecentAddMpsCycle) <= this.configFile.diffusionCount)
+				else if ((globalCycle - this.mostRecentAddMpsCycle) <= this.configFile.diffusionCount)					// Waiting for diffusion cycles to finish
 				{
 					this.signalChangeProgressBar.Maximum = this.configFile.diffusionCount + 1;
 					this.signalChangeProgressBar.Minimum = 0;
@@ -198,7 +214,7 @@ namespace SpintronicsGUI
 					this.signalChangeProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle;
 					this.finalSignalProgressBar.Value = 0;
 				}
-				else if ((globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.diffusionCount + this.configFile.sampleAverageCount))
+				else if ((globalCycle - this.mostRecentAddMpsCycle) <= (this.configFile.diffusionCount + this.configFile.sampleAverageCount))	// Waiting for second set of averaging cycles to finish
 				{
 					this.signalChangeProgressBar.Value = this.signalChangeProgressBar.Maximum;
 					this.signalChangeLabel.Text = "Waiting for signal change...Done";
@@ -207,7 +223,7 @@ namespace SpintronicsGUI
 					this.finalSignalLabel.Text = "Averaging final signal...";
 					this.finalSignalProgressBar.Value = globalCycle - this.mostRecentAddMpsCycle - this.configFile.diffusionCount;
 				}
-				else
+				else																			// Done
 				{
 					this.signalChangeProgressBar.Value = this.signalChangeProgressBar.Maximum;
 					this.signalChangeLabel.Text = "Waiting for signal change...Done";
@@ -215,12 +231,14 @@ namespace SpintronicsGUI
 					this.finalSignalLabel.Text = "Averaging final signal...Done";
 				}
 
+				// Re-enable Add Buffer and Add MNPs buttons
 				if (globalCycle >= this.enableAddBufferAndMnpAtCycle)
 				{
 					this.addBufferButton.Enabled = true;
 					this.addMnpButton.Enabled = true;
 				}
 
+				// Update latest sensor ID and globalCycle
 				cycleSensorCount = sensorId;
 				if (sensorId >= adjustedChart1.Series.Count)
 					globalCycle++;
@@ -242,17 +260,17 @@ namespace SpintronicsGUI
 			{
 				switch (sensor)
 				{
-					case 18: case 20: case 22: case 24: case 26: case 28: case 30:
+					case 18: case 20: case 22: case 24: case 26: case 28: case 30:	// Column a offsets
 						return 0.0;
-					case 17: case 19: case 21: case 23: case 25: case 27: case 29:
+					case 17: case 19: case 21: case 23: case 25: case 27: case 29:	// Column b offsets
 						return 0.2;
-					case 15: case 13: case 11: case 9: case 6: case 4: case 2:
+					case 15: case 13: case 11: case 9: case 6: case 4: case 2:		// Column c offsets
 						return 0.4;
-					case 14: case 12: case 10: case 8: case 5: case 3: case 1:
+					case 14: case 12: case 10: case 8: case 5: case 3: case 1:		// Column d offsets
 						return 0.6;
-					case 7:
+					case 7:										// Column e offsets
 						return 0.8;
-					default:
+					default:										// Default (should not happen)
 						return 0.0;
 				}
 			}
@@ -260,17 +278,17 @@ namespace SpintronicsGUI
 			{
 				switch (sensor)
 				{
-					case 1: case 3: case 5: case 8: case 10: case 12: case 14:
+					case 1: case 3: case 5: case 8: case 10: case 12: case 14:		// Column a offsets
 						return 0.0;
-					case 2: case 4: case 6: case 9: case 11: case 13: case 15:
+					case 2: case 4: case 6: case 9: case 11: case 13: case 15:		// Column b offsets
 						return 0.2;
-					case 29: case 27: case 25: case 23: case 21: case 19: case 17:
+					case 29: case 27: case 25: case 23: case 21: case 19: case 17:	// Column c offsets
 						return 0.4;
-					case 30: case 28: case 26: case 24: case 22: case 20: case 18:
+					case 30: case 28: case 26: case 24: case 22: case 20: case 18:	// Column d offsets
 						return 0.6;
-					case 7:
+					case 7:										// Column e offsets
 						return 0.8;
-					default:
+					default:										// Default (should not happen)
 						return 0.0;
 				}
 			}
@@ -376,11 +394,10 @@ namespace SpintronicsGUI
 			}
 		}
 
-
 		/* 
 		 * This is the handler for the serial port write event. It is called automagically when
 		 * something is written to the serial port. It will read the raw bytes and write them
-		 * into a packet object, which it will then pass on to
+		 * into a packet object, which it will then pass on to the Protocol Handler
 		*/
 		private void readPacket(object sender, SerialDataReceivedEventArgs args)
 		{
@@ -940,7 +957,9 @@ namespace SpintronicsGUI
 			}
 		}
 
-
+		/*
+		 * This validates the availability of post processing
+		 */
 		private void validatePostProcessing()
 		{
 			if (this.mostRecentAddMpsCycle == 0)
@@ -1233,11 +1252,11 @@ namespace SpintronicsGUI
 		private void logData(TextWriter file, int sensor, double data)
 		{
 			string dataString = System.Convert.ToString(data);
-			try {
+			/*try {
 				dataString = dataString.Substring(0, 10);
 			} catch (ArgumentOutOfRangeException) {
 				dataString = dataString.PadRight(10, '0');
-			}
+			}*/
 
 			file.Write(dataString + "\t");
 			if (sensor == 30)
@@ -1407,10 +1426,11 @@ namespace SpintronicsGUI
 					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						beforeAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
@@ -1419,10 +1439,11 @@ namespace SpintronicsGUI
 					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						beforeAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
@@ -1431,19 +1452,21 @@ namespace SpintronicsGUI
 					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						beforeAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							beforeAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));
+							beforeAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						beforeAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
@@ -1466,10 +1489,11 @@ namespace SpintronicsGUI
 					line = ltFileReader.ReadLine();
 					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							afterAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							afterAverage[sensor] += double.Parse(line.Substring(0, 11));
+							afterAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						afterAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
@@ -1478,10 +1502,11 @@ namespace SpintronicsGUI
 					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
 					{
-						if (sensor < 9)
+						/*if (sensor < 9)
 							afterAverage[sensor] += double.Parse(line.Substring(0, 10));
 						else
-							afterAverage[sensor] += double.Parse(line.Substring(0, 11));
+							afterAverage[sensor] += double.Parse(line.Substring(0, 11));*/
+						afterAverage[sensor] += double.Parse(line.Substring(0, line.IndexOf("\t")));
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
@@ -1625,9 +1650,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								line = line.Remove(0, 11);
+								this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 							}
 						}
 						else
@@ -1640,9 +1665,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								line = line.Remove(0, 11);
+								this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 							}
 						}
 						else
@@ -1655,9 +1680,9 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, 10)));
-								line = line.Remove(0, 11);
+								this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 							}
 						}
 						else

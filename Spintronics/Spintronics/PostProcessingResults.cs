@@ -220,11 +220,11 @@ namespace SpintronicsGUI
 					for (int i = 0; i < data.Length; i++)
 					{
 						string dataString = System.Convert.ToString(data[i]);
-						try {
+						/*try {
 							dataString = dataString.Substring(0, 10);
 						} catch (ArgumentOutOfRangeException) {
 							dataString = dataString.PadRight(10, '0');
-						}
+						}*/
 						postProcessingFile.Write(dataString + "\t");
 					}
 					this.hasSaved = true;
