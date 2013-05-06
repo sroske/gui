@@ -38,9 +38,6 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepTextBox = new System.Windows.Forms.TextBox();
 			this.revertGeneralButton = new System.Windows.Forms.Button();
 			this.measurementParametersTabPage = new System.Windows.Forms.TabPage();
-			this.coilDcOffsetUnitTextBox = new System.Windows.Forms.TextBox();
-			this.coilAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
-			this.wheatstoneAmplitudeUnitTextBox = new System.Windows.Forms.TextBox();
 			this.measurementPeriodUnitLabel = new System.Windows.Forms.Label();
 			this.coilFrequencyUnitLabel = new System.Windows.Forms.Label();
 			this.wheatstoneFrequencyUnitLabel = new System.Windows.Forms.Label();
@@ -143,6 +140,9 @@ namespace SpintronicsGUI
 			this.revertPostProcessingButton = new System.Windows.Forms.Button();
 			this.sampleAverageCountTextBox = new System.Windows.Forms.TextBox();
 			this.sampleAverageCountLabel = new System.Windows.Forms.Label();
+			this.wheatstoneAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.coilAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.coilDcOffsetUnitComboBox = new System.Windows.Forms.ComboBox();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -225,9 +225,9 @@ namespace SpintronicsGUI
 			// 
 			// measurementParametersTabPage
 			// 
-			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetUnitTextBox);
-			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeUnitTextBox);
-			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeUnitTextBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetUnitComboBox);
+			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeUnitComboBox);
+			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeUnitComboBox);
 			this.measurementParametersTabPage.Controls.Add(this.measurementPeriodUnitLabel);
 			this.measurementParametersTabPage.Controls.Add(this.coilFrequencyUnitLabel);
 			this.measurementParametersTabPage.Controls.Add(this.wheatstoneFrequencyUnitLabel);
@@ -251,27 +251,6 @@ namespace SpintronicsGUI
 			this.measurementParametersTabPage.TabIndex = 3;
 			this.measurementParametersTabPage.Text = "Measurement Parameters";
 			this.measurementParametersTabPage.UseVisualStyleBackColor = true;
-			// 
-			// coilDcOffsetUnitTextBox
-			// 
-			this.coilDcOffsetUnitTextBox.Location = new System.Drawing.Point(424, 95);
-			this.coilDcOffsetUnitTextBox.Name = "coilDcOffsetUnitTextBox";
-			this.coilDcOffsetUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.coilDcOffsetUnitTextBox.TabIndex = 8;
-			// 
-			// coilAmplitudeUnitTextBox
-			// 
-			this.coilAmplitudeUnitTextBox.Location = new System.Drawing.Point(92, 95);
-			this.coilAmplitudeUnitTextBox.Name = "coilAmplitudeUnitTextBox";
-			this.coilAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.coilAmplitudeUnitTextBox.TabIndex = 3;
-			// 
-			// wheatstoneAmplitudeUnitTextBox
-			// 
-			this.wheatstoneAmplitudeUnitTextBox.Location = new System.Drawing.Point(94, 36);
-			this.wheatstoneAmplitudeUnitTextBox.Name = "wheatstoneAmplitudeUnitTextBox";
-			this.wheatstoneAmplitudeUnitTextBox.Size = new System.Drawing.Size(26, 20);
-			this.wheatstoneAmplitudeUnitTextBox.TabIndex = 1;
 			// 
 			// measurementPeriodUnitLabel
 			// 
@@ -1216,6 +1195,48 @@ namespace SpintronicsGUI
 			this.sampleAverageCountLabel.TabIndex = 0;
 			this.sampleAverageCountLabel.Text = "Number of Samples to Use for Average";
 			// 
+			// wheatstoneAmplitudeUnitComboBox
+			// 
+			this.wheatstoneAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.wheatstoneAmplitudeUnitComboBox.FormattingEnabled = true;
+			this.wheatstoneAmplitudeUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.wheatstoneAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 35);
+			this.wheatstoneAmplitudeUnitComboBox.Name = "wheatstoneAmplitudeUnitComboBox";
+			this.wheatstoneAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.wheatstoneAmplitudeUnitComboBox.TabIndex = 34;
+			// 
+			// coilAmplitudeUnitComboBox
+			// 
+			this.coilAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.coilAmplitudeUnitComboBox.FormattingEnabled = true;
+			this.coilAmplitudeUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.coilAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 94);
+			this.coilAmplitudeUnitComboBox.Name = "coilAmplitudeUnitComboBox";
+			this.coilAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.coilAmplitudeUnitComboBox.TabIndex = 35;
+			// 
+			// coilDcOffsetUnitComboBox
+			// 
+			this.coilDcOffsetUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.coilDcOffsetUnitComboBox.FormattingEnabled = true;
+			this.coilDcOffsetUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.coilDcOffsetUnitComboBox.Location = new System.Drawing.Point(424, 94);
+			this.coilDcOffsetUnitComboBox.Name = "coilDcOffsetUnitComboBox";
+			this.coilDcOffsetUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.coilDcOffsetUnitComboBox.TabIndex = 36;
+			// 
 			// Preferences
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1344,9 +1365,6 @@ namespace SpintronicsGUI
 		private Label measurementPeriodUnitLabel;
 		private Label coilFrequencyUnitLabel;
 		private Label wheatstoneFrequencyUnitLabel;
-		private TextBox coilDcOffsetUnitTextBox;
-		private TextBox coilAmplitudeUnitTextBox;
-		private TextBox wheatstoneAmplitudeUnitTextBox;
 		private TabPage postProcessingTabPage;
 		private TextBox sampleAverageCountTextBox;
 		private Label sampleAverageCountLabel;
@@ -1356,5 +1374,8 @@ namespace SpintronicsGUI
 		private CheckBox htPostProcessingFileCheckBox;
 		private CheckBox ltPostProcessingFileCheckBox;
 		private Label postProcessingFilesLabel;
+		private ComboBox coilDcOffsetUnitComboBox;
+		private ComboBox coilAmplitudeUnitComboBox;
+		private ComboBox wheatstoneAmplitudeUnitComboBox;
 	}
 }

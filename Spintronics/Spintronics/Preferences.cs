@@ -98,13 +98,13 @@ namespace SpintronicsGUI
 			this.defaultAddMnpsVolumeTextBox.Text = System.Convert.ToString(this.defaultAddMnpsVolume);
 			this.defaultVolumeUnitComboBox.SelectedItem = this.defaultVolumeUnit;
 			this.wheatstoneAmplitudeTextBox.Text = System.Convert.ToString(this.wheatstoneAmplitude);
-			this.wheatstoneAmplitudeUnitTextBox.Text = this.wheatstoneAmplitudeUnit;
+			this.wheatstoneAmplitudeUnitComboBox.SelectedItem = this.wheatstoneAmplitudeUnit;
 			this.wheatstoneFrequencyTextBox.Text = System.Convert.ToString(this.wheatstoneFrequency);
 			this.coilAmplitudeTextBox.Text = System.Convert.ToString(this.coilAmplitude);
-			this.coilAmplitudeUnitTextBox.Text = this.coilAmplitudeUnit;
+			this.coilAmplitudeUnitComboBox.SelectedItem = this.coilAmplitudeUnit;
 			this.coilFrequencyTextBox.Text = System.Convert.ToString(this.coilFrequency);
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
-			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
+			this.coilDcOffsetUnitComboBox.SelectedItem = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
 			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
@@ -155,13 +155,13 @@ namespace SpintronicsGUI
 		{
 			try {
 				this.wheatstoneAmplitude = float.Parse(this.wheatstoneAmplitudeTextBox.Text);
-				this.wheatstoneAmplitudeUnit = this.wheatstoneAmplitudeUnitTextBox.Text;
+				this.wheatstoneAmplitudeUnit = (string)this.wheatstoneAmplitudeUnitComboBox.SelectedItem;
 				this.wheatstoneFrequency = float.Parse(this.wheatstoneFrequencyTextBox.Text);
 				this.coilAmplitude = float.Parse(this.coilAmplitudeTextBox.Text);
-				this.coilAmplitudeUnit = this.coilAmplitudeUnitTextBox.Text;
+				this.coilAmplitudeUnit = (string)this.coilAmplitudeUnitComboBox.SelectedItem;
 				this.coilFrequency = float.Parse(this.coilFrequencyTextBox.Text);
 				this.coilDcOffset = float.Parse(this.coilDcOffsetTextBox.Text);
-				this.coilDcOffsetUnit = this.coilDcOffsetUnitTextBox.Text;
+				this.coilDcOffsetUnit = (string)this.coilDcOffsetUnitComboBox.SelectedItem;
 				this.measurementPeriod = float.Parse(this.measurementPeriodTextBox.Text);
 				return true;
 			} catch (ArgumentNullException) {
@@ -179,13 +179,13 @@ namespace SpintronicsGUI
 		private void revertMeasurementParametersButton_Click(object sender, EventArgs e)
 		{
 			this.wheatstoneAmplitudeTextBox.Text = System.Convert.ToString(this.wheatstoneAmplitude);
-			this.wheatstoneAmplitudeUnitTextBox.Text = this.wheatstoneAmplitudeUnit;
+			this.wheatstoneAmplitudeUnitComboBox.SelectedItem = this.wheatstoneAmplitudeUnit;
 			this.wheatstoneFrequencyTextBox.Text = System.Convert.ToString(this.wheatstoneFrequency);
 			this.coilAmplitudeTextBox.Text = System.Convert.ToString(this.coilAmplitude);
-			this.coilAmplitudeUnitTextBox.Text = this.coilAmplitudeUnit;
+			this.coilAmplitudeUnitComboBox.SelectedItem = this.coilAmplitudeUnit;
 			this.coilFrequencyTextBox.Text = System.Convert.ToString(this.coilFrequency);
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
-			this.coilDcOffsetUnitTextBox.Text = this.coilDcOffsetUnit;
+			this.coilDcOffsetUnitComboBox.SelectedItem = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 		}
 

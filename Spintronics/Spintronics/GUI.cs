@@ -878,8 +878,10 @@ namespace SpintronicsGUI
 			}
 			/* Send a start packet to the microcontroller */
 			try {
-				// Create configuration packet
-				byte[] payload = (byte[])this.configFile.sensorMultiplexerValues;
+				// Create configuration packet (and omit sensor 16 from the config array)
+				byte[] payload = new byte[this.configFile.sensorMultiplexerValues.Length - 1];
+				Array.Copy(this.configFile.sensorMultiplexerValues, payload, 15);
+				Array.Copy(this.configFile.sensorMultiplexerValues, 16, payload, 15, this.configFile.sensorMultiplexerValues.Length - 15 - 1);
 				Packet configPacket = new Packet((byte)PacketType.Config | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(configPacket, PacketCommDirection.Out);
 				// Create start packet
@@ -890,6 +892,21 @@ namespace SpintronicsGUI
 				data[2] = this.configFile.coilAmplitude;
 				data[3] = this.configFile.coilFrequency;
 				data[4] = this.configFile.measurementPeriod;
+				// Scale down if units other than V are specified (options are V, mV, uV, or nV)
+				if (this.configFile.wheatstoneAmplitudeUnit.Contains("m"))
+					data[0] = data[0] / 1000;
+				else if (this.configFile.wheatstoneAmplitudeUnit.Contains("u"))
+					data[0] = data[0] / 1000000;
+				else if (this.configFile.wheatstoneAmplitudeUnit.Contains("n"))
+					data[0] = data[0] / 1000000000;
+
+				if (this.configFile.coilAmplitudeUnit.Contains("m"))
+					data[2] = data[2] / 1000;
+				else if (this.configFile.coilAmplitudeUnit.Contains("u"))
+					data[2] = data[2] / 1000000;
+				else if (this.configFile.coilAmplitudeUnit.Contains("n"))
+					data[2] = data[2] / 1000000000;
+
 				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
 				payload[20] = 0x01;
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
