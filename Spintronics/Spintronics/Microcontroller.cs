@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace SpintronicsGUI
 {
@@ -23,6 +22,7 @@ namespace SpintronicsGUI
 		byte sensor = 0x00;
 		int dataSpeed, sensorCount;
 		double[] baseData = { 0.0, 0.4, 0.8, 1.2, 1.6, 2.0 };
+		Timer timer;
 
 		public Microcontroller(SerialPort port, int speed = 1000, int count = 30)
 		{
@@ -36,8 +36,7 @@ namespace SpintronicsGUI
 		private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs args)
 		{
 			Packet packet = null;
-			try
-			{
+			try {
 				System.Threading.Thread.Sleep(100);
 				byte startOfFrame = (byte)serialPort.ReadByte();
 				if (startOfFrame != 0xFE)
@@ -57,9 +56,7 @@ namespace SpintronicsGUI
 				{
 					return;
 				}
-			}
-			catch (TimeoutException)
-			{
+			} catch (TimeoutException) {
 				return;
 			}
 
@@ -69,23 +66,22 @@ namespace SpintronicsGUI
 			switch (state)
 			{
 				case MicrocontrollerState.Idle:
+					if (packet.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
+					{
+						Packet configReplyPacket = new Packet(((byte)PacketType.Config | (byte)PacketSender.Microcontroller));
+						writePacket(configReplyPacket);
+					}
 					if (packet.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
 					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
 						Packet startReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Start), (byte)packet.payload.Length, packet.payload);
 						writePacket(startReplyPacket);
-						Thread.Sleep(dataSpeed);
-						writePacket(createDataPacket());
+						timer = new Timer(new TimerCallback(timerEvent));
+						timer.Change(this.dataSpeed, 0);
 						state = MicrocontrollerState.SendingData;
 					}
 					break;
 
 				case MicrocontrollerState.SendingData:
-					if ((packet.command == ((byte)PacketType.Report | (byte)PacketSender.GUI)) &&
-						(packet.payload[0] == sensor))
-					{// If we're sending data packets and we receive an acknowledge from the GUI
-						Thread.Sleep(dataSpeed);
-						writePacket(createDataPacket());
-					}
 					if (packet.command == ((byte)PacketType.Stop | (byte)PacketSender.GUI))
 					{// If we're sending data packets and we receive a stop packet from the GUI
 						Packet stopReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Stop));
@@ -106,6 +102,13 @@ namespace SpintronicsGUI
 				default:
 					break;
 			}
+		}
+
+		public void timerEvent(object arg)
+		{
+			if(this.state == MicrocontrollerState.SendingData)
+				writePacket(createDataPacket());
+			timer.Change(this.dataSpeed, 0);
 		}
 
 		private void writePacket(Packet packetToWrite)

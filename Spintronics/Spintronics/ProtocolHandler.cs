@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Windows.Forms;
+using System.Threading;
 
 namespace SpintronicsGUI
 {
@@ -15,7 +15,7 @@ namespace SpintronicsGUI
 		StartSent,
 		StopSent,
 		WaitForData,
-		ErrorReceived
+		ErrorReceived,
 	}
 
 	enum ProtocolDirective
@@ -23,12 +23,12 @@ namespace SpintronicsGUI
 		DoNothing,
 		AddData,
 		ErrorReceived,
-		WaitNotReady
+		WaitNotReady,
 	}
 
 	enum ErrorCode : byte
 	{
-		NoError,
+		TimeOut,
 		BadPacketXor,
 		A1OoR,
 		F1OoR,
@@ -39,7 +39,7 @@ namespace SpintronicsGUI
 		InvalidDigitalGain,
 		SignalClipBridgeAtoD,
 		SignalClipCoilAtoD,
-		SignalClipBridgeDigitalGain
+		SignalClipBridgeDigitalGain,
 	}
 
 	class ProtocolHandler
@@ -47,7 +47,8 @@ namespace SpintronicsGUI
 		ProtocolState state;
 		SerialPort serialPort;
 		public byte errorCode;
-		//System.Threading.Timer timer = new System.Threading.Timer(oneshotTimer);
+		Timer timer;
+		bool timerDone;
 
 		public ProtocolHandler(SerialPort port)
 		{
@@ -59,31 +60,17 @@ namespace SpintronicsGUI
 		{
 			switch (state)
 			{
-				/*case ProtocolState.Idle:
-					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
-					{
-						writePacket(packetIn, serialPort);
-						state = ProtocolState.ConfigSent;
-					}
-					if (packetIn.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
-					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
-						writePacket(packetIn, serialPort);
-						state = ProtocolState.StartSent;
-					}
-					break;*/
-
 				case ProtocolState.ConfigSent:
 					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.Microcontroller))
-					{
+					{// If we're waiting for an acknowledge and we receive one from the microcontroller
 						state = ProtocolState.Idle;
 					}
 					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
-					{
+					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
 						this.errorCode = packetIn.payload[0];
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
-
 				case ProtocolState.StartSent:
 					if (packetIn.command == ((byte)PacketType.Start | (byte)PacketSender.Microcontroller))
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
@@ -95,7 +82,6 @@ namespace SpintronicsGUI
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
-
 				case ProtocolState.StopSent:
 					if (packetIn.command == ((byte)PacketType.Stop | (byte)PacketSender.Microcontroller))
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
@@ -107,7 +93,6 @@ namespace SpintronicsGUI
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
-
 				case ProtocolState.WaitForData:
 					if (packetIn.command == ((byte)PacketType.Report | (byte)PacketSender.Microcontroller))
 					{// If we're waiting for data packets and we receive one from the microcontroller
@@ -116,19 +101,9 @@ namespace SpintronicsGUI
 					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
 					{
 						this.errorCode = packetIn.payload[0];
-						return ProtocolDirective.ErrorReceived;
-					}
-					else if (packetIn.command == ((byte)PacketType.Stop | (byte)PacketSender.GUI))
-					{// If we're waiting for data packets and we receive a stop packet from the GUI
-						writePacket(packetIn, serialPort);
-						state = ProtocolState.Idle;
+						return ProtocolDirective.ErrorReceived;	// This is the only case where we don't want to immediately set our state to something else; Instead, notify the GUI of the error
 					}
 					break;
-
-				/*case ProtocolState.ErrorReceived:
-					MessageBox.Show("Error received!");
-					break;*/
-
 				default:
 					break;
 			}
@@ -136,66 +111,108 @@ namespace SpintronicsGUI
 			return ProtocolDirective.DoNothing;
 		}
 
-		void oneshotTimer(int milliseconds)
+		public void timerFinished(object arg)
 		{
+			this.timerDone = true;
+		}
+
+		public void oneshotTimer(int milliseconds)
+		{
+			timer = new Timer(new TimerCallback(timerFinished));
+			timer.Change(milliseconds, Timeout.Infinite);
 		}
 
 		public bool StartRun(Packet configPacket, Packet startPacket)
 		{
-			if (configPacket != null)
+			if (configPacket != null)									// If we need to send a configuration packet (by default, we always will),
 			{
 				try {
-					writePacket(configPacket, serialPort);
-				} catch (Exception) {
-					return false;
+					writePacket(configPacket, serialPort);					// try writing the packet
+				} catch (Exception) {									// If something bad happens,
+					this.errorCode = (byte)ErrorCode.TimeOut;					// set the error code to the ProtocolHandler-specific code,
+					return false;									// and return false
 				}
-				this.state = ProtocolState.ConfigSent;
-				while (this.state == ProtocolState.ConfigSent);
-				if (this.state == ProtocolState.ErrorReceived)
+				this.state = ProtocolState.ConfigSent;						// Otherwise, set the state,
+			#if !DEBUG
+				oneshotTimer(500);									// start the timer,
+			#endif
+				while (!this.timerDone && this.state == ProtocolState.ConfigSent) ;	// and wait for either the timer to stop or the microcontroller to respond (state changes in HandlePacket)
+				this.timerDone = false;									// Reset the timer for next time
+				if (this.state == ProtocolState.ConfigSent)					// If we haven't changed states, that means we timed out,
 				{
-					this.state = ProtocolState.Idle;
-					return false;
+					this.state = ProtocolState.Idle;						// so set us back to idle,
+					this.errorCode = (byte)ErrorCode.TimeOut;					// set the error code to the ProtocolHandler-specific code,
+					return false;									// and return false
+				}
+				if (this.state == ProtocolState.ErrorReceived)					// If we received an error,
+				{
+					this.state = ProtocolState.Idle;						// set us back to idle,
+					return false;									// and return false
 				}
 			}
 
-			try {
-				writePacket(startPacket, serialPort);
-			} catch (Exception) {
-				return false;
+			try {													// If we made it to here, that means we successfully sent the configuration packet
+				writePacket(startPacket, serialPort);						// Try writing the packet
+			} catch (Exception) {										// If something bad happens,
+				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHandler-specific code,
+				return false;										// and return false
 			}
-			this.state = ProtocolState.StartSent;
-			while (this.state == ProtocolState.StartSent);
-			if (this.state == ProtocolState.ErrorReceived)
+			this.state = ProtocolState.StartSent;							// Otherwise, set the state,
+		#if !DEBUG
+			oneshotTimer(500);										// start the timer,
+		#endif
+			while (!this.timerDone && this.state == ProtocolState.StartSent) ;		// and wait for either the timer to stop or the microcontroller to respond
+			this.timerDone = false;										// Reset the timer for next time
+			if (this.state == ProtocolState.StartSent)						// If we haven't changed states, that means we timed out,
 			{
-				this.state = ProtocolState.Idle;
-				return false;
+				this.state = ProtocolState.Idle;							// so set us back to idle,
+				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHander-specific code,
+				return false;										// and return false
+			}
+			if (this.state == ProtocolState.ErrorReceived)						// If we received and error,
+			{
+				this.state = ProtocolState.Idle;							// set us back to idle,
+				return false;										// and return false
 			}
 
-			return true;
+			return true;											// If we made it this far, that means we successfully sent both packets, so return true!
 		}
 
 		public bool StopRun(Packet stopPacket)
 		{
 			try {
-				writePacket(stopPacket, serialPort);
-			} catch (Exception) {
-				return false;
+				writePacket(stopPacket, serialPort);						// Try to send the packet
+			} catch (Exception) {										// If something bad happens,
+				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHandler-specific code,
+				return false;										// and return false
 			}
-			this.state = ProtocolState.StopSent;
-			while (this.state == ProtocolState.StopSent);
-			if (this.state == ProtocolState.ErrorReceived)
+			this.state = ProtocolState.StopSent;							// Otherwise, set the state,
+		#if !DEBUG
+			oneshotTimer(500);										// start the timer,
+		#endif
+			while (!this.timerDone && this.state == ProtocolState.StopSent) ;			// and wait for either the timer to stop or the microcontroller to respond
+			this.timerDone = false;										// Reset the timer for next time
+			if (this.state == ProtocolState.StopSent)							// If we haven't changed states, that means we timed out,
 			{
-				this.state = ProtocolState.Idle;
-				return false;
+				this.state = ProtocolState.Idle;							// so set us back to idle,
+				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHander-specific code,
+				return false;										// and return false
+			}
+			if (this.state == ProtocolState.ErrorReceived)						// If we received and error,
+			{
+				this.state = ProtocolState.Idle;							// set us back to idle,
+				return false;										// and return false
 			}
 
-			return true;
+			return true;											// Otherwise, return true!
 		}
 
 		public string getErrorMessage()
 		{
 			switch (this.errorCode)
 			{
+				case (byte)ErrorCode.TimeOut:
+					return "Microcontroller failed to respond";
 				case (byte)ErrorCode.BadPacketXor:
 					return "Bad communication formatting";
 				case (byte)ErrorCode.A1OoR:

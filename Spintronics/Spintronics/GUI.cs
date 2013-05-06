@@ -1,6 +1,4 @@
-﻿//#define _DEBUG_
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -62,18 +60,19 @@ namespace SpintronicsGUI
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
 			// Initialize COM ports
-		#if _DEBUG_														// If we're debugging (and thus don't have an actual microcontroller),
+		#if DEBUG														// If we're debugging (and thus don't have an actual microcontroller),
 			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
 			debugSerial = new SerialPort("COM6", 115200);
 			debugSerial.ReadTimeout = 200;
 		#else															// Otherwise, start with the COM port name passed in (see Program.cs)
 			serialPort = new SerialPort(comPort, 10000);//115200);
 		#endif
-			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 200 milliseconds
+			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 800 milliseconds
+			serialPort.WriteTimeout = 800;									// Always set the main COM port WriteTimeout property to 800 milliseconds
 			// Open COM ports
 			try {
 				serialPort.Open();										// Open the main COM port
-			#if _DEBUG_													// If we're debugging,
+			#if DEBUG													// If we're debugging,
 				debugSerial.Open();										// open the debug COM port,
 				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
 			#endif
@@ -871,14 +870,12 @@ namespace SpintronicsGUI
 				MessageBox.Show("Please enter values for Reaction Well and Sample");
 				return;
 			}
-
 			/* Validate the Reaction Well name (the sensor pin assignment depends on this) */
 			this.validateReactionWellButton.PerformClick();
 			if (!this.reactionWellValidated)
 			{
 				return;
 			}
-
 			/* Send a start packet to the microcontroller */
 			try {
 				// Create configuration packet
@@ -901,8 +898,8 @@ namespace SpintronicsGUI
 					this.running = true;
 				else
 				{
-					MessageBox.Show("Failed to start run: Error code " + protocolHandler.errorCode +
-							    "-> " + protocolHandler.getErrorMessage());
+					MessageBox.Show("Failed to start: Error code " + protocolHandler.errorCode +
+							    "\n-> " + protocolHandler.getErrorMessage());
 					return;
 				}
 			} catch (ArgumentNullException) {
@@ -961,8 +958,12 @@ namespace SpintronicsGUI
 			byte[] payload = new byte[20];
 			Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
 			printPacket(stopPacket, PacketCommDirection.Out);
-			//protocolHandler.HandlePacket(stopPacket);
-			protocolHandler.StopRun(stopPacket);
+			if (protocolHandler.StopRun(stopPacket) != true)
+			{
+				MessageBox.Show("Failed to stop: Error code " + protocolHandler.errorCode +
+						    "\n-> " + protocolHandler.getErrorMessage());
+				return;
+			}
 			this.bufferingLabel.Visible = false;
 			this.bufferingProgressBar.Visible = false;
 			this.initialSignalProgressBar.Value = 0;
