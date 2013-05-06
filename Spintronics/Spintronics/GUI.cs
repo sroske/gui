@@ -1,4 +1,4 @@
-﻿#define _DEBUG_
+﻿//#define _DEBUG_
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ using System.IO.Ports;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Threading;
 
 namespace SpintronicsGUI
 {
@@ -26,7 +27,7 @@ namespace SpintronicsGUI
 		Configuration configFile;							// File containing user configurations
 		SerialPort serialPort = null;							// Main microcontroller COM port
 		SerialPort debugSerial = null;						// COM port used for debugging with microcontroller emulator
-		ProtocolHandler protocolHandler = new ProtocolHandler();		// Protocol handler object
+		ProtocolHandler protocolHandler;						// Protocol handler object
 		Microcontroller microcontroller;						// Microcontroller emulator (debugging only)
 		string runFilesDirectory;							// String containing the directory of the current run files
 		TextWriter logFile = null;							// Log file writer
@@ -61,23 +62,23 @@ namespace SpintronicsGUI
 			myDelegate = new addNewDataPoint(addNewDataPointMethod);
 
 			// Initialize COM ports
-#if _DEBUG_																// If we're debugging (and thus don't have an actual microcontroller),
+		#if _DEBUG_														// If we're debugging (and thus don't have an actual microcontroller),
 			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
 			debugSerial = new SerialPort("COM6", 115200);
 			debugSerial.ReadTimeout = 200;
-#else																	// Otherwise, start with the COM port name passed in (see Program.cs)
-			serialPort = new SerialPort(comPort, 115200);
-#endif
-			serialPort.ReadTimeout = 200;										// Always set the main COM port ReadTimeout property to 200 milliseconds
-
+		#else															// Otherwise, start with the COM port name passed in (see Program.cs)
+			serialPort = new SerialPort(comPort, 10000);//115200);
+		#endif
+			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 200 milliseconds
 			// Open COM ports
 			try {
 				serialPort.Open();										// Open the main COM port
-#if _DEBUG_																// If we're debugging,
+			#if _DEBUG_													// If we're debugging,
 				debugSerial.Open();										// open the debug COM port,
 				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
-#endif
+			#endif
 				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
+				protocolHandler = new ProtocolHandler(serialPort);					// Initialize the protocol handler
 			} catch(IOException) {
 				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
 				throw new ArgumentNullException();
@@ -401,21 +402,27 @@ namespace SpintronicsGUI
 		*/
 		private void readPacket(object sender, SerialDataReceivedEventArgs args)
 		{
-			try
-			{
-				byte startOfFrame = (byte)serialPort.ReadByte();
-				if (startOfFrame != 0xFE)
-				{
-					Console.WriteLine("<-<-<- Malformed packet sent. Started with 0x{0:X}", startOfFrame);
-					return;
+			byte startOfFrame;
+			try {
+				while(true) {                                                                       // Keep reading until we either
+					try {
+						if ((startOfFrame = (byte)serialPort.ReadByte()) == 0xFE)                   // hit a start of frame,
+							break;
+						else
+							Console.WriteLine("<-<-<- Malformed packet received. Started with 0x{0:X}", startOfFrame);
+					} catch (TimeoutException) {                                                    // or we run out of bytes to read (this will clear out the buffer in the event we don't get a valid SOF)
+						return;
+					}
 				}
 				Packet packet;
-				byte command = (byte)serialPort.ReadByte();
-				byte payloadLength = (byte)serialPort.ReadByte();
-				byte[] payload = new byte[payloadLength];
-				if (serialPort.Read(payload, 0, payloadLength) < payloadLength)
+				byte command = (byte)serialPort.ReadByte();                                         // Read the command byte
+				byte payloadLength = (byte)serialPort.ReadByte();                                   // Read the payload length byte
+				Thread.Sleep(100);                                                                  // The GUI seems to hanve trouble going right into the serialPort.Read(...), so I put in a delay
+				byte[] payload = new byte[payloadLength];                                           // Make the payload buffer
+				if (serialPort.Read(payload, 0, payloadLength) < payloadLength)                     // Read in the whole payload
 				{
-					Console.WriteLine("<-<-<- Payload length did not match");
+					Console.WriteLine("<-<-<- Payload length did not match. Was 0x{0:X2}, got 0x{0:X}", payloadLength, payload);
+					Console.WriteLine("<-<-<- (cont) Command was 0x{0:X2}", command);
 					return;
 				}
 				byte Xor = (byte)serialPort.ReadByte();
@@ -423,7 +430,7 @@ namespace SpintronicsGUI
 				printPacket(packet, PacketCommDirection.In);
 				if (packet.Xor != Xor)
 				{
-					Console.WriteLine("<-<-<- XOR did not match");
+					Console.WriteLine("<-<-<- XOR did not match. Received 0x{0:X}, should have been 0x{0:X}", Xor, packet.Xor);
 					return;
 				}
 
@@ -438,18 +445,27 @@ namespace SpintronicsGUI
 					case (byte)((byte)PacketType.Report | (byte)PacketSender.Microcontroller):
 						Console.WriteLine("Received a report packet");
 						break;
+					case (byte)((byte)PacketType.Config | (byte)PacketSender.Microcontroller):
+						Console.WriteLine("Received a config acknowledge packet");
+						break;
 					case (byte)((byte)PacketType.Error | (byte)PacketSender.Microcontroller):
 						Console.WriteLine("Received an error packet");
 						break;
 					default:
-						Console.WriteLine("Received an unknown packet");
-						break;
+						Console.WriteLine("Received an unknown packet of type 0x{0:X}", packet.command);
+                        return;
 				}
 
-				ProtocolDirective retval = protocolHandler.HandlePacket(packet, serialPort, chart: this.adjustedChart1);
-				if(retval == ProtocolDirective.AddData && this.running)
+				ProtocolDirective retval = protocolHandler.HandlePacket(packet);
+				if (retval == ProtocolDirective.AddData && this.running)
+				{
 					if (InvokeRequired)
 						this.Invoke(this.myDelegate, packet);
+				}
+				if (retval == ProtocolDirective.ErrorReceived && this.running)
+				{
+					MessageBox.Show("Error received!");
+				}
 
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Argument Null Exception in GUI, most likely thrown by ProtocolHandler");
@@ -843,21 +859,58 @@ namespace SpintronicsGUI
 		 */
 		private void startRun(object sender, EventArgs e)
 		{
+			/* Check that we aren't already running */
 			if (this.running == true)
 			{
 				MessageBox.Show("Please stop the current run before starting a new one");
 				return;
 			}
+			/* Check that valid names are entered */
 			if ((this.reactionWellTextBox.Text == "") || (this.sampleTextBox.Text == ""))
 			{
 				MessageBox.Show("Please enter values for Reaction Well and Sample");
 				return;
 			}
 
+			/* Validate the Reaction Well name (the sensor pin assignment depends on this) */
 			this.validateReactionWellButton.PerformClick();
 			if (!this.reactionWellValidated)
 			{
 				return;
+			}
+
+			/* Send a start packet to the microcontroller */
+			try {
+				// Create configuration packet
+				byte[] payload = (byte[])this.configFile.sensorMultiplexerValues;
+				Packet configPacket = new Packet((byte)PacketType.Config | (byte)PacketSender.GUI, (byte)payload.Length, payload);
+				printPacket(configPacket, PacketCommDirection.Out);
+				// Create start packet
+				float[] data = new float[5];
+				payload = new byte[21];
+				data[0] = this.configFile.wheatstoneAmplitude;
+				data[1] = this.configFile.wheatstoneFrequency;
+				data[2] = this.configFile.coilAmplitude;
+				data[3] = this.configFile.coilFrequency;
+				data[4] = this.configFile.measurementPeriod;
+				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
+				payload[20] = 0x01;
+				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
+				printPacket(startPacket, PacketCommDirection.Out);
+				if (protocolHandler.StartRun(configPacket, startPacket) == true)
+					this.running = true;
+				else
+				{
+					MessageBox.Show("Failed to start run: Error code " + protocolHandler.errorCode +
+							    "-> " + protocolHandler.getErrorMessage());
+					return;
+				}
+			} catch (ArgumentNullException) {
+				MessageBox.Show("Please enter a value for all fields");
+			} catch (FormatException) {
+				MessageBox.Show("Please enter a valid number for all fields");
+			} catch (OverflowException) {
+				MessageBox.Show("Please enter a valid number for all fields");
 			}
 
 			this.globalCycle = 0;
@@ -892,27 +945,6 @@ namespace SpintronicsGUI
 			}
 			createRunFiles();
 			this.globalCycle++;
-			try {
-				float[] data = new float[5];
-				byte[] payload = new byte[21];
-				data[0] = this.configFile.wheatstoneAmplitude;
-				data[1] = this.configFile.coilAmplitude;
-				data[2] = this.configFile.wheatstoneFrequency;
-				data[3] = this.configFile.coilFrequency;
-				data[4] = this.configFile.measurementPeriod;
-				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
-				payload[20] = 0x01;
-				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
-				printPacket(startPacket, PacketCommDirection.Out);
-				protocolHandler.HandlePacket(startPacket, serialPort);
-				this.running = true;
-			} catch (ArgumentNullException) {
-				MessageBox.Show("Please enter a value for all fields");
-			} catch (FormatException) {
-				MessageBox.Show("Please enter a valid number for all fields");
-			} catch (OverflowException) {
-				MessageBox.Show("Please enter a valid number for all fields");
-			}
 		}
 
 		/*
@@ -929,7 +961,8 @@ namespace SpintronicsGUI
 			byte[] payload = new byte[20];
 			Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
 			printPacket(stopPacket, PacketCommDirection.Out);
-			protocolHandler.HandlePacket(stopPacket, serialPort);
+			//protocolHandler.HandlePacket(stopPacket);
+			protocolHandler.StopRun(stopPacket);
 			this.bufferingLabel.Visible = false;
 			this.bufferingProgressBar.Visible = false;
 			this.initialSignalProgressBar.Value = 0;

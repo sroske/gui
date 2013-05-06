@@ -21,29 +21,45 @@ namespace SpintronicsGUI
 	enum ProtocolDirective
 	{
 		DoNothing,
-		AddData
+		AddData,
+		ErrorReceived,
+		WaitNotReady
+	}
+
+	enum ErrorCode : byte
+	{
+		NoError,
+		BadPacketXor,
+		A1OoR,
+		F1OoR,
+		A2OoR,
+		F2OoR,
+		F1F2OoR,
+		TOoR,
+		InvalidDigitalGain,
+		SignalClipBridgeAtoD,
+		SignalClipCoilAtoD,
+		SignalClipBridgeDigitalGain
 	}
 
 	class ProtocolHandler
 	{
 		ProtocolState state;
+		SerialPort serialPort;
+		public byte errorCode;
+		//System.Threading.Timer timer = new System.Threading.Timer(oneshotTimer);
 
-		public ProtocolHandler()
+		public ProtocolHandler(SerialPort port)
 		{
 			state = ProtocolState.Idle;
+			this.serialPort = port;
 		}
 
-		public ProtocolDirective HandlePacket(Packet packetIn, SerialPort serialPort, Chart chart = null, bool forceSend = false)
+		public ProtocolDirective HandlePacket(Packet packetIn)
 		{
-			if (forceSend)
-			{
-				writePacket(packetIn, serialPort);
-				return ProtocolDirective.DoNothing;
-			}
-
 			switch (state)
 			{
-				case ProtocolState.Idle:
+				/*case ProtocolState.Idle:
 					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
 					{
 						writePacket(packetIn, serialPort);
@@ -54,12 +70,17 @@ namespace SpintronicsGUI
 						writePacket(packetIn, serialPort);
 						state = ProtocolState.StartSent;
 					}
-					break;
+					break;*/
 
 				case ProtocolState.ConfigSent:
 					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.Microcontroller))
 					{
 						state = ProtocolState.Idle;
+					}
+					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					{
+						this.errorCode = packetIn.payload[0];
+						state = ProtocolState.ErrorReceived;
 					}
 					break;
 
@@ -70,6 +91,7 @@ namespace SpintronicsGUI
 					}
 					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
 					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
+						this.errorCode = packetIn.payload[0];
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
@@ -79,32 +101,125 @@ namespace SpintronicsGUI
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
 						state = ProtocolState.Idle;
 					}
+					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
+						this.errorCode = packetIn.payload[0];
+						state = ProtocolState.ErrorReceived;
+					}
 					break;
 
 				case ProtocolState.WaitForData:
 					if (packetIn.command == ((byte)PacketType.Report | (byte)PacketSender.Microcontroller))
 					{// If we're waiting for data packets and we receive one from the microcontroller
-						byte[] payload = new byte[1];
-						payload[0] = packetIn.payload[0];
-						Packet ackPacket = new Packet((byte)PacketType.Report | (byte)PacketSender.GUI, 1, payload);
-						writePacket(ackPacket, serialPort);
 						return ProtocolDirective.AddData;
+					}
+					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					{
+						this.errorCode = packetIn.payload[0];
+						return ProtocolDirective.ErrorReceived;
 					}
 					else if (packetIn.command == ((byte)PacketType.Stop | (byte)PacketSender.GUI))
 					{// If we're waiting for data packets and we receive a stop packet from the GUI
 						writePacket(packetIn, serialPort);
-						state = ProtocolState.StopSent;
+						state = ProtocolState.Idle;
 					}
 					break;
 
-				case ProtocolState.ErrorReceived:
+				/*case ProtocolState.ErrorReceived:
 					MessageBox.Show("Error received!");
-					break;
+					break;*/
 
 				default:
 					break;
 			}
+
 			return ProtocolDirective.DoNothing;
+		}
+
+		void oneshotTimer(int milliseconds)
+		{
+		}
+
+		public bool StartRun(Packet configPacket, Packet startPacket)
+		{
+			if (configPacket != null)
+			{
+				try {
+					writePacket(configPacket, serialPort);
+				} catch (Exception) {
+					return false;
+				}
+				this.state = ProtocolState.ConfigSent;
+				while (this.state == ProtocolState.ConfigSent);
+				if (this.state == ProtocolState.ErrorReceived)
+				{
+					this.state = ProtocolState.Idle;
+					return false;
+				}
+			}
+
+			try {
+				writePacket(startPacket, serialPort);
+			} catch (Exception) {
+				return false;
+			}
+			this.state = ProtocolState.StartSent;
+			while (this.state == ProtocolState.StartSent);
+			if (this.state == ProtocolState.ErrorReceived)
+			{
+				this.state = ProtocolState.Idle;
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool StopRun(Packet stopPacket)
+		{
+			try {
+				writePacket(stopPacket, serialPort);
+			} catch (Exception) {
+				return false;
+			}
+			this.state = ProtocolState.StopSent;
+			while (this.state == ProtocolState.StopSent);
+			if (this.state == ProtocolState.ErrorReceived)
+			{
+				this.state = ProtocolState.Idle;
+				return false;
+			}
+
+			return true;
+		}
+
+		public string getErrorMessage()
+		{
+			switch (this.errorCode)
+			{
+				case (byte)ErrorCode.BadPacketXor:
+					return "Bad communication formatting";
+				case (byte)ErrorCode.A1OoR:
+					return "Wheatstone bridge signal amplitude is out of range";
+				case (byte)ErrorCode.F1OoR:
+					return "Wheatstone bridge signal frequency is out of range";
+				case (byte)ErrorCode.A2OoR:
+					return "Coil signal amplitude is out of range";
+				case (byte)ErrorCode.F2OoR:
+					return "Coil signal frequency is out of range";
+				case (byte)ErrorCode.F1F2OoR:
+					return "Wheatsone + coil frequency sum is out of range";
+				case (byte)ErrorCode.TOoR:
+					return "Frequency acquisition period out of range";
+				case (byte)ErrorCode.InvalidDigitalGain:
+					return "Invalid digital gain factor";
+				case (byte)ErrorCode.SignalClipBridgeAtoD:
+					return "Wheatstone bridge A-to-D signal is clipping";
+				case (byte)ErrorCode.SignalClipCoilAtoD:
+					return "Coil A-to-D signal is clipping";
+				case (byte)ErrorCode.SignalClipBridgeDigitalGain:
+					return "Wheatstone bridge digital gain is clipping";
+			}
+			return "Unknown error of type " + errorCode;
 		}
 
 		private void writePacket(Packet packetToWrite, SerialPort port)
@@ -116,40 +231,21 @@ namespace SpintronicsGUI
 			if(packetToWrite.payloadLength != 0)
 				Array.Copy(packetToWrite.payload, 0, buf, 3, packetToWrite.payloadLength);
 			buf[3 + packetToWrite.payloadLength] = packetToWrite.Xor;
-			try
-			{
+			try {
 				port.Write(buf, 0, buf.Length);
 			} catch (ArgumentNullException) {
-				//throw new ArgumentNullException();
+				throw new ArgumentNullException();
 			} catch (InvalidOperationException) {
-				//throw new InvalidOperationException();
+				throw new InvalidOperationException();
 			} catch (ArgumentOutOfRangeException) {
-				//throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException();
 			} catch (ArgumentException) {
-				//throw new ArgumentException();
+				throw new ArgumentException();
 			} catch (TimeoutException) {
-				//throw new TimeoutException();
+				throw new TimeoutException();
 			} catch (Exception) {
-				//throw new Exception();
+				throw new Exception();
 			}
-		}
-
-		private void addData(byte[] dataToAdd, int time, Chart chart = null)
-		{
-			int sensorId = dataToAdd[0];
-			float wheatstonef1A = System.BitConverter.ToSingle(dataToAdd, 1);
-			float wheatstonef1P = System.BitConverter.ToSingle(dataToAdd, 5);
-			float wheatstonef2A = System.BitConverter.ToSingle(dataToAdd, 9);
-			float wheatstonef2P = System.BitConverter.ToSingle(dataToAdd, 13);
-			float wheatstonef1Mf2A = System.BitConverter.ToSingle(dataToAdd, 17);
-			float wheatstonef1Mf2P = System.BitConverter.ToSingle(dataToAdd, 21);
-			float wheatstonef1Pf2A = System.BitConverter.ToSingle(dataToAdd, 25);
-			float wheatstonef1Pf2P = System.BitConverter.ToSingle(dataToAdd, 29);
-			float wheatstoneCoilf2A = System.BitConverter.ToSingle(dataToAdd, 33);
-			float wheatstoneCoilf2P = System.BitConverter.ToSingle(dataToAdd, 37);
-			if (chart != null)
-				chart.Series[sensorId - 1].Points.AddXY(time, wheatstonef1A);
-			// Write data to text file, too
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace SpintronicsGUI
 	{
 		public string defaultSaveDirectory = Directory.GetCurrentDirectory();
 		public int tempFoldersToKeep = -1;
-		public int[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
+		public byte[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
 									24, 25, 26, 27, 28, 29, 30};
 		public string bufferName = "PBS";
 		public string mnpsName = "MACS";
@@ -168,7 +168,7 @@ namespace SpintronicsGUI
 			return float.Parse(line);
 		}
 
-		public int[] readSensorMultiplexerValues()
+		public byte[] readSensorMultiplexerValues()
 		{
 			StreamReader file = new StreamReader("./config.ini");
 			string line = file.ReadToEnd();
@@ -177,12 +177,12 @@ namespace SpintronicsGUI
 			int start = line.IndexOf("SensorMultiplexerValues:", 0);
 			int end = line.IndexOf("\n", start);
 			line = line.Substring(start + 24, end - start - 24);
-			int[] array = new int[sensorMultiplexerValues.Length];
+			byte[] array = new byte[sensorMultiplexerValues.Length];
 			for (int i = 0; i < sensorMultiplexerValues.Length; i++)
 			{
 				int first = line.IndexOf("-", 0);
 				int last = line.IndexOf("-", first + 1);
-				array[i] = System.Convert.ToInt32(line.Substring(first + 1, last - first - 1));
+				array[i] = (byte)System.Convert.ToInt32(line.Substring(first + 1, last - first - 1));
 				line = line.Remove(first, last - first);
 			}
 			return array;
@@ -201,7 +201,7 @@ namespace SpintronicsGUI
 			saveConfigurations();
 		}
 
-		public void setSensorMultiplexerValues(int[] array)
+		public void setSensorMultiplexerValues(byte[] array)
 		{
 			this.sensorMultiplexerValues = array;
 			saveConfigurations();

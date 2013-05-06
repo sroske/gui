@@ -15,7 +15,7 @@ namespace SpintronicsGUI
 		private bool readOnly = false;
 
 		public int tempFoldersToKeep;
-		public int[] sensorMultiplexerValues;
+		public byte[] sensorMultiplexerValues;
 		public string bufferName;
 		public string mnpsName;
 		public int preloadBufferVolume;
@@ -195,7 +195,7 @@ namespace SpintronicsGUI
 			{
 				try {
 					int value = System.Convert.ToInt32(t.Text);
-					this.sensorMultiplexerValues[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1] = value;
+					this.sensorMultiplexerValues[System.Convert.ToUInt32(t.Name.Substring(t.Name.Length - 2, 2)) - 1] = (byte)value;
 				} catch (ArgumentNullException) {
 					MessageBox.Show("Please enter a value for sensor " + t.Name);
 					return false;

@@ -57,6 +57,7 @@ namespace SpintronicsGUI
 			payloadLength = length;
 			payload = pay;
 			Xor = 0x00;
+			Xor ^= command;
 			Xor ^= payloadLength;
 			for (int i = 0; i < payloadLength; i++)
 			{
