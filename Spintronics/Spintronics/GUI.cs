@@ -463,7 +463,8 @@ namespace SpintronicsGUI
 				}
 				if (retval == ProtocolDirective.ErrorReceived && this.running)
 				{
-					MessageBox.Show("Error received!");
+					MessageBox.Show("Error received from microcontroller: Error code " + protocolHandler.errorCode +
+							    "\n-> " + protocolHandler.getErrorMessage());
 				}
 
 			} catch (ArgumentNullException) {
@@ -978,8 +979,8 @@ namespace SpintronicsGUI
 			if (protocolHandler.StopRun(stopPacket) != true)
 			{
 				MessageBox.Show("Failed to stop: Error code " + protocolHandler.errorCode +
-						    "\n-> " + protocolHandler.getErrorMessage());
-				return;
+						    "\n-> " + protocolHandler.getErrorMessage() +
+						    "\nExiting");
 			}
 			this.bufferingLabel.Visible = false;
 			this.bufferingProgressBar.Visible = false;

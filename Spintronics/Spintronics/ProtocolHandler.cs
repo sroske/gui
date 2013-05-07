@@ -118,6 +118,7 @@ namespace SpintronicsGUI
 
 		public void oneshotTimer(int milliseconds)
 		{
+			this.timerDone = false;
 			timer = new Timer(new TimerCallback(timerFinished));
 			timer.Change(milliseconds, Timeout.Infinite);
 		}
@@ -134,10 +135,9 @@ namespace SpintronicsGUI
 				}
 				this.state = ProtocolState.ConfigSent;						// Otherwise, set the state,
 			#if !DEBUG
-				oneshotTimer(500);									// start the timer,
+				oneshotTimer(1000);									// start the timer,
 			#endif
 				while (!this.timerDone && this.state == ProtocolState.ConfigSent) ;	// and wait for either the timer to stop or the microcontroller to respond (state changes in HandlePacket)
-				this.timerDone = false;									// Reset the timer for next time
 				if (this.state == ProtocolState.ConfigSent)					// If we haven't changed states, that means we timed out,
 				{
 					this.state = ProtocolState.Idle;						// so set us back to idle,
@@ -159,10 +159,9 @@ namespace SpintronicsGUI
 			}
 			this.state = ProtocolState.StartSent;							// Otherwise, set the state,
 		#if !DEBUG
-			oneshotTimer(500);										// start the timer,
+			oneshotTimer(2000);										// start the timer,
 		#endif
 			while (!this.timerDone && this.state == ProtocolState.StartSent) ;		// and wait for either the timer to stop or the microcontroller to respond
-			this.timerDone = false;										// Reset the timer for next time
 			if (this.state == ProtocolState.StartSent)						// If we haven't changed states, that means we timed out,
 			{
 				this.state = ProtocolState.Idle;							// so set us back to idle,
@@ -188,10 +187,9 @@ namespace SpintronicsGUI
 			}
 			this.state = ProtocolState.StopSent;							// Otherwise, set the state,
 		#if !DEBUG
-			oneshotTimer(500);										// start the timer,
+			oneshotTimer(1000);										// start the timer,
 		#endif
 			while (!this.timerDone && this.state == ProtocolState.StopSent) ;			// and wait for either the timer to stop or the microcontroller to respond
-			this.timerDone = false;										// Reset the timer for next time
 			if (this.state == ProtocolState.StopSent)							// If we haven't changed states, that means we timed out,
 			{
 				this.state = ProtocolState.Idle;							// so set us back to idle,
