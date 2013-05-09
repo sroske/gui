@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define _DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +24,7 @@ namespace SpintronicsGUI
 
 	public partial class GUI : Form
 	{
+		string comPortName;
 		Configuration configFile;							// File containing user configurations
 		SerialPort serialPort = null;							// Main microcontroller COM port
 		SerialPort debugSerial = null;						// COM port used for debugging with microcontroller emulator
@@ -29,19 +32,40 @@ namespace SpintronicsGUI
 		Microcontroller microcontroller;						// Microcontroller emulator (debugging only)
 		string runFilesDirectory;							// String containing the directory of the current run files
 		TextWriter logFile = null;							// Log file writer
-		TextWriter htFile = null;							// HT file writer
-		TextWriter ltFile = null;							// LT file writer
-		TextWriter ctFile = null;							// CT file writer
+		TextWriter f1Mf2AFile = null;							// LT file writer
+		TextWriter f1AFile = null;							// CT file writer
+		TextWriter f1Pf2AFile = null;							// HT file writer
+		TextWriter f1PFile = null;
+		TextWriter f2AFile = null;
+		TextWriter f2PFile = null;
+		TextWriter f1Mf2PFile = null;
+		TextWriter f1Pf2PFile = null;
+		TextWriter coilAFile = null;
+		TextWriter coilPFile = null;
+		string f1Mf2AFileName = "WS-F1MF2A.txt";
+		string f1AFileName = "WS-F1A.txt";
+		string f1Pf2AFileName = "WS-F1PF2A.txt";
+		string f1PFileName = "WS-F1P.txt";
+		string f2AFileName = "WS-F2A.txt";
+		string f2PFileName = "WS-F2P.txt";
+		string f1Mf2PFileName = "WS-F1MF2P.txt";
+		string f1Pf2PFileName = "WS-F1PF2P.txt";
+		string coilAFileName = "COIL-F2A.txt";
+		string coilPFileName = "COIL-F2P.txt";
 		bool running = false;								// Tells us whether or not a run is in progress
 		bool resultsSaved = true;							// Tells us if the current results have been saved
 		bool reactionWellValidated = false;						// Tells us if the Reaction Well name is valid
 		SensorAssignment sensorAssignment = SensorAssignment.A;		// Tells us the sensor pin assignments for the physical sensor array being used
 		public delegate void addNewDataPoint(Packet packet);			// Delegate for adding packets
-		public addNewDataPoint myDelegate;						// See above
+		public addNewDataPoint addNewDataPointDelegate;				// See above
+		public delegate void addDataErrorToTextBox(int sensor,		// Delagate for adding data error text to text box
+									 int cycle,
+									 string message);
+		public addDataErrorToTextBox addNewDataErrorDelegate;			// See above
 		int globalCycle = 0;								// The global cycle pointer; This always points to the cycle CURRENTLY BEING ACQUIRED AND RECORDED
 		int tareIndex = 0;								// The global tare index (what is the first cycle of data the user can see)
 		bool recalculate = true;							// Tells us if we should recalculate the adjusted chart points
-		int cycleSensorCount = 0;							// Keeps track of the latest sensor we've received data for
+		int latestSensorId = 0;								// Keeps track of the latest sensor we've received data for
 		int mostRecentAddMpsCycle = 0;						// Keeps track of the latest cycle MNPs were added
 		int enableAddBufferAndMnpAtCycle;						// Tells us when to re-enable the Add Buffer and Add MNPs buttons
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };				// Array containing the integer numbers of the reference sensors (they don't change)
@@ -57,33 +81,39 @@ namespace SpintronicsGUI
 
 			// Initialize delegate for adding new data to the graph
 			// (this is because of threading rules)
-			myDelegate = new addNewDataPoint(addNewDataPointMethod);
+			addNewDataPointDelegate = new addNewDataPoint(addNewDataPointMethod);
+			addNewDataErrorDelegate = new addDataErrorToTextBox(addDataErrorMethod);
 
 			// Initialize COM ports
-		#if DEBUG														// If we're debugging (and thus don't have an actual microcontroller),
+			this.comPortName = comPort;
+		#if _DEBUG														// If we're debugging (and thus don't have an actual microcontroller),
 			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
 			debugSerial = new SerialPort("COM6", 115200);
 			debugSerial.ReadTimeout = 200;
 		#else															// Otherwise, start with the COM port name passed in (see Program.cs)
-			serialPort = new SerialPort(comPort, 10000);//115200);
+			serialPort = new SerialPort(this.comPortName, 10000);//115200);
 		#endif
 			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 800 milliseconds
 			serialPort.WriteTimeout = 800;									// Always set the main COM port WriteTimeout property to 800 milliseconds
 			// Open COM ports
 			try {
 				serialPort.Open();										// Open the main COM port
-			#if DEBUG													// If we're debugging,
+			#if _DEBUG													// If we're debugging,
 				debugSerial.Open();										// open the debug COM port,
 				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
 			#endif
 				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
 				protocolHandler = new ProtocolHandler(serialPort);					// Initialize the protocol handler
-			} catch(IOException) {
+			/*} catch(IOException) {
 				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
 				throw new ArgumentNullException();
 			} catch(UnauthorizedAccessException) {
 				MessageBox.Show("Please make sure COM port is not already in use");
 				throw new UnauthorizedAccessException();
+			}*/
+			} catch (Exception) {
+				MessageBox.Show("Failed to connect to device");
+				this.startRunButton.Enabled = false;
 			}
 		}
 
@@ -102,7 +132,7 @@ namespace SpintronicsGUI
 			this.addMnpVolumeTextBox.Text = System.Convert.ToString(configFile.defaultAddMnpsVolume);		// MNPs volume,
 			this.addBufferUnitLabel.Text = this.configFile.defaultVolumeUnit;						// buffer unit,
 			this.addMnpUnitLabel.Text = this.configFile.defaultVolumeUnit;						// and MNPs unit texts according to our configuration file
-			this.reactionWellTextBox.Focus();											// Put focus on the Reaction Well text box
+			this.userNameTextBox.Focus();											// Put focus on the Reaction Well text box
 		}
 
 		/*
@@ -126,9 +156,36 @@ namespace SpintronicsGUI
 		 */
 		private void addNewDataPointMethod(Packet packet)
 		{
-			try
-			{																				// (For all locations/specifications of data packets, see Coomunications document)
-				int sensorId = packet.payload[0];														// Get the sensor ID
+			try {																				// (For all locations/specifications of data packets, see Coomunications document)
+				int sensorId = 0;
+				int sensorMultiplexerAddress = packet.payload[0];											// Get the sensor multiplexer address
+				for (int i = 0; i < configFile.sensorMultiplexerValues.Length; i++)								// For each sensor multiplexer value in our array,
+				{
+					if (sensorMultiplexerAddress == configFile.sensorMultiplexerValues[i])							// if the member at i in the array matches our received address from the microcontroller,
+					{
+						sensorId = i + 1;															// then that's the sensor we received data for, so set sensor ID (incrementing i by 1 for the 0 indexing)
+						break;																// We're done searching, so might as well break
+					}
+				}
+				if (sensorId == 0)																// If we didn't find the address in our array,
+				{
+					// error																	// Let the user know we received bad data,
+					return;																	// and don't bother adding any data
+				}
+				if (latestSensorId != 15)
+				{
+					if (sensorId != ((latestSensorId % 30) + 1))
+					{
+						fixNoncontinuityInLogFiles(sensorId, latestSensorId);
+					}
+				}
+				else
+				{
+					if (sensorId != 17)
+					{
+						fixNoncontinuityInLogFiles(sensorId, latestSensorId);
+					}
+				}
 				float wheatstonef1A = System.BitConverter.ToSingle(packet.payload, 1);								// Get float #1
 				float wheatstonef1P = System.BitConverter.ToSingle(packet.payload, 5);								// Get float #2
 				float wheatstonef2A = System.BitConverter.ToSingle(packet.payload, 9);								// Get float #3
@@ -141,40 +198,47 @@ namespace SpintronicsGUI
 				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);							// Get float #10
 
 				// Add the data to the hidden charts and write them to the files
-				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);				// Add data to raw chart #1
-				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1P);				// Add data to raw chart #2
-				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef2A);				// Add data to raw chart #3
-				logData(htFile, sensorId, wheatstonef1A);													// Log the data in the appropriate file (these will be stored in 'temp' directory until saved)
-				logData(ltFile, sensorId, wheatstonef1P);													// See above
-				logData(ctFile, sensorId, wheatstonef2A);													// See above
+				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1Mf2A);			// Add data to raw chart #1
+				rawChart2.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1A);				// Add data to raw chart #2
+				rawChart3.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1Pf2A);			// Add data to raw chart #3
+				logData(f1Mf2AFile, sensorId, wheatstonef1Mf2A);											// Log the data in the appropriate file (these will be stored in 'temp' directory until saved)
+				logData(f1AFile, sensorId, wheatstonef1A);												// See above
+				logData(f1Pf2AFile, sensorId, wheatstonef1Pf2A);											// See above
+				logData(f1PFile, sensorId, wheatstonef1P);												// See above
+				logData(f2AFile, sensorId, wheatstonef2A);												// See above
+				logData(f2PFile, sensorId, wheatstonef2P);												// See above
+				logData(f1Mf2PFile, sensorId, wheatstonef1Mf2P);											// See above
+				logData(f1Pf2PFile, sensorId, wheatstonef1Pf2P);											// See above
+				logData(coilAFile, sensorId, wheatstoneCoilf2A);											// See above
+				logData(coilPFile, sensorId, wheatstoneCoilf2P);											// See above
 
 				// Add the data to the visible charts
 				if (globalCycle > 1)																// If globalCycle is greater than 1 (i.e. we're done buffering),
 				{
-					wheatstonef1A = (float)rawChart1.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];				// grab the data points,
-					wheatstonef1P = (float)rawChart2.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
-					wheatstonef2A = (float)rawChart3.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+					wheatstonef1Mf2A = (float)rawChart1.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];				// grab the data points,
+					wheatstonef1A = (float)rawChart2.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
+					wheatstonef1Pf2A = (float)rawChart3.Series[sensorId - 1].Points[globalCycle - 1].YValues[0];
 
 					if (this.amplitudeTareCheckbox.Checked)												// if box is checked, subtract the sensor's amplitude value from cycle pointed at by tareIndex
 					{
-						wheatstonef1A -= (float)rawChart1.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
-						wheatstonef1P -= (float)rawChart2.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
-						wheatstonef2A -= (float)rawChart3.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+						wheatstonef1Mf2A -= (float)rawChart1.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+						wheatstonef1A -= (float)rawChart2.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+						wheatstonef1Pf2A -= (float)rawChart3.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 
 						if (this.referenceTareCheckbox.Checked)											// if box is checked, subtract the average of the CHECKED reference sensors
 						{
-							wheatstonef1A -= (float)getReferenceAverage(this.rawChart1, (globalCycle - 1));
-							wheatstonef1P -= (float)getReferenceAverage(this.rawChart2, (globalCycle - 1));
-							wheatstonef2A -= (float)getReferenceAverage(this.rawChart3, (globalCycle - 1));
+							wheatstonef1Mf2A -= (float)getReferenceAverage(this.rawChart1, (globalCycle - 1));
+							wheatstonef1A -= (float)getReferenceAverage(this.rawChart2, (globalCycle - 1));
+							wheatstonef1Pf2A -= (float)getReferenceAverage(this.rawChart3, (globalCycle - 1));
 						}
 					}
 
-					adjustedChart1.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1A);	// Add the data points,
-					adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;					// and set their chart markers to circles
-					adjustedChart2.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1P);
-					adjustedChart2.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
-					adjustedChart3.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef2A);
-					adjustedChart3.Series[sensorId - 1].Points.Last().MarkerStyle = MarkerStyle.Circle;
+					adjustedChart1.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1Mf2A);	// Add the data points,
+					adjustedChart1.Series[sensorId - 1].Points.Last().MarkerStyle = getMarker(sensorId);				// and set their chart markers to circles
+					adjustedChart2.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1A);
+					adjustedChart2.Series[sensorId - 1].Points.Last().MarkerStyle = getMarker(sensorId);
+					adjustedChart3.Series[sensorId - 1].Points.AddXY(globalCycle - 1 + getAddTime(sensorId), wheatstonef1Pf2A);
+					adjustedChart3.Series[sensorId - 1].Points.Last().MarkerStyle = getMarker(sensorId);
 				}
 				else
 				{
@@ -239,7 +303,7 @@ namespace SpintronicsGUI
 				}
 
 				// Update latest sensor ID and globalCycle
-				cycleSensorCount = sensorId;
+				latestSensorId = sensorId;
 				if (sensorId >= adjustedChart1.Series.Count)
 					globalCycle++;
 			} catch (IndexOutOfRangeException) {
@@ -290,6 +354,47 @@ namespace SpintronicsGUI
 						return 0.8;
 					default:										// Default (should not happen)
 						return 0.0;
+				}
+			}
+		}
+
+
+		private MarkerStyle getMarker(int sensor)
+		{
+			if (sensorAssignment == SensorAssignment.A)
+			{
+				switch (sensor)
+				{
+					case 18: case 20: case 22: case 24: case 26: case 28: case 30:	// Column a offsets
+						return MarkerStyle.Circle;
+					case 17: case 19: case 21: case 23: case 25: case 27: case 29:	// Column b offsets
+						return MarkerStyle.Diamond;
+					case 15: case 13: case 11: case 9: case 6: case 4: case 2:		// Column c offsets
+						return MarkerStyle.Triangle;
+					case 14: case 12: case 10: case 8: case 5: case 3: case 1:		// Column d offsets
+						return MarkerStyle.Cross;
+					case 7:										// Column e offsets
+						return MarkerStyle.Star5;
+					default:										// Default (should not happen)
+						return MarkerStyle.Circle;
+				}
+			}
+			else
+			{
+				switch (sensor)
+				{
+					case 1: case 3: case 5: case 8: case 10: case 12: case 14:		// Column a offsets
+						return MarkerStyle.Circle;
+					case 2: case 4: case 6: case 9: case 11: case 13: case 15:		// Column b offsets
+						return MarkerStyle.Diamond;
+					case 29: case 27: case 25: case 23: case 21: case 19: case 17:	// Column c offsets
+						return MarkerStyle.Triangle;
+					case 30: case 28: case 26: case 24: case 22: case 20: case 18:	// Column d offsets
+						return MarkerStyle.Cross;
+					case 7:										// Column e offsets
+						return MarkerStyle.Star5;
+					default:										// Default (should not happen)
+						return MarkerStyle.Circle;
 				}
 			}
 		}
@@ -353,7 +458,7 @@ namespace SpintronicsGUI
 								{
 									if (globalCycle != 1)
 									{
-										if ((i == (globalCycle - 1)) && (System.Convert.ToInt32(s.Name) > cycleSensorCount))
+										if ((i == (globalCycle - 1)) && (System.Convert.ToInt32(s.Name) > latestSensorId))
 											continue;
 									}
 									int sensorId = System.Convert.ToInt32(((Series)s).Name);
@@ -381,7 +486,7 @@ namespace SpintronicsGUI
 									double time = getAddTime(sensorId);
 									time += (double)i;
 									s.Points.AddXY(time, value);
-									s.Points.Last().MarkerStyle = MarkerStyle.Circle;
+									s.Points.Last().MarkerStyle = getMarker(sensorId);
 								}
 							} catch (ArgumentNullException) {
 
@@ -459,17 +564,19 @@ namespace SpintronicsGUI
 				if (retval == ProtocolDirective.AddData && this.running)
 				{
 					if (InvokeRequired)
-						this.Invoke(this.myDelegate, packet);
+						this.Invoke(this.addNewDataPointDelegate, packet);
 				}
 				if (retval == ProtocolDirective.ErrorReceived && this.running)
 				{
-					MessageBox.Show("Error received from microcontroller: Error code " + protocolHandler.errorCode +
-							    "\n-> " + protocolHandler.getErrorMessage());
+					if (InvokeRequired)
+						this.Invoke(this.addNewDataErrorDelegate, this.latestSensorId + 1, this.globalCycle, protocolHandler.getErrorMessage());
+					//addDataErrorToTextBox(this.latestSensorId + 1, this.globalCycle, protocolHandler.getErrorMessage());
 				}
 
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Argument Null Exception in GUI, most likely thrown by ProtocolHandler");
-			} catch (InvalidOperationException) {
+			} catch (InvalidOperationException e) {
+				MessageBox.Show(e.Message);
 				MessageBox.Show("Invalid Operation Exception in GUI, most likely thrown by ProtocolHandler");
 			} catch (ArgumentOutOfRangeException) {
 				MessageBox.Show("Argument Out of Range Exception in GUI, most likely thrown by ProtocolHandler");
@@ -509,13 +616,13 @@ namespace SpintronicsGUI
 					setLegendText(number);
 				}
 			}
-			for (int i = 0; i < 5; i++)
-			{
-				if (number == referenceSensors[i])
-				{
+			//for (int i = 0; i < 5; i++)
+			//{
+			//	if (number == referenceSensors[i])
+			//	{
 					recalculateData();
-				}
-			}
+			//	}
+			//}
 		}
 
 		/*
@@ -862,13 +969,13 @@ namespace SpintronicsGUI
 			/* Check that we aren't already running */
 			if (this.running == true)
 			{
-				MessageBox.Show("Please stop the current run before starting a new one");
+				MessageBox.Show("Please stop current session before starting a new session");
 				return;
 			}
 			/* Check that valid names are entered */
-			if ((this.reactionWellTextBox.Text == "") || (this.sampleTextBox.Text == ""))
+			if ((this.reactionWellTextBox.Text == "") || (this.sampleTextBox.Text == "") || (this.userNameTextBox.Text == ""))
 			{
-				MessageBox.Show("Please enter values for Reaction Well and Sample");
+				MessageBox.Show("Please enter values for Reaction Well, Sample, and User Name");
 				return;
 			}
 			/* Validate the Reaction Well name (the sensor pin assignment depends on this) */
@@ -940,7 +1047,8 @@ namespace SpintronicsGUI
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
 			this.enableAddBufferAndMnpAtCycle = configFile.sampleAverageCount + 1;
-
+			this.reconnectToDeviceToolStripMenuItem.Enabled = false;
+			this.reconnectToDeviceToolStripMenuItem.ToolTipText = "Please stop the current run before attempting to reset the connecting";
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
 
@@ -998,14 +1106,21 @@ namespace SpintronicsGUI
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
 			this.addBufferButton.Enabled = false;
+			this.reconnectToDeviceToolStripMenuItem.Enabled = false;
 
 			try {
 				this.logFile.Close();
-				this.htFile.Close();
-				this.ltFile.Close();
-				this.ctFile.Close();
+				this.f1Mf2AFile.Close();
+				this.f1AFile.Close();
+				this.f1Pf2AFile.Close();
+				this.f1PFile.Close();
+				this.f2AFile.Close();
+				this.f2PFile.Close();
+				this.f1Mf2PFile.Close();
+				this.f1Pf2PFile.Close();
+				this.coilAFile.Close();
+				this.coilPFile.Close();
 			} catch (Exception) {
-
 			}
 		}
 
@@ -1212,11 +1327,18 @@ namespace SpintronicsGUI
 			try {
 				try {
 					logFile.Close();
-					htFile.Close();
-					ltFile.Close();
-					ctFile.Close();
+					f1Mf2AFile.Close();
+					f1AFile.Close();
+					f1Pf2AFile.Close();
+					f1Pf2AFile.Close();
+					f1PFile.Close();
+					f2AFile.Close();
+					f2PFile.Close();
+					f1Mf2PFile.Close();
+					f1Pf2PFile.Close();
+					coilAFile.Close();
+					coilPFile.Close();
 				} catch (Exception) {
-
 				}
 
 				string[] tempDirectories;
@@ -1234,9 +1356,7 @@ namespace SpintronicsGUI
 							try {
 								Directory.Delete(tempDirectories[i], true);
 							} catch (UnauthorizedAccessException) {
-
 							} catch (IOException) {
-
 							}
 						}
 					}
@@ -1254,12 +1374,27 @@ namespace SpintronicsGUI
 
 				string logFileNameBase = runFilesDirectory + "/";
 				logFile = new StreamWriter(logFileNameBase + "log.txt");
-				htFile = new StreamWriter(logFileNameBase + "HT.txt");
-				ltFile = new StreamWriter(logFileNameBase + "LT.txt");
-				ctFile = new StreamWriter(logFileNameBase + "CT.txt");
+				f1Mf2AFile = new StreamWriter(logFileNameBase + f1Mf2AFileName);
+				f1AFile = new StreamWriter(logFileNameBase + f1AFileName);
+				f1Pf2AFile = new StreamWriter(logFileNameBase + f1Pf2AFileName);
+				f1PFile = new StreamWriter(logFileNameBase + f1PFileName);
+				f2AFile = new StreamWriter(logFileNameBase + f2AFileName);
+				f2PFile = new StreamWriter(logFileNameBase + f2PFileName);
+				f1Mf2PFile = new StreamWriter(logFileNameBase + f1Mf2PFileName);
+				f1Pf2PFile = new StreamWriter(logFileNameBase + f1Pf2PFileName);
+				coilAFile = new StreamWriter(logFileNameBase + coilAFileName);
+				coilPFile = new StreamWriter(logFileNameBase + coilPFileName);
 
+				logFile.WriteLine("User Name:\t" + this.userNameTextBox.Text);
 				logFile.WriteLine("Reaction Well:\t" + this.reactionWellTextBox.Text);
 				logFile.WriteLine("Sample:\t\t" + this.sampleTextBox.Text + "\n");
+				logFile.WriteLine("Measurement Parameters:\n");
+				logFile.WriteLine("\tWheatstone Amplitude:\t" + this.configFile.wheatstoneAmplitude + " " + this.configFile.wheatstoneAmplitudeUnit);
+				logFile.WriteLine("\tWheatstone Frequency:\t" + this.configFile.wheatstoneFrequency + " Hz");
+				logFile.WriteLine("\tCoil Amplitude:\t\t" + this.configFile.coilAmplitude + " " + this.configFile.coilAmplitudeUnit);
+				logFile.WriteLine("\tCoil Frequency:\t\t" + this.configFile.coilFrequency + " Hz");
+				logFile.WriteLine("\tCoil DC Offset:\t\t" + this.configFile.coilDcOffset + " " + this.configFile.coilDcOffsetUnit);
+				logFile.WriteLine("\tMeasurement Period:\t" + this.configFile.measurementPeriod + " seconds\n");
 				logFile.WriteLine("Cycle\t\tDetails");
 				logFile.WriteLine("*********************************************");
 				logFile.WriteLine(globalCycle + "\t\tPreload " +
@@ -1271,25 +1406,37 @@ namespace SpintronicsGUI
 				{
 					if (i == 15)
 						continue;
-					if (i < 9)
-					{
-						htFile.Write("Sensor   " + (i + 1) + "\t");
-						ltFile.Write("Sensor   " + (i + 1) + "\t");
-						ctFile.Write("Sensor   " + (i + 1) + "\t");
-					}
-					else
-					{
-						htFile.Write("Sensor  " + (i + 1) + "\t");
-						ltFile.Write("Sensor  " + (i + 1) + "\t");
-						ctFile.Write("Sensor  " + (i + 1) + "\t");
-					}
+					f1Mf2AFile.Write("Sensor " + (i + 1) + "\t");
+					f1AFile.Write("Sensor " + (i + 1) + "\t");
+					f1Pf2AFile.Write("Sensor " + (i + 1) + "\t");
+					f1PFile.Write("Sensor " + (i + 1) + "\t");
+					f2AFile.Write("Sensor " + (i + 1) + "\t");
+					f2PFile.Write("Sensor " + (i + 1) + "\t");
+					f1Mf2PFile.Write("Sensor " + (i + 1) + "\t");
+					f1Pf2PFile.Write("Sensor " + (i + 1) + "\t");
+					coilAFile.Write("Sensor " + (i + 1) + "\t");
+					coilPFile.Write("Sensor " + (i + 1) + "\t");
 				}
-				htFile.Write("\n");
-				ltFile.Write("\n");
-				ctFile.Write("\n");
-				htFile.Flush();
-				ltFile.Flush();
-				ctFile.Flush();
+				f1Mf2AFile.Write("\n");
+				f1AFile.Write("\n");
+				f1Pf2AFile.Write("\n");
+				f1PFile.Write("\n");
+				f2AFile.Write("\n");
+				f2PFile.Write("\n");
+				f1Mf2PFile.Write("\n");
+				f1Pf2PFile.Write("\n");
+				coilAFile.Write("\n");
+				coilPFile.Write("\n");
+				f1Mf2AFile.Flush();
+				f1AFile.Flush();
+				f1Pf2AFile.Flush();
+				f1PFile.Flush();
+				f2AFile.Flush();
+				f2PFile.Flush();
+				f1Mf2PFile.Flush();
+				f1Pf2PFile.Flush();
+				coilAFile.Flush();
+				coilPFile.Flush();
 
 			} catch (Exception) {
 				DialogResult messageBoxResult = MessageBox.Show("Unable to create run files. Continue?", "Error", MessageBoxButtons.YesNo);
@@ -1301,14 +1448,13 @@ namespace SpintronicsGUI
 		/*
 		 * This adds data to the data log file
 		 */
-		private void logData(TextWriter file, int sensor, double data)
+		private void logData(TextWriter file, int sensor, double data, bool noData = false)
 		{
-			string dataString = System.Convert.ToString(data);
-			/*try {
-				dataString = dataString.Substring(0, 10);
-			} catch (ArgumentOutOfRangeException) {
-				dataString = dataString.PadRight(10, '0');
-			}*/
+			string dataString;
+			if (noData)
+				dataString = "N/A";
+			else
+				dataString = System.Convert.ToString(data);
 
 			file.Write(dataString + "\t");
 			if (sensor == 30)
@@ -1316,6 +1462,48 @@ namespace SpintronicsGUI
 				file.Write("\n");
 			}
 			file.Flush();
+		}
+
+		/*
+		 * This will handle the case where we don't receive sequentially-occurring sensor IDs (i.e. a sensor was skipped or missed)
+		 */
+		private void fixNoncontinuityInLogFiles(int newId, int previousId)
+		{
+			previousId++;									// Since we're going to log this sensors
+			if (previousId == 16)								// data, we only want to write
+				previousId++;								// <difference> - 1 'N/A's
+			else if (previousId == 31)
+				previousId = 1;
+
+			for (; previousId != newId; )
+			{
+				logData(this.f1Mf2AFile, previousId, 0.0, noData: true);
+				logData(this.f1AFile, previousId, 0.0, noData: true);
+				logData(this.f1Pf2AFile, previousId, 0.0, noData: true);
+				logData(this.f1PFile, previousId, 0.0, noData: true);
+				logData(this.f2AFile, previousId, 0.0, noData: true);
+				logData(this.f2PFile, previousId, 0.0, noData: true);
+				logData(this.f1Mf2PFile, previousId, 0.0, noData: true);
+				logData(this.f1Pf2PFile, previousId, 0.0, noData: true);
+				logData(this.coilAFile, previousId, 0.0, noData: true);
+				logData(this.coilPFile, previousId, 0.0, noData: true);
+				previousId++;
+				if (previousId == 16)
+					previousId++;
+				else if (previousId == 31)
+					previousId = 1;
+			}
+			addDataErrorMethod(newId, this.globalCycle, "Sensor was not expected next sensor");
+		}
+
+		/*
+		 * This adds error text to the dataErrorTextBox control
+		 */
+		private void addDataErrorMethod(int sensor, int cycle, string message)
+		{
+			this.dataErrorTextBox.Visible = true;
+			this.dataErrorLabel.Visible = true;
+			this.dataErrorTextBox.Text += sensor + "\t" + cycle + "\t" + message + Environment.NewLine;
 		}
 
 		/*
@@ -1386,9 +1574,16 @@ namespace SpintronicsGUI
 
 			try {
 				this.logFile.Close();
-				this.htFile.Close();
-				this.ltFile.Close();
-				this.ctFile.Close();
+				this.f1Mf2AFile.Close();
+				this.f1AFile.Close();
+				this.f1Pf2AFile.Close();
+				this.f1PFile.Close();
+				this.f2AFile.Close();
+				this.f2PFile.Close();
+				this.f1Mf2PFile.Close();
+				this.f1Pf2PFile.Close();
+				this.coilAFile.Close();
+				this.coilPFile.Close();
 			} catch (Exception) {
 
 			}
@@ -1406,10 +1601,17 @@ namespace SpintronicsGUI
 					newDefaultDirectory = newDefaultDirectory.Substring(0, last);
 					this.configFile.setDefaultSaveDirectory(newDefaultDirectory);
 					Directory.CreateDirectory(saveFile.FileName);
-					File.Copy(this.runFilesDirectory + "/HT.txt", saveFile.FileName + "/HT.txt");
-					File.Copy(this.runFilesDirectory + "/LT.txt", saveFile.FileName + "/LT.txt");
-					File.Copy(this.runFilesDirectory + "/CT.txt", saveFile.FileName + "/CT.txt");
 					File.Copy(this.runFilesDirectory + "/log.txt", saveFile.FileName + "/log.txt");
+					File.Copy(this.runFilesDirectory + "/" + f1Mf2AFileName, saveFile.FileName + "/" + f1Mf2AFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1AFileName, saveFile.FileName + "/" + f1AFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1Pf2AFileName, saveFile.FileName + "/" + f1Pf2AFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1PFile, saveFile.FileName + "/" + f1PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f2AFile, saveFile.FileName + "/" + f2AFileName);
+					File.Copy(this.runFilesDirectory + "/" + f2PFile, saveFile.FileName + "/" + f2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1Mf2PFile, saveFile.FileName + "/" + f1Mf2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1Pf2PFile, saveFile.FileName + "/" + f1Pf2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + coilAFile, saveFile.FileName + "/" + coilAFileName);
+					File.Copy(this.runFilesDirectory + "/" + coilPFile, saveFile.FileName + "/" + coilPFileName);
 					this.resultsSaved = true;
 				} catch (FileNotFoundException) {
 					MessageBox.Show("Error while saving files: One or more files could not be found");
@@ -1428,16 +1630,15 @@ namespace SpintronicsGUI
 		{
 			try {
 				this.logFile.Close();
-				this.htFile.Close();
-				this.ltFile.Close();
-				this.ctFile.Close();
+				this.f1Mf2AFile.Close();
+				this.f1AFile.Close();
+				this.f1Pf2AFile.Close();
 			} catch (Exception) {
-
 			}
 
 			string logFileName = this.runFilesDirectory + "\\log.txt";
-			string htFileName = this.runFilesDirectory + "\\HT.txt";
-			string ltFileName = this.runFilesDirectory + "\\LT.txt";
+			string ltFileName = this.runFilesDirectory + "\\" + f1Mf2AFileName;
+			string htFileName = this.runFilesDirectory + "\\" + f1Pf2AFileName;
 			StreamReader logFileReader = new StreamReader(logFileName);
 			StreamReader htFileReader = new StreamReader(htFileName);
 			StreamReader ltFileReader = new StreamReader(ltFileName);
@@ -1459,6 +1660,7 @@ namespace SpintronicsGUI
 				{
 					int end = line.IndexOf("\t");
 					cycle = System.Convert.ToInt32(line.Substring(0, end));
+					break;
 				}
 			}
 			logFileReader.Close();
@@ -1476,6 +1678,13 @@ namespace SpintronicsGUI
 				if (configFile.postProcessingFiles == 0)
 				{
 					line = ltFileReader.ReadLine();
+					if(line.Contains("N/A"))
+					{
+						MessageBox.Show("Data files contain incomplete data ('N/A' entries)\n" + "Not continuing with post-processing");
+						htFileReader.Close();
+						ltFileReader.Close();
+						return;
+					}
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						/*if (sensor < 9)
@@ -1489,6 +1698,13 @@ namespace SpintronicsGUI
 				else if (configFile.postProcessingFiles == 1)
 				{
 					line = htFileReader.ReadLine();
+					if (line.Contains("N/A"))
+					{
+						MessageBox.Show("Data files contain incomplete data ('N/A' entries)\n" + "Not continuing with post-processing");
+						htFileReader.Close();
+						ltFileReader.Close();
+						return;
+					}
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						/*if (sensor < 9)
@@ -1502,6 +1718,13 @@ namespace SpintronicsGUI
 				else
 				{
 					line = ltFileReader.ReadLine();
+					if (line.Contains("N/A"))
+					{
+						MessageBox.Show("Data files contain incomplete data ('N/A' entries)\n" + "Not continuing with post-processing");
+						htFileReader.Close();
+						ltFileReader.Close();
+						return;
+					}
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						/*if (sensor < 9)
@@ -1512,6 +1735,13 @@ namespace SpintronicsGUI
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 					line = htFileReader.ReadLine();
+					if (line.Contains("N/A"))
+					{
+						MessageBox.Show("Data files contain incomplete data ('N/A' entries)\n" + "Not continuing with post-processing");
+						htFileReader.Close();
+						ltFileReader.Close();
+						return;
+					}
 					for (int sensor = 0; sensor < beforeAverage.Length; sensor++)
 					{
 						/*if (sensor < 9)
@@ -1633,6 +1863,11 @@ namespace SpintronicsGUI
 		 */
 		private void openRunToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if (this.running)
+			{
+				MessageBox.Show("Please stop before opening files");
+				return;
+			}
 			if (!this.resultsSaved)
 			{
 				if (MessageBox.Show("Save results first?", "Save", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
@@ -1661,9 +1896,9 @@ namespace SpintronicsGUI
 
 					int startOfFileName = logFileName.LastIndexOf("\\");
 					this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
-					string htFileName = logFileName.Substring(0, startOfFileName+1) + "HT.txt";
-					string ltFileName = logFileName.Substring(0, startOfFileName+1) + "LT.txt";
-					string ctFileName = logFileName.Substring(0, startOfFileName+1) + "CT.txt";
+					string ltFileName = logFileName.Substring(0, startOfFileName + 1) + f1Mf2AFileName;
+					string htFileName = logFileName.Substring(0, startOfFileName+1) + f1Pf2AFileName;
+					string ctFileName = logFileName.Substring(0, startOfFileName+1) + f1AFileName;
 					StreamReader logFileReader = new StreamReader(logFileName);
 					StreamReader htFileReader = new StreamReader(htFileName);
 					StreamReader ltFileReader = new StreamReader(ltFileName);
@@ -1752,6 +1987,13 @@ namespace SpintronicsGUI
 					ctFileReader.Close();
 					while ((line = logFileReader.ReadLine()) != null)
 					{
+						if (line.Contains("User Name:"))
+						{
+							line = line.Replace("\t", "");
+							int first = line.IndexOf(":");
+							string me = line.Substring(first + 1, line.Length - first - 1);
+							this.userNameTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
+						}
 						if (line.Contains("Reaction Well:"))
 						{
 							line = line.Replace("\t", "");
@@ -1834,6 +2076,51 @@ namespace SpintronicsGUI
 			}
 
 			this.Close();
+		}
+
+		/*
+		 * This will attempt to reconnect to the microcontroller
+		 */
+		private void reconnectToDeviceToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			try {
+				serialPort.Close();
+			#if DEBUG
+				debugSerial.Close();
+			#endif
+			} catch (Exception) {
+			}
+
+		#if _DEBUG														// If we're debugging (and thus don't have an actual microcontroller),
+			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
+			debugSerial = new SerialPort("COM6", 115200);
+			debugSerial.ReadTimeout = 200;
+		#else															// Otherwise, start with the COM port name passed in (see Program.cs)
+			serialPort = new SerialPort(this.comPortName, 10000);//115200);
+		#endif
+			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 800 milliseconds
+			serialPort.WriteTimeout = 800;									// Always set the main COM port WriteTimeout property to 800 milliseconds
+			// Open COM ports
+			try {
+				serialPort.Open();										// Open the main COM port
+			#if _DEBUG													// If we're debugging,
+				debugSerial.Open();										// open the debug COM port,
+				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
+			#endif
+				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
+				protocolHandler = new ProtocolHandler(serialPort);					// Initialize the protocol handler
+				this.startRunButton.Enabled = true;
+			/*} catch(IOException) {
+				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
+				throw new ArgumentNullException();
+			} catch(UnauthorizedAccessException) {
+				MessageBox.Show("Please make sure COM port is not already in use");
+				throw new UnauthorizedAccessException();
+			}*/
+			} catch (Exception) {
+				MessageBox.Show("Failed to connect to device");
+				this.startRunButton.Enabled = false;
+			}
 		}
 	}
 }

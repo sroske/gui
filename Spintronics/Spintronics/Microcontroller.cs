@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define INCLUDE_ERRORS
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +20,12 @@ namespace SpintronicsGUI
 	{
 		SerialPort serialPort;
 		MicrocontrollerState state;
-		byte errorSent = 0xFF;
+		//byte errorSent = 0xFF;
+		int starts = 1;
 		byte sensor = 0x00;
+		byte startError = 0x01;
+		byte dataError = 0x08;
+		byte[] sensorMultiplexerAddresses = new byte[29];
 		int dataSpeed, sensorCount;
 		double[] baseData = { 0.0, 0.4, 0.8, 1.2, 1.6, 2.0 };
 		Timer timer;
@@ -36,6 +42,7 @@ namespace SpintronicsGUI
 		private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs args)
 		{
 			Packet packet = null;
+			bool dontStart = false;
 			try {
 				System.Threading.Thread.Sleep(100);
 				byte startOfFrame = (byte)serialPort.ReadByte();
@@ -68,16 +75,28 @@ namespace SpintronicsGUI
 				case MicrocontrollerState.Idle:
 					if (packet.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
 					{
+						if (packet.payloadLength == 29)
+							this.sensorMultiplexerAddresses = packet.payload;
 						Packet configReplyPacket = new Packet(((byte)PacketType.Config | (byte)PacketSender.Microcontroller));
 						writePacket(configReplyPacket);
 					}
 					if (packet.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
 					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
+					#if INCLUDE_ERRORS
+						if (this.starts % 5 == 0)
+						{
+							writePacket(createStartErrorPacket());
+							dontStart = true;
+						}
+					#endif
 						Packet startReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Start), (byte)packet.payload.Length, packet.payload);
 						writePacket(startReplyPacket);
-						timer = new Timer(new TimerCallback(timerEvent));
-						timer.Change(this.dataSpeed, 0);
-						state = MicrocontrollerState.SendingData;
+						if (!dontStart)
+						{
+							timer = new Timer(new TimerCallback(timerEvent));
+							timer.Change(this.dataSpeed, 0);
+							state = MicrocontrollerState.SendingData;
+						}
 					}
 					break;
 
@@ -91,13 +110,13 @@ namespace SpintronicsGUI
 					}
 					break;
 
-				case MicrocontrollerState.SendingError:
+				/*case MicrocontrollerState.SendingError:
 					if (packet.command == ((byte)PacketType.Error | (byte)PacketSender.GUI))
 					{// If we're waiting for an error acknowledge packet and we receive one from the GUI
 						if ((packet.payloadLength == 1) && (packet.payload[0] == errorSent))
 								state = MicrocontrollerState.Idle;
 					}
-					break;
+					break;*/
 
 				default:
 					break;
@@ -106,8 +125,17 @@ namespace SpintronicsGUI
 
 		public void timerEvent(object arg)
 		{
-			if(this.state == MicrocontrollerState.SendingData)
+			if (this.state == MicrocontrollerState.SendingData)
+			{
 				writePacket(createDataPacket());
+			#if INCLUDE_ERRORS
+				if (this.sensor % 6 == 0)
+				{
+					writePacket(createDataErrorPacket());
+					this.sensor++;
+				}
+			#endif
+			}
 			timer.Change(this.dataSpeed, 0);
 		}
 
@@ -151,7 +179,7 @@ namespace SpintronicsGUI
 			if (sensor == 16)
 				sensor++;
 
-			int baseSensor;
+			int baseSensor;						// This is just to group sensors by number so it looks less random on the GUI charts
 			if (sensor <= 5)
 			{
 				baseSensor = 0;
@@ -188,21 +216,34 @@ namespace SpintronicsGUI
 				data[i] = (float)baseData[baseSensor];
 				data[i] += (float)(random.NextDouble() % 0.2);
 			}
-			/*data[0] = 1.0F;
-			data[1] = 1.0F;
-			data[2] = 1.0F;
-			data[3] = 1.0F;
-			data[4] = 1.0F;
-			data[5] = 1.0F;
-			data[6] = 1.0F;
-			data[7] = 1.0F;
-			data[8] = 1.0F;
-			data[9] = 1.0F;*/
 			byte[] payload = new byte[41];
-			payload[0] = sensor;
+			if (sensor < 16)
+				payload[0] = sensorMultiplexerAddresses[sensor - 1];
+			else
+				payload[0] = sensorMultiplexerAddresses[sensor - 2];
 			Buffer.BlockCopy(data, 0, payload, 1, payload.Length - 1);
 			Packet dataPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Report, (byte)payload.Length, payload);
 			return dataPacket;
+		}
+
+		private Packet createStartErrorPacket()
+		{
+			this.startError++;
+			if (this.startError > 0x08)
+				this.startError = 0x02;
+			byte[] payload = { this.startError };
+			Packet errorPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Error, (byte)payload.Length, payload);
+			return errorPacket;
+		}
+
+		private Packet createDataErrorPacket()
+		{
+			dataError++;
+			if (dataError > 0x0B)
+				dataError = 0x09;
+			byte[] payload = { this.dataError };
+			Packet errorPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Error, (byte)payload.Length, payload);
+			return errorPacket;
 		}
 	}
 }

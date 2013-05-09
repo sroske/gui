@@ -134,9 +134,7 @@ namespace SpintronicsGUI
 					return false;									// and return false
 				}
 				this.state = ProtocolState.ConfigSent;						// Otherwise, set the state,
-			#if !DEBUG
 				oneshotTimer(1000);									// start the timer,
-			#endif
 				while (!this.timerDone && this.state == ProtocolState.ConfigSent) ;	// and wait for either the timer to stop or the microcontroller to respond (state changes in HandlePacket)
 				if (this.state == ProtocolState.ConfigSent)					// If we haven't changed states, that means we timed out,
 				{
@@ -158,9 +156,7 @@ namespace SpintronicsGUI
 				return false;										// and return false
 			}
 			this.state = ProtocolState.StartSent;							// Otherwise, set the state,
-		#if !DEBUG
 			oneshotTimer(2000);										// start the timer,
-		#endif
 			while (!this.timerDone && this.state == ProtocolState.StartSent) ;		// and wait for either the timer to stop or the microcontroller to respond
 			if (this.state == ProtocolState.StartSent)						// If we haven't changed states, that means we timed out,
 			{
@@ -186,9 +182,7 @@ namespace SpintronicsGUI
 				return false;										// and return false
 			}
 			this.state = ProtocolState.StopSent;							// Otherwise, set the state,
-		#if !DEBUG
 			oneshotTimer(1000);										// start the timer,
-		#endif
 			while (!this.timerDone && this.state == ProtocolState.StopSent) ;			// and wait for either the timer to stop or the microcontroller to respond
 			if (this.state == ProtocolState.StopSent)							// If we haven't changed states, that means we timed out,
 			{

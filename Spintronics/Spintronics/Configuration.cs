@@ -10,8 +10,11 @@ namespace SpintronicsGUI
 	{
 		public string defaultSaveDirectory = Directory.GetCurrentDirectory();
 		public int tempFoldersToKeep = -1;
-		public byte[] sensorMultiplexerValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 19, 20, 21, 22, 23,
-									24, 25, 26, 27, 28, 29, 30};
+		public byte[] sensorMultiplexerValues = {46, 47, 45, 16, 44, 17,
+								     43, 18, 42, 19, 41, 20,
+								     40, 21, 39,  0, 38, 22,
+								     37, 23, 36, 24, 35, 25,
+								     34, 26, 33, 27, 32, 28};
 		public string bufferName = "PBS";
 		public string mnpsName = "MACS";
 		public int preloadBufferVolume = 10;

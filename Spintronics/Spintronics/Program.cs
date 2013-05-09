@@ -15,8 +15,8 @@ namespace SpintronicsGUI
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			//try
-			//{
+			try
+			{
 				ComSelector selector = new ComSelector();
 				Application.Run(selector);
 				string comPort = selector.GetPort();
@@ -25,9 +25,11 @@ namespace SpintronicsGUI
 					GUI gui = new GUI(comPort);
 					Application.Run(gui);
 				}
-			//} catch(Exception)
-			//{
-			//}
+			} catch(Exception ex)
+			{
+				MessageBox.Show("Exception occurred in GUI!\n" +
+						    "Reason: " + ex.Message);
+			}
 		}
 	}
 }

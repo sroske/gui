@@ -240,6 +240,7 @@ namespace SpintronicsGUI
 			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.postProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.reconnectToDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -321,6 +322,10 @@ namespace SpintronicsGUI
 			this.initialSignalLabel = new System.Windows.Forms.Label();
 			this.signalChangeLabel = new System.Windows.Forms.Label();
 			this.finalSignalLabel = new System.Windows.Forms.Label();
+			this.dataErrorTextBox = new System.Windows.Forms.TextBox();
+			this.dataErrorLabel = new System.Windows.Forms.Label();
+			this.userNameTextBox = new System.Windows.Forms.TextBox();
+			this.userNameLabel = new System.Windows.Forms.Label();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -414,7 +419,8 @@ namespace SpintronicsGUI
 			// toolsToolStripMenuItem
 			// 
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.postProcessingToolStripMenuItem});
+            this.postProcessingToolStripMenuItem,
+            this.reconnectToDeviceToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
 			this.toolsToolStripMenuItem.Text = "Tools";
@@ -423,10 +429,17 @@ namespace SpintronicsGUI
 			// 
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.Name = "postProcessingToolStripMenuItem";
-			this.postProcessingToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.postProcessingToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
 			this.postProcessingToolStripMenuItem.Text = "Post Processing";
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please start or open a run before doing any post-processing";
 			this.postProcessingToolStripMenuItem.Click += new System.EventHandler(this.postProcessingToolStripMenuItem_Click);
+			// 
+			// reconnectToDeviceToolStripMenuItem
+			// 
+			this.reconnectToDeviceToolStripMenuItem.Name = "reconnectToDeviceToolStripMenuItem";
+			this.reconnectToDeviceToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+			this.reconnectToDeviceToolStripMenuItem.Text = "Reconnect to Device";
+			this.reconnectToDeviceToolStripMenuItem.Click += new System.EventHandler(this.reconnectToDeviceToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -490,7 +503,7 @@ namespace SpintronicsGUI
 			this.groupBox1.Location = new System.Drawing.Point(12, 190);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(187, 270);
-			this.groupBox1.TabIndex = 2;
+			this.groupBox1.TabIndex = 50;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Sensors";
 			// 
@@ -972,11 +985,10 @@ namespace SpintronicsGUI
 			// 
 			// startRunButton
 			// 
-			this.startRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.startRunButton.Location = new System.Drawing.Point(350, 522);
+			this.startRunButton.Location = new System.Drawing.Point(334, 570);
 			this.startRunButton.Name = "startRunButton";
 			this.startRunButton.Size = new System.Drawing.Size(92, 23);
-			this.startRunButton.TabIndex = 1;
+			this.startRunButton.TabIndex = 4;
 			this.startRunButton.Text = "Start New";
 			this.startRunButton.UseVisualStyleBackColor = true;
 			this.startRunButton.Click += new System.EventHandler(this.startRun);
@@ -1146,37 +1158,33 @@ namespace SpintronicsGUI
 			this.adjustedChart1.Series.Add(series28);
 			this.adjustedChart1.Series.Add(series29);
 			this.adjustedChart1.Series.Add(series30);
-			this.adjustedChart1.Size = new System.Drawing.Size(715, 414);
+			this.adjustedChart1.Size = new System.Drawing.Size(803, 414);
 			this.adjustedChart1.TabIndex = 9;
 			this.adjustedChart1.Text = "chart1";
 			title1.Name = "SensorData";
-			title1.Text = "Wheatstone F1 Amplitude";
+			title1.Text = "Wheatstone F1 - F2 Amplitude";
 			this.adjustedChart1.Titles.Add(title1);
 			// 
 			// stopRunButton
 			// 
-			this.stopRunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.stopRunButton.Enabled = false;
-			this.stopRunButton.Location = new System.Drawing.Point(350, 551);
+			this.stopRunButton.Location = new System.Drawing.Point(334, 599);
 			this.stopRunButton.Name = "stopRunButton";
 			this.stopRunButton.Size = new System.Drawing.Size(92, 23);
-			this.stopRunButton.TabIndex = 1;
+			this.stopRunButton.TabIndex = 5;
 			this.stopRunButton.Text = "Stop";
 			this.stopRunButton.UseVisualStyleBackColor = true;
 			this.stopRunButton.Click += new System.EventHandler(this.stopRun);
 			// 
 			// tabControl1
 			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-					| System.Windows.Forms.AnchorStyles.Left)
-					| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Location = new System.Drawing.Point(271, 41);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(715, 464);
+			this.tabControl1.Size = new System.Drawing.Size(803, 464);
 			this.tabControl1.TabIndex = 17;
 			// 
 			// tabPage1
@@ -1188,7 +1196,7 @@ namespace SpintronicsGUI
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(707, 438);
+			this.tabPage1.Size = new System.Drawing.Size(795, 438);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "WS F1 A";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -1359,7 +1367,7 @@ namespace SpintronicsGUI
 			this.rawChart1.Series.Add(series58);
 			this.rawChart1.Series.Add(series59);
 			this.rawChart1.Series.Add(series60);
-			this.rawChart1.Size = new System.Drawing.Size(715, 414);
+			this.rawChart1.Size = new System.Drawing.Size(803, 414);
 			this.rawChart1.TabIndex = 47;
 			this.rawChart1.Text = "chart6";
 			title2.Name = "SensorData";
@@ -1533,7 +1541,7 @@ namespace SpintronicsGUI
 			this.rawChart2.Series.Add(series88);
 			this.rawChart2.Series.Add(series89);
 			this.rawChart2.Series.Add(series90);
-			this.rawChart2.Size = new System.Drawing.Size(715, 414);
+			this.rawChart2.Size = new System.Drawing.Size(803, 414);
 			this.rawChart2.TabIndex = 47;
 			this.rawChart2.Text = "chart5";
 			title3.Name = "SensorData";
@@ -1707,7 +1715,7 @@ namespace SpintronicsGUI
 			this.rawChart3.Series.Add(series118);
 			this.rawChart3.Series.Add(series119);
 			this.rawChart3.Series.Add(series120);
-			this.rawChart3.Size = new System.Drawing.Size(715, 414);
+			this.rawChart3.Size = new System.Drawing.Size(803, 414);
 			this.rawChart3.TabIndex = 47;
 			this.rawChart3.Text = "chart4";
 			title4.Name = "SensorData";
@@ -1721,7 +1729,7 @@ namespace SpintronicsGUI
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(707, 438);
+			this.tabPage2.Size = new System.Drawing.Size(795, 438);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "WS F1 P";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -1892,7 +1900,7 @@ namespace SpintronicsGUI
 			this.adjustedChart2.TabIndex = 10;
 			this.adjustedChart2.Text = "chart2";
 			title5.Name = "SensorData2";
-			title5.Text = "Wheatstone F1 Phase";
+			title5.Text = "Wheatstone F1 Amplitude";
 			this.adjustedChart2.Titles.Add(title5);
 			// 
 			// tabPage3
@@ -1901,7 +1909,7 @@ namespace SpintronicsGUI
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
 			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage3.Size = new System.Drawing.Size(707, 438);
+			this.tabPage3.Size = new System.Drawing.Size(795, 438);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "WS F2 A";
 			this.tabPage3.UseVisualStyleBackColor = true;
@@ -2068,18 +2076,17 @@ namespace SpintronicsGUI
 			this.adjustedChart3.Series.Add(series178);
 			this.adjustedChart3.Series.Add(series179);
 			this.adjustedChart3.Series.Add(series180);
-			this.adjustedChart3.Size = new System.Drawing.Size(715, 414);
+			this.adjustedChart3.Size = new System.Drawing.Size(715, 359);
 			this.adjustedChart3.TabIndex = 11;
 			this.adjustedChart3.Text = "chart3";
 			title6.Name = "SensorData2";
-			title6.Text = "Wheatstone F2 Amplitude";
+			title6.Text = "Wheatstone F1 + F2 Amplitude";
 			this.adjustedChart3.Titles.Add(title6);
 			// 
 			// amplitudeTareCheckbox
 			// 
-			this.amplitudeTareCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.amplitudeTareCheckbox.AutoSize = true;
-			this.amplitudeTareCheckbox.Location = new System.Drawing.Point(492, 531);
+			this.amplitudeTareCheckbox.Location = new System.Drawing.Point(338, 524);
 			this.amplitudeTareCheckbox.Name = "amplitudeTareCheckbox";
 			this.amplitudeTareCheckbox.Size = new System.Drawing.Size(97, 17);
 			this.amplitudeTareCheckbox.TabIndex = 44;
@@ -2089,10 +2096,9 @@ namespace SpintronicsGUI
 			// 
 			// referenceTareCheckbox
 			// 
-			this.referenceTareCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.referenceTareCheckbox.AutoSize = true;
 			this.referenceTareCheckbox.Enabled = false;
-			this.referenceTareCheckbox.Location = new System.Drawing.Point(595, 531);
+			this.referenceTareCheckbox.Location = new System.Drawing.Point(338, 547);
 			this.referenceTareCheckbox.Name = "referenceTareCheckbox";
 			this.referenceTareCheckbox.Size = new System.Drawing.Size(119, 17);
 			this.referenceTareCheckbox.TabIndex = 45;
@@ -2102,8 +2108,7 @@ namespace SpintronicsGUI
 			// 
 			// tareIndexTextbox
 			// 
-			this.tareIndexTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.tareIndexTextbox.Location = new System.Drawing.Point(553, 563);
+			this.tareIndexTextbox.Location = new System.Drawing.Point(516, 522);
 			this.tareIndexTextbox.Name = "tareIndexTextbox";
 			this.tareIndexTextbox.Size = new System.Drawing.Size(92, 20);
 			this.tareIndexTextbox.TabIndex = 46;
@@ -2114,9 +2119,8 @@ namespace SpintronicsGUI
 			// 
 			// tareIndexLabel
 			// 
-			this.tareIndexLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.tareIndexLabel.AutoSize = true;
-			this.tareIndexLabel.Location = new System.Drawing.Point(489, 565);
+			this.tareIndexLabel.Location = new System.Drawing.Point(452, 526);
 			this.tareIndexLabel.Name = "tareIndexLabel";
 			this.tareIndexLabel.Size = new System.Drawing.Size(58, 13);
 			this.tareIndexLabel.TabIndex = 47;
@@ -2124,8 +2128,7 @@ namespace SpintronicsGUI
 			// 
 			// bufferingProgressBar
 			// 
-			this.bufferingProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.bufferingProgressBar.Location = new System.Drawing.Point(940, 560);
+			this.bufferingProgressBar.Location = new System.Drawing.Point(12, 504);
 			this.bufferingProgressBar.Name = "bufferingProgressBar";
 			this.bufferingProgressBar.Size = new System.Drawing.Size(134, 23);
 			this.bufferingProgressBar.TabIndex = 48;
@@ -2133,9 +2136,8 @@ namespace SpintronicsGUI
 			// 
 			// bufferingLabel
 			// 
-			this.bufferingLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.bufferingLabel.AutoSize = true;
-			this.bufferingLabel.Location = new System.Drawing.Point(940, 537);
+			this.bufferingLabel.Location = new System.Drawing.Point(12, 488);
 			this.bufferingLabel.Name = "bufferingLabel";
 			this.bufferingLabel.Size = new System.Drawing.Size(58, 13);
 			this.bufferingLabel.TabIndex = 49;
@@ -2144,9 +2146,8 @@ namespace SpintronicsGUI
 			// 
 			// addMnpButton
 			// 
-			this.addMnpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addMnpButton.Enabled = false;
-			this.addMnpButton.Location = new System.Drawing.Point(830, 555);
+			this.addMnpButton.Location = new System.Drawing.Point(455, 599);
 			this.addMnpButton.Name = "addMnpButton";
 			this.addMnpButton.Size = new System.Drawing.Size(75, 23);
 			this.addMnpButton.TabIndex = 50;
@@ -2156,9 +2157,8 @@ namespace SpintronicsGUI
 			// 
 			// addBufferButton
 			// 
-			this.addBufferButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addBufferButton.Enabled = false;
-			this.addBufferButton.Location = new System.Drawing.Point(830, 525);
+			this.addBufferButton.Location = new System.Drawing.Point(455, 570);
 			this.addBufferButton.Name = "addBufferButton";
 			this.addBufferButton.Size = new System.Drawing.Size(75, 23);
 			this.addBufferButton.TabIndex = 51;
@@ -2168,16 +2168,14 @@ namespace SpintronicsGUI
 			// 
 			// addBufferVolumeTextBox
 			// 
-			this.addBufferVolumeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addBufferVolumeTextBox.Location = new System.Drawing.Point(738, 528);
+			this.addBufferVolumeTextBox.Location = new System.Drawing.Point(536, 572);
 			this.addBufferVolumeTextBox.Name = "addBufferVolumeTextBox";
 			this.addBufferVolumeTextBox.Size = new System.Drawing.Size(38, 20);
 			this.addBufferVolumeTextBox.TabIndex = 52;
 			// 
 			// addMnpVolumeTextBox
 			// 
-			this.addMnpVolumeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addMnpVolumeTextBox.Location = new System.Drawing.Point(738, 557);
+			this.addMnpVolumeTextBox.Location = new System.Drawing.Point(536, 601);
 			this.addMnpVolumeTextBox.Name = "addMnpVolumeTextBox";
 			this.addMnpVolumeTextBox.Size = new System.Drawing.Size(38, 20);
 			this.addMnpVolumeTextBox.TabIndex = 53;
@@ -2196,7 +2194,7 @@ namespace SpintronicsGUI
 			this.reactionWellTextBox.Location = new System.Drawing.Point(12, 102);
 			this.reactionWellTextBox.Name = "reactionWellTextBox";
 			this.reactionWellTextBox.Size = new System.Drawing.Size(113, 20);
-			this.reactionWellTextBox.TabIndex = 57;
+			this.reactionWellTextBox.TabIndex = 1;
 			this.reactionWellTextBox.TextChanged += new System.EventHandler(this.reactionWellTextBox_TextChanged);
 			// 
 			// sampleLabel
@@ -2213,13 +2211,12 @@ namespace SpintronicsGUI
 			this.sampleTextBox.Location = new System.Drawing.Point(11, 141);
 			this.sampleTextBox.Name = "sampleTextBox";
 			this.sampleTextBox.Size = new System.Drawing.Size(111, 20);
-			this.sampleTextBox.TabIndex = 59;
+			this.sampleTextBox.TabIndex = 2;
 			// 
 			// addBufferUnitLabel
 			// 
-			this.addBufferUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addBufferUnitLabel.AutoSize = true;
-			this.addBufferUnitLabel.Location = new System.Drawing.Point(782, 532);
+			this.addBufferUnitLabel.Location = new System.Drawing.Point(580, 575);
 			this.addBufferUnitLabel.Name = "addBufferUnitLabel";
 			this.addBufferUnitLabel.Size = new System.Drawing.Size(35, 13);
 			this.addBufferUnitLabel.TabIndex = 60;
@@ -2227,9 +2224,8 @@ namespace SpintronicsGUI
 			// 
 			// addMnpUnitLabel
 			// 
-			this.addMnpUnitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addMnpUnitLabel.AutoSize = true;
-			this.addMnpUnitLabel.Location = new System.Drawing.Point(782, 560);
+			this.addMnpUnitLabel.Location = new System.Drawing.Point(580, 604);
 			this.addMnpUnitLabel.Name = "addMnpUnitLabel";
 			this.addMnpUnitLabel.Size = new System.Drawing.Size(35, 13);
 			this.addMnpUnitLabel.TabIndex = 61;
@@ -2240,28 +2236,28 @@ namespace SpintronicsGUI
 			this.validateReactionWellButton.Location = new System.Drawing.Point(132, 102);
 			this.validateReactionWellButton.Name = "validateReactionWellButton";
 			this.validateReactionWellButton.Size = new System.Drawing.Size(75, 23);
-			this.validateReactionWellButton.TabIndex = 62;
+			this.validateReactionWellButton.TabIndex = 3;
 			this.validateReactionWellButton.Text = "Validate";
 			this.validateReactionWellButton.UseVisualStyleBackColor = true;
 			this.validateReactionWellButton.Click += new System.EventHandler(this.validateReactionWellButton_Click);
 			// 
 			// initialSignalProgressBar
 			// 
-			this.initialSignalProgressBar.Location = new System.Drawing.Point(15, 496);
+			this.initialSignalProgressBar.Location = new System.Drawing.Point(12, 547);
 			this.initialSignalProgressBar.Name = "initialSignalProgressBar";
 			this.initialSignalProgressBar.Size = new System.Drawing.Size(100, 23);
 			this.initialSignalProgressBar.TabIndex = 63;
 			// 
 			// signalChangeProgressBar
 			// 
-			this.signalChangeProgressBar.Location = new System.Drawing.Point(15, 525);
+			this.signalChangeProgressBar.Location = new System.Drawing.Point(12, 576);
 			this.signalChangeProgressBar.Name = "signalChangeProgressBar";
 			this.signalChangeProgressBar.Size = new System.Drawing.Size(100, 23);
 			this.signalChangeProgressBar.TabIndex = 64;
 			// 
 			// finalSignalProgressBar
 			// 
-			this.finalSignalProgressBar.Location = new System.Drawing.Point(15, 554);
+			this.finalSignalProgressBar.Location = new System.Drawing.Point(12, 605);
 			this.finalSignalProgressBar.Name = "finalSignalProgressBar";
 			this.finalSignalProgressBar.Size = new System.Drawing.Size(100, 23);
 			this.finalSignalProgressBar.TabIndex = 65;
@@ -2269,7 +2265,7 @@ namespace SpintronicsGUI
 			// initialSignalLabel
 			// 
 			this.initialSignalLabel.AutoSize = true;
-			this.initialSignalLabel.Location = new System.Drawing.Point(121, 506);
+			this.initialSignalLabel.Location = new System.Drawing.Point(118, 557);
 			this.initialSignalLabel.Name = "initialSignalLabel";
 			this.initialSignalLabel.Size = new System.Drawing.Size(0, 13);
 			this.initialSignalLabel.TabIndex = 66;
@@ -2277,7 +2273,7 @@ namespace SpintronicsGUI
 			// signalChangeLabel
 			// 
 			this.signalChangeLabel.AutoSize = true;
-			this.signalChangeLabel.Location = new System.Drawing.Point(121, 535);
+			this.signalChangeLabel.Location = new System.Drawing.Point(118, 586);
 			this.signalChangeLabel.Name = "signalChangeLabel";
 			this.signalChangeLabel.Size = new System.Drawing.Size(0, 13);
 			this.signalChangeLabel.TabIndex = 67;
@@ -2285,16 +2281,57 @@ namespace SpintronicsGUI
 			// finalSignalLabel
 			// 
 			this.finalSignalLabel.AutoSize = true;
-			this.finalSignalLabel.Location = new System.Drawing.Point(121, 564);
+			this.finalSignalLabel.Location = new System.Drawing.Point(118, 615);
 			this.finalSignalLabel.Name = "finalSignalLabel";
 			this.finalSignalLabel.Size = new System.Drawing.Size(0, 13);
 			this.finalSignalLabel.TabIndex = 68;
+			// 
+			// dataErrorTextBox
+			// 
+			this.dataErrorTextBox.Enabled = false;
+			this.dataErrorTextBox.Location = new System.Drawing.Point(652, 530);
+			this.dataErrorTextBox.Multiline = true;
+			this.dataErrorTextBox.Name = "dataErrorTextBox";
+			this.dataErrorTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.dataErrorTextBox.Size = new System.Drawing.Size(418, 98);
+			this.dataErrorTextBox.TabIndex = 69;
+			this.dataErrorTextBox.Visible = false;
+			// 
+			// dataErrorLabel
+			// 
+			this.dataErrorLabel.AutoSize = true;
+			this.dataErrorLabel.Location = new System.Drawing.Point(649, 514);
+			this.dataErrorLabel.Name = "dataErrorLabel";
+			this.dataErrorLabel.Size = new System.Drawing.Size(145, 13);
+			this.dataErrorLabel.TabIndex = 70;
+			this.dataErrorLabel.Text = "Sensor      Cycle      Message";
+			this.dataErrorLabel.Visible = false;
+			// 
+			// userNameTextBox
+			// 
+			this.userNameTextBox.Location = new System.Drawing.Point(12, 63);
+			this.userNameTextBox.Name = "userNameTextBox";
+			this.userNameTextBox.Size = new System.Drawing.Size(113, 20);
+			this.userNameTextBox.TabIndex = 0;
+			// 
+			// userNameLabel
+			// 
+			this.userNameLabel.AutoSize = true;
+			this.userNameLabel.Location = new System.Drawing.Point(8, 47);
+			this.userNameLabel.Name = "userNameLabel";
+			this.userNameLabel.Size = new System.Drawing.Size(60, 13);
+			this.userNameLabel.TabIndex = 72;
+			this.userNameLabel.Text = "User Name";
 			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1086, 595);
+			this.ClientSize = new System.Drawing.Size(1086, 652);
+			this.Controls.Add(this.userNameLabel);
+			this.Controls.Add(this.userNameTextBox);
+			this.Controls.Add(this.dataErrorLabel);
+			this.Controls.Add(this.dataErrorTextBox);
 			this.Controls.Add(this.finalSignalLabel);
 			this.Controls.Add(this.signalChangeLabel);
 			this.Controls.Add(this.initialSignalLabel);
@@ -2441,6 +2478,11 @@ namespace SpintronicsGUI
 		private Label initialSignalLabel;
 		private Label signalChangeLabel;
 		private Label finalSignalLabel;
+		private TextBox dataErrorTextBox;
+		private Label dataErrorLabel;
+		private ToolStripMenuItem reconnectToDeviceToolStripMenuItem;
+		private TextBox userNameTextBox;
+		private Label userNameLabel;
 	}
 }
 
