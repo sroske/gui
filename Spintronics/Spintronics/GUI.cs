@@ -86,35 +86,7 @@ namespace SpintronicsGUI
 
 			// Initialize COM ports
 			this.comPortName = comPort;
-		#if _DEBUG														// If we're debugging (and thus don't have an actual microcontroller),
-			serialPort = new SerialPort("COM5", 115200);							// manually set the COM ports
-			debugSerial = new SerialPort("COM6", 115200);
-			debugSerial.ReadTimeout = 200;
-		#else															// Otherwise, start with the COM port name passed in (see Program.cs)
-			serialPort = new SerialPort(this.comPortName, 10000);//115200);
-		#endif
-			serialPort.ReadTimeout = 800;										// Always set the main COM port ReadTimeout property to 800 milliseconds
-			serialPort.WriteTimeout = 800;									// Always set the main COM port WriteTimeout property to 800 milliseconds
-			// Open COM ports
-			try {
-				serialPort.Open();										// Open the main COM port
-			#if _DEBUG													// If we're debugging,
-				debugSerial.Open();										// open the debug COM port,
-				microcontroller = new Microcontroller(debugSerial, speed: 200, count: 30);	// and start the microcontroller emulator (for behavior, see Microcontroller.cs)
-			#endif
-				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
-				protocolHandler = new ProtocolHandler(serialPort);					// Initialize the protocol handler
-			/*} catch(IOException) {
-				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
-				throw new ArgumentNullException();
-			} catch(UnauthorizedAccessException) {
-				MessageBox.Show("Please make sure COM port is not already in use");
-				throw new UnauthorizedAccessException();
-			}*/
-			} catch (Exception) {
-				MessageBox.Show("Failed to connect to device");
-				this.startRunButton.Enabled = false;
-			}
+			reconnectToDevice();
 		}
 
 		/*
@@ -984,6 +956,11 @@ namespace SpintronicsGUI
 			{
 				return;
 			}
+			/* Ensure we are connected to the microcontroller COM ports before starting */
+			if (!reconnectToDevice())
+			{
+				return;
+			}
 			/* Send a start packet to the microcontroller */
 			try {
 				// Create configuration packet (and omit sensor 16 from the config array)
@@ -1047,8 +1024,6 @@ namespace SpintronicsGUI
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
 			this.enableAddBufferAndMnpAtCycle = configFile.sampleAverageCount + 1;
-			//this.reconnectToDeviceToolStripMenuItem.Enabled = false;
-			//this.reconnectToDeviceToolStripMenuItem.ToolTipText = "Please stop the current run before attempting to reset the connecting";
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
 
@@ -1106,8 +1081,6 @@ namespace SpintronicsGUI
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
 			this.addBufferButton.Enabled = false;
-			//this.reconnectToDeviceToolStripMenuItem.Enabled = true;
-			//this.reconnectToDeviceToolStripMenuItem.ToolTipText = "";
 
 			try {
 				this.logFile.Close();
@@ -2085,12 +2058,20 @@ namespace SpintronicsGUI
 		/*
 		 * This will attempt to reconnect to the microcontroller
 		 */
-		private void reconnectToDevice(object sender, EventArgs e)
+		private bool reconnectToDevice()
 		{
 			try {
-				serialPort.Close();
-			#if DEBUG
+				serialPort.Close();										// Try to close the COM ports in case we've already opened them
+			#if _DEBUG
 				debugSerial.Close();
+			#endif
+			} catch (Exception) {
+			}
+
+			try {
+				serialPort.Dispose();										// Dispose of the previous SerialPort objects (might as well clean up a little bit)
+			#if _DEBUG
+				debugSerial.Dispose();
 			#endif
 			} catch (Exception) {
 			}
@@ -2114,17 +2095,12 @@ namespace SpintronicsGUI
 				serialPort.DataReceived += new SerialDataReceivedEventHandler(readPacket);	// Add the handler for COM port reading (automatically called when something is written to main COM port)
 				protocolHandler = new ProtocolHandler(serialPort);					// Initialize the protocol handler
 				this.startRunButton.Enabled = true;
-			/*} catch(IOException) {
-				MessageBox.Show("Port " + serialPort.PortName + " doesn't exist on this computer");
-				throw new ArgumentNullException();
-			} catch(UnauthorizedAccessException) {
-				MessageBox.Show("Please make sure COM port is not already in use");
-				throw new UnauthorizedAccessException();
-			}*/
 			} catch (Exception) {
 				MessageBox.Show("Failed to connect to device");
-				this.startRunButton.Enabled = false;
+				return false;
 			}
+
+			return true;
 		}
 	}
 }
