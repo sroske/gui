@@ -24,7 +24,7 @@ namespace SpintronicsGUI
 
 	public partial class GUI : Form
 	{
-		string comPortName;
+		string comPortName;								// String that keeps the name of the COM port the user wants to use
 		Configuration configFile;							// File containing user configurations
 		SerialPort serialPort = null;							// Main microcontroller COM port
 		SerialPort debugSerial = null;						// COM port used for debugging with microcontroller emulator
@@ -35,23 +35,23 @@ namespace SpintronicsGUI
 		TextWriter f1Mf2AFile = null;							// LT file writer
 		TextWriter f1AFile = null;							// CT file writer
 		TextWriter f1Pf2AFile = null;							// HT file writer
-		TextWriter f1PFile = null;
-		TextWriter f2AFile = null;
-		TextWriter f2PFile = null;
-		TextWriter f1Mf2PFile = null;
-		TextWriter f1Pf2PFile = null;
-		TextWriter coilAFile = null;
-		TextWriter coilPFile = null;
-		string f1Mf2AFileName = "WS-F1MF2A.txt";
-		string f1AFileName = "WS-F1A.txt";
-		string f1Pf2AFileName = "WS-F1PF2A.txt";
-		string f1PFileName = "WS-F1P.txt";
-		string f2AFileName = "WS-F2A.txt";
-		string f2PFileName = "WS-F2P.txt";
-		string f1Mf2PFileName = "WS-F1MF2P.txt";
-		string f1Pf2PFileName = "WS-F1PF2P.txt";
-		string coilAFileName = "COIL-F2A.txt";
-		string coilPFileName = "COIL-F2P.txt";
+		TextWriter f1PFile = null;							// Another file writer
+		TextWriter f2AFile = null;							// Same as above
+		TextWriter f2PFile = null;							// Same as above
+		TextWriter f1Mf2PFile = null;							// Same as above
+		TextWriter f1Pf2PFile = null;							// Same as above
+		TextWriter coilAFile = null;							// Same as above
+		TextWriter coilPFile = null;							// Same as above
+		string f1Mf2AFileName = "WS-F1MF2A.txt";					// File name
+		string f1AFileName = "WS-F1A.txt";						// Same as above
+		string f1Pf2AFileName = "WS-F1PF2A.txt";					// Same as above
+		string f1PFileName = "WS-F1P.txt";						// Same as above
+		string f2AFileName = "WS-F2A.txt";						// Same as above
+		string f2PFileName = "WS-F2P.txt";						// Same as above
+		string f1Mf2PFileName = "WS-F1MF2P.txt";					// Same as above
+		string f1Pf2PFileName = "WS-F1PF2P.txt";					// Same as above
+		string coilAFileName = "COIL-F2A.txt";					// Same as above
+		string coilPFileName = "COIL-F2P.txt";					// Same as above
 		bool running = false;								// Tells us whether or not a run is in progress
 		bool resultsSaved = true;							// Tells us if the current results have been saved
 		bool reactionWellValidated = false;						// Tells us if the Reaction Well name is valid
@@ -75,9 +75,11 @@ namespace SpintronicsGUI
 		 */
 		public GUI(string comPort)
 		{
-			InitializeComponent();											// Initialize GUI controls
+			// Initialize GUI controls
+			InitializeComponent();
 
-			configFile = new Configuration();									// Create configuration object (automatically populated; see Configuration.cs)
+			// Create configuration object (automatically populated; see Configuration.cs)
+			configFile = new Configuration();
 
 			// Initialize delegate for adding new data to the graph
 			// (this is because of threading rules)
@@ -288,7 +290,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This will get the time which the data should be added (globalTime plus an appropriate offset for the pin)
+		 * This will get the time which the data should be added
+		 * (globalTime plus an appropriate offset for the pin)
 		 */
 		private double getAddTime(int sensor)
 		{
@@ -409,7 +412,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This is used to do a flush of the current data in the visible charts and a total recalculation of all to-be-displayed data points
+		 * This is used to do a flush of the current data in the visible charts
+		 * and a total recalculation of all to-be-displayed data points
 		 */
 		private void recalculateData()
 		{
@@ -562,7 +566,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This returns the pin number of each sensor check box according to the current pin assignment
+		 * This returns the pin number of each sensor check box according to
+		 * the current pin assignment
 		 */
 		private int getSensorNumber(string name)
 		{
@@ -573,7 +578,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This enables and disables the showing of the sensor data in each chart according to the sensor check boxes
+		 * This enables and disables the showing of the sensor data in each
+		 * chart according to the sensor check boxes
 		 */
 		private void sensor_CheckedChanged(object sender, EventArgs e)
 		{
@@ -598,7 +604,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This sets the charts' legend text for each sensor according to its position in the array (1-7, A-E)
+		 * This sets the charts' legend text for each sensor according to its
+		 * position in the array (1-7, A-E)
 		 */
 		private void setLegendText(int sensor)
 		{
@@ -1130,7 +1137,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This enables and disables the option to change the reference-tare check box according to the amplitude tare check box state
+		 * This enables and disables the option to change the reference-tare
+		 * check box according to the amplitude tare check box state
 		 */
 		private void amplitudeTareCheckbox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -1150,7 +1158,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This enables and disables showing reference sensors in charts according to the reference tare check box
+		 * This enables and disables showing reference sensors in charts according
+		 * to the reference tare check box
 		 */
 		private void referenceTareCheckbox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -1294,7 +1303,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This initializes a data file by printing out the sensor name headers at the top of the file
+		 * This initializes a data file by printing out the sensor name headers
+		 * at the top of the file
 		 */
 		private void createRunFiles()
 		{
@@ -1439,7 +1449,8 @@ namespace SpintronicsGUI
 		}
 
 		/*
-		 * This will handle the case where we don't receive sequentially-occurring sensor IDs (i.e. a sensor was skipped or missed)
+		 * This will handle the case where we don't receive sequentially-occurring sensor IDs
+		 * (i.e. a sensor was skipped or missed)
 		 */
 		private void fixNoncontinuityInLogFiles(int newId, int previousId)
 		{
@@ -2101,6 +2112,30 @@ namespace SpintronicsGUI
 			}
 
 			return true;
+		}
+
+		/* This is a little Easter Egg I decided to throw in to commemorate our team */
+		int helpToolStripMenuItemClickCount = 0;
+		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			this.helpToolStripMenuItemClickCount++;								// Increment the counter (which is set to 0 when the About item is clicked)
+			if (this.helpToolStripMenuItemClickCount > 9)							// If the user has clicked ten times,
+			{
+				MessageBox.Show("U of M Spring 2013 Senior Design Group:\n" +			// show the box,
+							"   Erik Johnson\n" +
+							"   Michael Sandstedt\n" +
+							"   Jonathon Pechuman\n" +
+							"   Samiha Sultana\n" +
+							"   Hajime Makino\n" +
+							"'It's what we do'\n\t-Team");
+				this.helpToolStripMenuItemClickCount = 0;							// and set the count back to 0
+			}
+		}
+
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{															// Reset the counter from above
+			this.helpToolStripMenuItemClickCount = 0;								// This is something you need to do, Todd. I'd maybe suggest creating a new Form so you don't have to put a whole bunch of
+			MessageBox.Show("Add some stuff here, Todd!");							// text in a message box (plus it'd be a nice way to start getting familiar with C# form programming)
 		}
 	}
 }
