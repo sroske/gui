@@ -1047,8 +1047,8 @@ namespace SpintronicsGUI
 			this.stopRunButton.Enabled = true;
 			this.stopRunToolStripMenuItem.Enabled = true;
 			this.enableAddBufferAndMnpAtCycle = configFile.sampleAverageCount + 1;
-			this.reconnectToDeviceToolStripMenuItem.Enabled = false;
-			this.reconnectToDeviceToolStripMenuItem.ToolTipText = "Please stop the current run before attempting to reset the connecting";
+			//this.reconnectToDeviceToolStripMenuItem.Enabled = false;
+			//this.reconnectToDeviceToolStripMenuItem.ToolTipText = "Please stop the current run before attempting to reset the connecting";
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
 
@@ -1106,7 +1106,8 @@ namespace SpintronicsGUI
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
 			this.addBufferButton.Enabled = false;
-			this.reconnectToDeviceToolStripMenuItem.Enabled = false;
+			//this.reconnectToDeviceToolStripMenuItem.Enabled = true;
+			//this.reconnectToDeviceToolStripMenuItem.ToolTipText = "";
 
 			try {
 				this.logFile.Close();
@@ -1504,6 +1505,9 @@ namespace SpintronicsGUI
 			this.dataErrorTextBox.Visible = true;
 			this.dataErrorLabel.Visible = true;
 			this.dataErrorTextBox.Text += sensor + "\t" + cycle + "\t" + message + Environment.NewLine;
+			this.dataErrorTextBox.SelectionStart = this.dataErrorTextBox.TextLength;
+			this.dataErrorTextBox.ScrollToCaret();
+			this.dataErrorTextBox.Refresh();
 		}
 
 		/*
@@ -1605,13 +1609,13 @@ namespace SpintronicsGUI
 					File.Copy(this.runFilesDirectory + "/" + f1Mf2AFileName, saveFile.FileName + "/" + f1Mf2AFileName);
 					File.Copy(this.runFilesDirectory + "/" + f1AFileName, saveFile.FileName + "/" + f1AFileName);
 					File.Copy(this.runFilesDirectory + "/" + f1Pf2AFileName, saveFile.FileName + "/" + f1Pf2AFileName);
-					File.Copy(this.runFilesDirectory + "/" + f1PFile, saveFile.FileName + "/" + f1PFileName);
-					File.Copy(this.runFilesDirectory + "/" + f2AFile, saveFile.FileName + "/" + f2AFileName);
-					File.Copy(this.runFilesDirectory + "/" + f2PFile, saveFile.FileName + "/" + f2PFileName);
-					File.Copy(this.runFilesDirectory + "/" + f1Mf2PFile, saveFile.FileName + "/" + f1Mf2PFileName);
-					File.Copy(this.runFilesDirectory + "/" + f1Pf2PFile, saveFile.FileName + "/" + f1Pf2PFileName);
-					File.Copy(this.runFilesDirectory + "/" + coilAFile, saveFile.FileName + "/" + coilAFileName);
-					File.Copy(this.runFilesDirectory + "/" + coilPFile, saveFile.FileName + "/" + coilPFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1PFileName, saveFile.FileName + "/" + f1PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f2AFileName, saveFile.FileName + "/" + f2AFileName);
+					File.Copy(this.runFilesDirectory + "/" + f2PFileName, saveFile.FileName + "/" + f2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1Mf2PFileName, saveFile.FileName + "/" + f1Mf2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + f1Pf2PFileName, saveFile.FileName + "/" + f1Pf2PFileName);
+					File.Copy(this.runFilesDirectory + "/" + coilAFileName, saveFile.FileName + "/" + coilAFileName);
+					File.Copy(this.runFilesDirectory + "/" + coilPFileName, saveFile.FileName + "/" + coilPFileName);
 					this.resultsSaved = true;
 				} catch (FileNotFoundException) {
 					MessageBox.Show("Error while saving files: One or more files could not be found");
@@ -2081,7 +2085,7 @@ namespace SpintronicsGUI
 		/*
 		 * This will attempt to reconnect to the microcontroller
 		 */
-		private void reconnectToDeviceToolStripMenuItem_Click(object sender, EventArgs e)
+		private void reconnectToDevice(object sender, EventArgs e)
 		{
 			try {
 				serialPort.Close();

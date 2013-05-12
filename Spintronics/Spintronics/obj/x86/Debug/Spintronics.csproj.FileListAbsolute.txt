@@ -47,3 +47,17 @@ C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintroni
 C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\Users\Samiha\Dropbox\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog
 D:\Dropbox\Documents\School\4951\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe.config
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe.config
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.exe
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\Spintronics.pdb
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.exe
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\bin\Debug\Spintronics.pdb
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.ComSelector.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.GUI.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.InputTextForm.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.PostProcessingResults.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Preferences.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\SpintronicsGUI.Properties.Resources.resources
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Dropbox\Shared\Senior Design Project\Software\GUI\Spintronics\Spintronics\obj\x86\Debug\GenerateResource.write.1.tlog
