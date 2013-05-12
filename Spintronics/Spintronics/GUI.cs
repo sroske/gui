@@ -66,6 +66,7 @@ namespace SpintronicsGUI
 		int tareIndex = 0;								// The global tare index (what is the first cycle of data the user can see)
 		bool recalculate = true;							// Tells us if we should recalculate the adjusted chart points
 		int latestSensorId = 0;								// Keeps track of the latest sensor we've received data for
+		//int demoModeCycleSensorsReceivedCount = 0;				// Keeps track of the number of sensors we've received data for this cycle for demo mode
 		int mostRecentAddMpsCycle = 0;						// Keeps track of the latest cycle MNPs were added
 		int enableAddBufferAndMnpAtCycle;						// Tells us when to re-enable the Add Buffer and Add MNPs buttons
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };				// Array containing the integer numbers of the reference sensors (they don't change)
@@ -146,20 +147,24 @@ namespace SpintronicsGUI
 					// error																	// Let the user know we received bad data,
 					return;																	// and don't bother adding any data
 				}
-				if (latestSensorId != 15)
+				if (!this.demoModeToolStripMenuItem.Checked)
 				{
-					if (sensorId != ((latestSensorId % 30) + 1))
+					if (latestSensorId != 15)
 					{
-						fixNoncontinuityInLogFiles(sensorId, latestSensorId);
+						if (sensorId != ((latestSensorId % 30) + 1))
+						{
+							fixNoncontinuityInLogFiles(sensorId, latestSensorId);
+						}
+					}
+					else
+					{
+						if (sensorId != 17)
+						{
+							fixNoncontinuityInLogFiles(sensorId, latestSensorId);
+						}
 					}
 				}
-				else
-				{
-					if (sensorId != 17)
-					{
-						fixNoncontinuityInLogFiles(sensorId, latestSensorId);
-					}
-				}
+
 				float wheatstonef1A = System.BitConverter.ToSingle(packet.payload, 1);								// Get float #1
 				float wheatstonef1P = System.BitConverter.ToSingle(packet.payload, 5);								// Get float #2
 				float wheatstonef2A = System.BitConverter.ToSingle(packet.payload, 9);								// Get float #3
@@ -278,8 +283,19 @@ namespace SpintronicsGUI
 
 				// Update latest sensor ID and globalCycle
 				latestSensorId = sensorId;
-				if (sensorId >= adjustedChart1.Series.Count)
-					globalCycle++;
+				if (this.demoModeToolStripMenuItem.Checked)
+				{
+					//if (this.demoModeCycleSensorsReceivedCount >= 29)
+					//{
+					//	this.demoModeCycleSensorsReceivedCount = 0;
+						this.globalCycle++;
+					//}
+				}
+				else
+				{
+					if (sensorId >= adjustedChart1.Series.Count)
+						this.globalCycle++;
+				}
 			} catch (IndexOutOfRangeException) {
 				
 			} catch (ArgumentOutOfRangeException) {
@@ -971,9 +987,20 @@ namespace SpintronicsGUI
 			/* Send a start packet to the microcontroller */
 			try {
 				// Create configuration packet (and omit sensor 16 from the config array)
-				byte[] payload = new byte[this.configFile.sensorMultiplexerValues.Length - 1];
-				Array.Copy(this.configFile.sensorMultiplexerValues, payload, 15);
-				Array.Copy(this.configFile.sensorMultiplexerValues, 16, payload, 15, this.configFile.sensorMultiplexerValues.Length - 15 - 1);
+				byte[] payload;
+				/* If the user wants to use Demo Mode, defer to the Demo Mode method for the configuration packet payload */
+				if (this.demoModeToolStripMenuItem.Checked)
+				{
+					payload = demoModeStart();
+					if (payload == null)
+						return;
+				}
+				else
+				{
+					payload = new byte[this.configFile.sensorMultiplexerValues.Length - 1];
+					Array.Copy(this.configFile.sensorMultiplexerValues, payload, 15);
+					Array.Copy(this.configFile.sensorMultiplexerValues, 16, payload, 15, this.configFile.sensorMultiplexerValues.Length - 15 - 1);
+				}
 				Packet configPacket = new Packet((byte)PacketType.Config | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(configPacket, PacketCommDirection.Out);
 				// Create start packet
@@ -1008,15 +1035,18 @@ namespace SpintronicsGUI
 				else
 				{
 					MessageBox.Show("Failed to start: Error code " + protocolHandler.errorCode +
-							    "\n-> " + protocolHandler.getErrorMessage());
+								"\n-> " + protocolHandler.getErrorMessage());
 					return;
 				}
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a value for all fields");
+				return;
 			} catch (FormatException) {
 				MessageBox.Show("Please enter a valid number for all fields");
+				return;
 			} catch (OverflowException) {
 				MessageBox.Show("Please enter a valid number for all fields");
+				return;
 			}
 
 			this.globalCycle = 0;
@@ -2112,6 +2142,72 @@ namespace SpintronicsGUI
 			}
 
 			return true;
+		}
+
+		/*
+		 * This is for using Demo Mode (only up to two reference and two normal sensors used)
+		 */
+		private byte[] demoModeStart()
+		{
+			int[] selectedNormalSensors = new int[2];
+			int selectedNormalSensorsCount = 0;
+			int[] selectedReferenceSensors = new int[2];
+			int selectedReferenceSensorsCount = 0;
+			foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
+			{
+				if (c.Checked)
+				{
+					bool used = false;
+					int number = getSensorNumber(c.Name);
+					for (int i = 0; i < 5; i++)
+					{
+						if (number == referenceSensors[i])
+						{
+							if (selectedReferenceSensorsCount >= 2)
+							{
+								MessageBox.Show("Please select up to two reference and\n" +
+											"two normal sensors to acquire data for");
+								return null;
+							}
+							selectedReferenceSensors[selectedReferenceSensorsCount] = number;
+							selectedReferenceSensorsCount++;
+							used = true;
+							break;
+						}
+					}
+					if (!used && selectedNormalSensorsCount >= 2)
+					{
+						MessageBox.Show("Please select up to two reference and\n" +
+									"two normal sensors to acquire data for");
+						return null;
+					}
+					else if (!used)
+					{
+						selectedNormalSensors[selectedNormalSensorsCount] = number;
+						selectedNormalSensorsCount++;
+					}
+				}
+			}
+
+			if (selectedReferenceSensorsCount == 0 || selectedNormalSensorsCount == 0)
+			{
+				MessageBox.Show("Please select up to two reference and\n" +
+							"two normal sensors to acquire data for");
+				return null;
+			}
+
+			/* Create a config packet for the microcontroller */
+			byte[] payload = new byte[this.configFile.sensorMultiplexerValues.Length - 1];
+			for (int i = 0; i < selectedReferenceSensorsCount; i++)
+			{
+				payload[i] = this.configFile.sensorMultiplexerValues[selectedReferenceSensors[i] - 1];
+			}
+			for (int i = selectedReferenceSensorsCount; i < payload.Length; i++)
+			{
+				payload[i] = this.configFile.sensorMultiplexerValues[selectedNormalSensors[i % selectedNormalSensorsCount] - 1];
+			}
+
+			return payload;
 		}
 
 		/* This is a little Easter Egg I decided to throw in to commemorate our team */

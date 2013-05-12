@@ -325,6 +325,7 @@ namespace SpintronicsGUI
 			this.dataErrorLabel = new System.Windows.Forms.Label();
 			this.userNameTextBox = new System.Windows.Forms.TextBox();
 			this.userNameLabel = new System.Windows.Forms.Label();
+			this.demoModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -418,7 +419,8 @@ namespace SpintronicsGUI
 			// toolsToolStripMenuItem
 			// 
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.postProcessingToolStripMenuItem});
+            this.postProcessingToolStripMenuItem,
+            this.demoModeToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
 			this.toolsToolStripMenuItem.Text = "Tools";
@@ -2339,6 +2341,13 @@ namespace SpintronicsGUI
 			this.userNameLabel.TabIndex = 72;
 			this.userNameLabel.Text = "User Name";
 			// 
+			// demoModeToolStripMenuItem
+			// 
+			this.demoModeToolStripMenuItem.CheckOnClick = true;
+			this.demoModeToolStripMenuItem.Name = "demoModeToolStripMenuItem";
+			this.demoModeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.demoModeToolStripMenuItem.Text = "Demo Mode";
+			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2499,6 +2508,7 @@ namespace SpintronicsGUI
 		//private ToolStripMenuItem reconnectToDeviceToolStripMenuItem;
 		private TextBox userNameTextBox;
 		private Label userNameLabel;
+		private ToolStripMenuItem demoModeToolStripMenuItem;
 	}
 }
 
