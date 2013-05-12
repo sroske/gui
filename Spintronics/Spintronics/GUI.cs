@@ -398,11 +398,11 @@ namespace SpintronicsGUI
 			double total = 0;
 			int count = 0;
 
-			for (int i = 0; i < 5; i++)										// For each sensor in our system,
+			for (int i = 0; i < 5; i++)										// For each reference sensor in our system,
 			{
 				foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 				{
-					if (getSensorNumber(c.Name) == referenceSensors[i])				// if the sensor is a reference sensor,
+					if (getSensorNumber(c.Name) == referenceSensors[i])				// if the check box is for a reference sensor,
 					{
 						try {
 							if (c.Checked)								// and the sensor is enabled,
@@ -433,52 +433,52 @@ namespace SpintronicsGUI
 		 */
 		private void recalculateData()
 		{
-			if (!recalculate)
+			if (!recalculate)														// If we don't need to recalculate, don't
 				return;
-			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())					// Otherwise, for each chart in each tab page,
 			{
 				foreach (Chart c in t.Controls.OfType<Chart>())
 				{
-					if (c.Name.Contains("adjusted"))
+					if (c.Name.Contains("adjusted"))									// that has "adjusted" in its name (i.e. it is a visible one),
 					{
-						c.ChartAreas[0].AxisX.Minimum = tareIndex;
-						foreach (Series s in c.Series)
+						c.ChartAreas[0].AxisX.Minimum = tareIndex;						// set the minimum viewing place to tare index (we only care about points after it),
+						foreach (Series s in c.Series)								// and, for each series (i.e. set of data for one sensor),
 						{
 							try {
-								s.Points.Clear();
-								for(int i = tareIndex; i < globalCycle; i++)
+								s.Points.Clear();									// clear the previous points (since they need to be recalculated)
+								for(int i = tareIndex; i < globalCycle; i++)				// Then, for each cycle until the most recent one, starting from tare index,
 								{
-									if (globalCycle != 1)
-									{
-										if ((i == (globalCycle - 1)) && (System.Convert.ToInt32(s.Name) > latestSensorId))
-											continue;
+									if (globalCycle != 1)							// If it isn't the first cycle,
+									{										// and we're now adding points for the last visible cycle,
+										if ((i == (globalCycle - 1)) && (System.Convert.ToInt32(s.Name) > latestSensorId))	// if the sensor ID is greater than the latest received for this cycle,
+											continue;							// (i.e. we haven't received the point yet and shouldn't try to show it), continue without adding
 									}
-									int sensorId = System.Convert.ToInt32(((Series)s).Name);
-									Chart chart;
-									if(c.Name.Contains("1")) {
+									int sensorId = System.Convert.ToInt32(((Series)s).Name);	// Get the sensor ID
+									Chart chart;								// Declare a temporary chart
+									if(c.Name.Contains("1")) {						// Set the temp chart to the appropriate raw-data chart
 										chart = this.rawChart1;
 									} else if (c.Name.Contains("2")) {
 										chart = this.rawChart2;
 									} else {
 										chart = this.rawChart3;
 									}
-
+																			// Get the raw, unadjusted data
 									double value = chart.Series[sensorId - 1].Points.ElementAt(i).YValues[0];
 
-									if (this.amplitudeTareCheckbox.Checked)
-									{
+									if (this.amplitudeTareCheckbox.Checked)				// If we need to factor in the amplitude tare,
+									{										// subtract the amplitude of this sensor at index tare index
 										value -= (float)chart.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
 
-										if (this.referenceTareCheckbox.Checked)
+										if (this.referenceTareCheckbox.Checked)			// If we need to factor in the reference tare,
 										{
-											value -= (float)getReferenceAverage(chart, i);
+											value -= (float)getReferenceAverage(chart, i);	// subtract the reference average from this sensor
 										}
 									}
 
-									double time = getAddTime(sensorId);
-									time += (double)i;
-									s.Points.AddXY(time, value);
-									s.Points.Last().MarkerStyle = getMarker(sensorId);
+									double time = getAddTime(sensorId);					// Get the offset for this sensor,
+									time += (double)i;							// and include it
+									s.Points.AddXY(time, value);						// Add the sensor's data
+									s.Points.Last().MarkerStyle = getMarker(sensorId);		// Set the marker style
 								}
 							} catch (ArgumentNullException) {
 
