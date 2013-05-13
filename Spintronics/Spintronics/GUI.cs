@@ -349,7 +349,9 @@ namespace SpintronicsGUI
 			}
 		}
 
-
+		/*
+		 * This will get the marker style for the sensor (assigned using column of sensor)
+		 */
 		private MarkerStyle getMarker(int sensor)
 		{
 			if (sensorAssignment == SensorAssignment.A)
@@ -1822,6 +1824,12 @@ namespace SpintronicsGUI
 			ltFileReader.ReadLine(); // Skip the MNPs-added cycle
 			htFileReader.ReadLine(); // Skip the MNPs-added cycle
 
+			for (int i = 0; i < configFile.diffusionCount; i++)
+			{
+				ltFileReader.ReadLine();
+				htFileReader.ReadLine();
+			}
+
 			for (int i = startPostCycle; i < endPostCycle + 1; i++)
 			{
 				if ((configFile.postProcessingFiles == 0) || (configFile.postProcessingFiles == 2))
@@ -1837,7 +1845,7 @@ namespace SpintronicsGUI
 						line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 					}
 				}
-				else if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
+				if ((configFile.postProcessingFiles == 1) || (configFile.postProcessingFiles == 2))
 				{
 					line = htFileReader.ReadLine();
 					for (int sensor = 0; sensor < afterAverage.Length; sensor++)
@@ -1856,9 +1864,9 @@ namespace SpintronicsGUI
 			for (int i = 0; i < afterAverage.Length; i++)
 			{
 				if (configFile.postProcessingFiles == 2)
-					afterAverage[i] /= ((configFile.sampleAverageCount + configFile.diffusionCount) * 2);
+					afterAverage[i] /= (configFile.sampleAverageCount * 2);
 				else
-					afterAverage[i] /= (configFile.sampleAverageCount + configFile.diffusionCount);
+					afterAverage[i] /= configFile.sampleAverageCount;
 			}
 			double beforeTotal = 0.0;
 			double afterTotal = 0.0;
