@@ -1973,108 +1973,7 @@ namespace SpintronicsGUI
 					this.mostRecentAddMpsCycle = 0;
 					this.tareIndex = 0;
 					this.tareIndexTextbox.Text = "0";
-					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
-					{
-						foreach (Chart c in t.Controls.OfType<Chart>())
-						{
-							c.ChartAreas[0].AxisX.Minimum = this.globalCycle;
-							c.ChartAreas[0].AxisX.StripLines.Clear();
-							foreach (Series s in c.Series)
-							{
-								s.Points.Clear();
-								s.Points.AddXY(this.globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
-								s.Points.Last().MarkerStyle = MarkerStyle.Circle;
-							}
-						}
-					}
 					string line;
-					htFileReader.ReadLine();
-					ctFileReader.ReadLine();
-					ltFileReader.ReadLine();
-					globalCycle++;
-					for (int i = 0; ; i++)
-					{
-						int nullCount = 0;
-						if ((line = ltFileReader.ReadLine()) != null)
-						{
-							for (int j = 0; ; j++)
-							{
-								if (line == "")
-									break;
-								if (j == 16)
-									continue;
-
-								double dataPoint;
-								try {
-									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
-								} catch (FormatException) {
-									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-									continue;
-								}
-								this.rawChart1.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-							}
-						}
-						else
-							nullCount++;
-						if ((line = ctFileReader.ReadLine()) != null)
-						{
-							for (int j = 0; ; j++)
-							{
-								if (line == "")
-									break;
-								if (j == 16)
-									continue;
-
-								double dataPoint;
-								try {
-									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
-								} catch (FormatException) {
-									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-									continue;
-								}
-								this.rawChart2.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-							}
-						}
-						else
-							nullCount++;
-						if ((line = htFileReader.ReadLine()) != null)
-						{
-							for (int j = 0; ; j++)
-							{
-								if (line == "")
-									break;
-								if (j == 16)
-									continue;
-
-								double dataPoint;
-								try {
-									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
-								} catch (FormatException) {
-									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-									continue;
-								}
-								this.rawChart3.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
-								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-							}
-						}
-						else
-							nullCount++;
-						if (nullCount >= 3)
-						{
-							globalCycle--;		// Because we incremented global cycle before we discovered that our last line was null/empty,
-							break;			// it will be pointing to that cycle. GlobalCycle is ALWAYS pointing to the last uncompleted row
-						}					// of data points, so we need to move it back to that row (because we can't verify it had exactly
-						else					// 29 data points, one for each sensor (excluding 16)
-							globalCycle++;
-					}
-					htFileReader.Close();
-					ltFileReader.Close();
-					ctFileReader.Close();
 					while ((line = logFileReader.ReadLine()) != null)
 					{
 						if (line.Contains("User Name:"))
@@ -2101,6 +2000,110 @@ namespace SpintronicsGUI
 							string me = line.Substring(first + 1, line.Length - first - 1);
 							this.sampleTextBox.Text = line.Substring(first + 1, line.Length - first - 1);
 						}
+					}
+					foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
+					{
+						foreach (Chart c in t.Controls.OfType<Chart>())
+						{
+							c.ChartAreas[0].AxisX.Minimum = this.globalCycle;
+							c.ChartAreas[0].AxisX.StripLines.Clear();
+							foreach (Series s in c.Series)
+							{
+								s.Points.Clear();
+								s.Points.AddXY(this.globalCycle + getAddTime(System.Convert.ToInt32(s.Name)), 0);
+								s.Points.Last().MarkerStyle = MarkerStyle.Circle;
+							}
+						}
+					}
+					htFileReader.ReadLine();
+					ctFileReader.ReadLine();
+					ltFileReader.ReadLine();
+					this.globalCycle++;
+					for (int i = 0; ; i++)
+					{
+						int nullCount = 0;
+						if ((line = ltFileReader.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart1.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+							}
+						}
+						else
+							nullCount++;
+						if ((line = ctFileReader.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart2.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+							}
+						}
+						else
+							nullCount++;
+						if ((line = htFileReader.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart3.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j + 1) + this.globalCycle, dataPoint);
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+							}
+						}
+						else
+							nullCount++;
+						if (nullCount >= 3)
+						{
+							globalCycle--;		// Because we incremented global cycle before we discovered that our last line was null/empty,
+							break;			// it will be pointing to that cycle. GlobalCycle is ALWAYS pointing to the last uncompleted row
+						}					// of data points, so we need to move it back to that row (because we can't verify it had exactly
+						else					// 29 data points, one for each sensor (excluding 16)
+							globalCycle++;
+					}
+					htFileReader.Close();
+					ltFileReader.Close();
+					ctFileReader.Close();
+					while ((line = logFileReader.ReadLine()) != null)
+					{
 						if(line.Contains("Buffer"))
 						{
 							if (line.Contains("Preload"))
