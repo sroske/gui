@@ -33,6 +33,7 @@ namespace SpintronicsGUI
 		public int sampleAverageCount = 10;
 		public int diffusionCount = 10;
 		public int postProcessingFiles = 2; // 0: LT only, 1: HT only, 2: Both
+		public int digitalGainFactor = 1;
 
 		public Configuration()
 		{
@@ -67,6 +68,7 @@ namespace SpintronicsGUI
 				this.sampleAverageCount = readIntConfiguration("SampleAverageCount");
 				this.diffusionCount = readIntConfiguration("DiffusionCount");
 				this.postProcessingFiles = readIntConfiguration("PostProcessingFiles");
+				this.digitalGainFactor = readIntConfiguration("DigitalGainFactor");
 			} catch (IOException) {
 
 			} catch (UnauthorizedAccessException) {
@@ -105,6 +107,7 @@ namespace SpintronicsGUI
 				file.WriteLine("SampleAverageCount:" + this.sampleAverageCount);
 				file.WriteLine("DiffusionCount:" + this.diffusionCount);
 				file.WriteLine("PostProcessingFiles:" + this.postProcessingFiles);
+				file.WriteLine("DigitalGainFactor:" + this.digitalGainFactor);
 				file.Flush();
 				file.Close();
 				file.Dispose();
@@ -315,6 +318,12 @@ namespace SpintronicsGUI
 		public void setPostProcessingFiles(int choice)
 		{
 			this.postProcessingFiles = choice;
+			saveConfigurations();
+		}
+
+		public void setDigitalGainFactor(int gain)
+		{
+			this.digitalGainFactor = gain;
 			saveConfigurations();
 		}
 	}

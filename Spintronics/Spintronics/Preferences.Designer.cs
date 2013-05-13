@@ -38,6 +38,9 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepTextBox = new System.Windows.Forms.TextBox();
 			this.revertGeneralButton = new System.Windows.Forms.Button();
 			this.measurementParametersTabPage = new System.Windows.Forms.TabPage();
+			this.coilDcOffsetUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.coilAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.wheatstoneAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
 			this.measurementPeriodUnitLabel = new System.Windows.Forms.Label();
 			this.coilFrequencyUnitLabel = new System.Windows.Forms.Label();
 			this.wheatstoneFrequencyUnitLabel = new System.Windows.Forms.Label();
@@ -140,9 +143,8 @@ namespace SpintronicsGUI
 			this.revertPostProcessingButton = new System.Windows.Forms.Button();
 			this.sampleAverageCountTextBox = new System.Windows.Forms.TextBox();
 			this.sampleAverageCountLabel = new System.Windows.Forms.Label();
-			this.wheatstoneAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
-			this.coilAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
-			this.coilDcOffsetUnitComboBox = new System.Windows.Forms.ComboBox();
+			this.digitalGainFactorComboBox = new System.Windows.Forms.ComboBox();
+			this.digitalGainFactorLabel = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -225,6 +227,8 @@ namespace SpintronicsGUI
 			// 
 			// measurementParametersTabPage
 			// 
+			this.measurementParametersTabPage.Controls.Add(this.digitalGainFactorLabel);
+			this.measurementParametersTabPage.Controls.Add(this.digitalGainFactorComboBox);
 			this.measurementParametersTabPage.Controls.Add(this.coilDcOffsetUnitComboBox);
 			this.measurementParametersTabPage.Controls.Add(this.coilAmplitudeUnitComboBox);
 			this.measurementParametersTabPage.Controls.Add(this.wheatstoneAmplitudeUnitComboBox);
@@ -251,6 +255,48 @@ namespace SpintronicsGUI
 			this.measurementParametersTabPage.TabIndex = 3;
 			this.measurementParametersTabPage.Text = "Measurement Parameters";
 			this.measurementParametersTabPage.UseVisualStyleBackColor = true;
+			// 
+			// coilDcOffsetUnitComboBox
+			// 
+			this.coilDcOffsetUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.coilDcOffsetUnitComboBox.FormattingEnabled = true;
+			this.coilDcOffsetUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.coilDcOffsetUnitComboBox.Location = new System.Drawing.Point(424, 94);
+			this.coilDcOffsetUnitComboBox.Name = "coilDcOffsetUnitComboBox";
+			this.coilDcOffsetUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.coilDcOffsetUnitComboBox.TabIndex = 36;
+			// 
+			// coilAmplitudeUnitComboBox
+			// 
+			this.coilAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.coilAmplitudeUnitComboBox.FormattingEnabled = true;
+			this.coilAmplitudeUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.coilAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 94);
+			this.coilAmplitudeUnitComboBox.Name = "coilAmplitudeUnitComboBox";
+			this.coilAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.coilAmplitudeUnitComboBox.TabIndex = 35;
+			// 
+			// wheatstoneAmplitudeUnitComboBox
+			// 
+			this.wheatstoneAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.wheatstoneAmplitudeUnitComboBox.FormattingEnabled = true;
+			this.wheatstoneAmplitudeUnitComboBox.Items.AddRange(new object[] {
+            "V",
+            "mV",
+            "uV",
+            "nV"});
+			this.wheatstoneAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 35);
+			this.wheatstoneAmplitudeUnitComboBox.Name = "wheatstoneAmplitudeUnitComboBox";
+			this.wheatstoneAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
+			this.wheatstoneAmplitudeUnitComboBox.TabIndex = 34;
 			// 
 			// measurementPeriodUnitLabel
 			// 
@@ -1195,47 +1241,29 @@ namespace SpintronicsGUI
 			this.sampleAverageCountLabel.TabIndex = 0;
 			this.sampleAverageCountLabel.Text = "Number of Samples to Use for Average";
 			// 
-			// wheatstoneAmplitudeUnitComboBox
+			// digitalGainFactorComboBox
 			// 
-			this.wheatstoneAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.wheatstoneAmplitudeUnitComboBox.FormattingEnabled = true;
-			this.wheatstoneAmplitudeUnitComboBox.Items.AddRange(new object[] {
-            "V",
-            "mV",
-            "uV",
-            "nV"});
-			this.wheatstoneAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 35);
-			this.wheatstoneAmplitudeUnitComboBox.Name = "wheatstoneAmplitudeUnitComboBox";
-			this.wheatstoneAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.wheatstoneAmplitudeUnitComboBox.TabIndex = 34;
+			this.digitalGainFactorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.digitalGainFactorComboBox.FormattingEnabled = true;
+			this.digitalGainFactorComboBox.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "4",
+            "8",
+            "16"});
+			this.digitalGainFactorComboBox.Location = new System.Drawing.Point(173, 157);
+			this.digitalGainFactorComboBox.Name = "digitalGainFactorComboBox";
+			this.digitalGainFactorComboBox.Size = new System.Drawing.Size(58, 21);
+			this.digitalGainFactorComboBox.TabIndex = 37;
 			// 
-			// coilAmplitudeUnitComboBox
+			// digitalGainFactorLabel
 			// 
-			this.coilAmplitudeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.coilAmplitudeUnitComboBox.FormattingEnabled = true;
-			this.coilAmplitudeUnitComboBox.Items.AddRange(new object[] {
-            "V",
-            "mV",
-            "uV",
-            "nV"});
-			this.coilAmplitudeUnitComboBox.Location = new System.Drawing.Point(94, 94);
-			this.coilAmplitudeUnitComboBox.Name = "coilAmplitudeUnitComboBox";
-			this.coilAmplitudeUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.coilAmplitudeUnitComboBox.TabIndex = 35;
-			// 
-			// coilDcOffsetUnitComboBox
-			// 
-			this.coilDcOffsetUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.coilDcOffsetUnitComboBox.FormattingEnabled = true;
-			this.coilDcOffsetUnitComboBox.Items.AddRange(new object[] {
-            "V",
-            "mV",
-            "uV",
-            "nV"});
-			this.coilDcOffsetUnitComboBox.Location = new System.Drawing.Point(424, 94);
-			this.coilDcOffsetUnitComboBox.Name = "coilDcOffsetUnitComboBox";
-			this.coilDcOffsetUnitComboBox.Size = new System.Drawing.Size(42, 21);
-			this.coilDcOffsetUnitComboBox.TabIndex = 36;
+			this.digitalGainFactorLabel.AutoSize = true;
+			this.digitalGainFactorLabel.Location = new System.Drawing.Point(170, 141);
+			this.digitalGainFactorLabel.Name = "digitalGainFactorLabel";
+			this.digitalGainFactorLabel.Size = new System.Drawing.Size(61, 13);
+			this.digitalGainFactorLabel.TabIndex = 38;
+			this.digitalGainFactorLabel.Text = "Digital Gain";
 			// 
 			// Preferences
 			// 
@@ -1377,5 +1405,7 @@ namespace SpintronicsGUI
 		private ComboBox coilDcOffsetUnitComboBox;
 		private ComboBox coilAmplitudeUnitComboBox;
 		private ComboBox wheatstoneAmplitudeUnitComboBox;
+		private Label digitalGainFactorLabel;
+		private ComboBox digitalGainFactorComboBox;
 	}
 }

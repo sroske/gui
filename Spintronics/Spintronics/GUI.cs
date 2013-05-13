@@ -1065,7 +1065,7 @@ namespace SpintronicsGUI
 					data[2] = data[2] / 1000000000;
 
 				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
-				payload[20] = 0x01;
+				payload[20] = (byte)configFile.digitalGainFactor;
 				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
 				printPacket(startPacket, PacketCommDirection.Out);
 				if (protocolHandler.StartRun(configPacket, startPacket) == true)
@@ -1597,6 +1597,7 @@ namespace SpintronicsGUI
 					configFile.setSampleAverageCount(preferenceWindow.sampleAverageCount);
 					configFile.setDiffusionCount(preferenceWindow.diffusionCount);
 					configFile.setPostProcessingFiles(preferenceWindow.postProcessingFiles);
+					configFile.setDigitalGainFactor(preferenceWindow.digitalGainFactor);
 					this.addBufferUnitLabel.Text = configFile.defaultVolumeUnit;
 					this.addMnpUnitLabel.Text = configFile.defaultVolumeUnit;
 					validatePostProcessing();

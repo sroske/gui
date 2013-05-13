@@ -34,6 +34,7 @@ namespace SpintronicsGUI
 		public int sampleAverageCount;
 		public int diffusionCount;
 		public int postProcessingFiles;
+		public int digitalGainFactor;
 
 		public Preferences(Configuration config, bool readOnlySetting = false)
 		{
@@ -60,6 +61,7 @@ namespace SpintronicsGUI
 			this.sampleAverageCount = config.sampleAverageCount;
 			this.diffusionCount = config.diffusionCount;
 			this.postProcessingFiles = config.postProcessingFiles;
+			this.digitalGainFactor = config.digitalGainFactor;
 			populateFields();
 
 			if (this.readOnly)
@@ -108,6 +110,7 @@ namespace SpintronicsGUI
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
 			this.sampleAverageCountTextBox.Text = System.Convert.ToString(this.sampleAverageCount);
 			this.diffusionCountTextBox.Text = System.Convert.ToString(this.diffusionCount);
+			this.digitalGainFactorComboBox.SelectedItem = System.Convert.ToString(this.digitalGainFactor);
 			switch (this.postProcessingFiles)
 			{
 				case 0:
@@ -163,6 +166,7 @@ namespace SpintronicsGUI
 				this.coilDcOffset = float.Parse(this.coilDcOffsetTextBox.Text);
 				this.coilDcOffsetUnit = (string)this.coilDcOffsetUnitComboBox.SelectedItem;
 				this.measurementPeriod = float.Parse(this.measurementPeriodTextBox.Text);
+				this.digitalGainFactor = int.Parse((string)this.digitalGainFactorComboBox.SelectedItem);
 				return true;
 			} catch (ArgumentNullException) {
 				MessageBox.Show("Please enter a for all fields");
@@ -187,6 +191,7 @@ namespace SpintronicsGUI
 			this.coilDcOffsetTextBox.Text = System.Convert.ToString(this.coilDcOffset);
 			this.coilDcOffsetUnitComboBox.SelectedItem = this.coilDcOffsetUnit;
 			this.measurementPeriodTextBox.Text = System.Convert.ToString(this.measurementPeriod);
+			this.digitalGainFactorComboBox.SelectedItem = System.Convert.ToString(this.digitalGainFactor);
 		}
 
 		private bool savePinAssignmentsTabPreferences()
