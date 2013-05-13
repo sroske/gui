@@ -398,17 +398,36 @@ namespace SpintronicsGUI
 			double total = 0;
 			int count = 0;
 
-			for (int i = 0; i < 5; i++)										// For each reference sensor in our system,
+			for (int i = 0; i < 5; i++)																				// For each reference sensor in our system,
 			{
 				foreach (CheckBox c in this.groupBox1.Controls.OfType<CheckBox>())
 				{
-					if (getSensorNumber(c.Name) == referenceSensors[i])				// if the check box is for a reference sensor,
+					if (getSensorNumber(c.Name) == referenceSensors[i])														// if the check box is for a reference sensor,
 					{
 						try {
-							if (c.Checked)								// and the sensor is enabled,
+							if (c.Checked)																		// and the sensor is enabled,
 							{
-								double difference = chart.Series[referenceSensors[i] - 1].Points.ElementAt(cycle).YValues[0];
-								difference -= chart.Series[referenceSensors[i] - 1].Points.ElementAt(tareIndex).YValues[0];
+								double difference = double.NegativeInfinity;
+								int k;
+								for (k = 0; k < chart.Series[referenceSensors[i] - 1].Points.Count; k++)							// and the sensor has a data point with an X value
+								{
+									if (chart.Series[referenceSensors[i] - 1].Points[k].XValue == cycle + getAddTime(referenceSensors[i]))	// that matches what we're looking for,
+									{
+										difference = chart.Series[referenceSensors[i] - 1].Points[k].YValues[0];					// grab the data point
+										break;
+									}
+								}
+								if (difference == double.NegativeInfinity)												// Otherwise, if there was no available point,
+									continue;																	// don't bother adding anything to the running total
+
+								for (k = 0; k < chart.Series[referenceSensors[i] - 1].Points.Count; k++)							// Use the same process as above to subtract the value at the tare
+								{																			// index (if one exists)
+									if (chart.Series[referenceSensors[i] - 1].Points[k].XValue == tareIndex + getAddTime(referenceSensors[i]))
+									{
+										difference -= chart.Series[referenceSensors[i] - 1].Points.ElementAt(k).YValues[0];
+										break;
+									}
+								}
 								total += difference;
 								count++;								// add it to our running total and increment the count.
 							}
@@ -462,12 +481,29 @@ namespace SpintronicsGUI
 									} else {
 										chart = this.rawChart3;
 									}
-																			// Get the raw, unadjusted data
-									double value = chart.Series[sensorId - 1].Points.ElementAt(i).YValues[0];
 
-									if (this.amplitudeTareCheckbox.Checked)				// If we need to factor in the amplitude tare,
-									{										// subtract the amplitude of this sensor at index tare index
-										value -= (float)chart.Series[sensorId - 1].Points.ElementAt(tareIndex).YValues[0];
+									double value = double.NaN;
+									for (int k = 0; k < chart.Series[sensorId - 1].Points.Count; k++)					// We need to handle missing data points,
+									{															// so for each data point available,
+										if (chart.Series[sensorId - 1].Points[k].XValue == i + getAddTime(sensorId))		// if the X value matches the cycle we want,
+										{
+											value = chart.Series[sensorId - 1].Points[k].YValues[0];				// use that value
+											break;
+										}
+									}
+									if (value == double.NaN)											// If we didn't find a data point, that means there was none,
+										continue;													// so don't bother adding data for this cycle for this point
+
+									if (this.amplitudeTareCheckbox.Checked)									// If we need to factor in the amplitude tare,
+									{															// subtract the amplitude of this sensor at index with X value = tare index
+										for (int k = 0; k < chart.Series[sensorId - 1].Points.Count; k++)				// (this uses the same process as above)
+										{
+											if (chart.Series[sensorId - 1].Points[k].XValue == tareIndex + getAddTime(sensorId))
+											{
+												value -= (float)chart.Series[sensorId - 1].Points.ElementAt(k).YValues[0];
+												break;
+											}
+										}
 
 										if (this.referenceTareCheckbox.Checked)			// If we need to factor in the reference tare,
 										{
@@ -1063,6 +1099,8 @@ namespace SpintronicsGUI
 			this.enableAddBufferAndMnpAtCycle = configFile.sampleAverageCount + 1;
 			this.postProcessingToolStripMenuItem.Enabled = false;
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please stop the current run before doing any post-processing";
+			this.demoModeToolStripMenuItem.Enabled = false;
+			this.demoModeToolStripMenuItem.ToolTipText = "You cannot change this during a run";
 
 			foreach (TabPage t in this.tabControl1.Controls.OfType<TabPage>())
 			{
@@ -1114,6 +1152,8 @@ namespace SpintronicsGUI
 
 			validatePostProcessing();
 
+			this.demoModeToolStripMenuItem.Enabled = true;
+			this.demoModeToolStripMenuItem.ToolTipText = "";
 			this.stopRunButton.Enabled = false;
 			this.stopRunToolStripMenuItem.Enabled = false;
 			this.addMnpButton.Enabled = false;
@@ -1915,8 +1955,8 @@ namespace SpintronicsGUI
 					int startOfFileName = logFileName.LastIndexOf("\\");
 					this.runFilesDirectory = logFileName.Substring(0, startOfFileName);
 					string ltFileName = logFileName.Substring(0, startOfFileName + 1) + f1Mf2AFileName;
+					string ctFileName = logFileName.Substring(0, startOfFileName + 1) + f1AFileName;
 					string htFileName = logFileName.Substring(0, startOfFileName+1) + f1Pf2AFileName;
-					string ctFileName = logFileName.Substring(0, startOfFileName+1) + f1AFileName;
 					StreamReader logFileReader = new StreamReader(logFileName);
 					StreamReader htFileReader = new StreamReader(htFileName);
 					StreamReader ltFileReader = new StreamReader(ltFileName);
@@ -1941,27 +1981,12 @@ namespace SpintronicsGUI
 					}
 					string line;
 					htFileReader.ReadLine();
-					ltFileReader.ReadLine();
 					ctFileReader.ReadLine();
+					ltFileReader.ReadLine();
 					globalCycle++;
 					for (int i = 0; ; i++)
 					{
 						int nullCount = 0;
-						if ((line = htFileReader.ReadLine()) != null)
-						{
-							for (int j = 0; ; j++)
-							{
-								if (line == "")
-									break;
-								if (j == 16)
-									continue;
-								this.rawChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
-								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
-								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
-							}
-						}
-						else
-							nullCount++;
 						if ((line = ltFileReader.ReadLine()) != null)
 						{
 							for (int j = 0; ; j++)
@@ -1970,8 +1995,16 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								this.rawChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
-								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart1.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
+								this.adjustedChart1.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
 								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 							}
 						}
@@ -1985,8 +2018,39 @@ namespace SpintronicsGUI
 									break;
 								if (j == 16)
 									continue;
-								this.rawChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
-								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j) + globalCycle, double.Parse(line.Substring(0, line.IndexOf("\t"))));
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart2.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
+								this.adjustedChart2.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
+								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+							}
+						}
+						else
+							nullCount++;
+						if ((line = htFileReader.ReadLine()) != null)
+						{
+							for (int j = 0; ; j++)
+							{
+								if (line == "")
+									break;
+								if (j == 16)
+									continue;
+
+								double dataPoint;
+								try {
+									dataPoint = double.Parse(line.Substring(0, line.IndexOf("\t")));
+								} catch (FormatException) {
+									line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
+									continue;
+								}
+								this.rawChart3.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
+								this.adjustedChart3.Series[j].Points.AddXY(getAddTime(j + 1) + globalCycle, dataPoint);
 								line = line.Substring(line.IndexOf("\t") + 1, line.Length - line.IndexOf("\t") - 1);
 							}
 						}
@@ -2069,13 +2133,9 @@ namespace SpintronicsGUI
 					}
 					logFileReader.Close();
 
-					//globalCycle++;		// Because recalculateData() operates in the scope of the VISIBLE charts, we need to cheat and say we're
 					recalculateData();	// a cycle ahead so we can view all of our available data (note: we'll see more data points than we did when we saved the files)
-					//globalCycle--;		// Reverse our hack
-
+					
 					validatePostProcessing();
-
-					//globalCycle += 2;		// Increment the global cycle again in case recalculateData() is called again
 				} catch (FileNotFoundException) {
 
 				}
