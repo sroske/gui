@@ -66,7 +66,8 @@ namespace SpintronicsGUI
 		int tareIndex = 0;								// The global tare index (what is the first cycle of data the user can see)
 		bool recalculate = true;							// Tells us if we should recalculate the adjusted chart points
 		int latestSensorId = 0;								// Keeps track of the latest sensor we've received data for
-		//int demoModeCycleSensorsReceivedCount = 0;				// Keeps track of the number of sensors we've received data for this cycle for demo mode
+		int demoModeSensorsCount;							// Keeps track of the number of sensors we expect to receive for a cycle in Demo Mode
+		int demoModeCycleSensorsReceivedCount = 0;				// Keeps track of the number of sensors we've received data for this cycle for demo mode
 		int mostRecentAddMpsCycle = 0;						// Keeps track of the latest cycle MNPs were added
 		int enableAddBufferAndMnpAtCycle;						// Tells us when to re-enable the Add Buffer and Add MNPs buttons
 		int[] referenceSensors = { 1, 2, 7, 29, 30 };				// Array containing the integer numbers of the reference sensors (they don't change)
@@ -285,11 +286,12 @@ namespace SpintronicsGUI
 				latestSensorId = sensorId;
 				if (this.demoModeToolStripMenuItem.Checked)
 				{
-					//if (this.demoModeCycleSensorsReceivedCount >= 29)
-					//{
-					//	this.demoModeCycleSensorsReceivedCount = 0;
+					this.demoModeCycleSensorsReceivedCount++;
+					if (this.demoModeCycleSensorsReceivedCount >= this.demoModeSensorsCount)
+					{
 						this.globalCycle++;
-					//}
+						this.demoModeCycleSensorsReceivedCount = 0;
+					}
 				}
 				else
 				{
@@ -1513,7 +1515,7 @@ namespace SpintronicsGUI
 				dataString = System.Convert.ToString(data);
 
 			file.Write(dataString + "\t");
-			if (sensor == 30)
+			if (sensor == 30 || this.demoModeToolStripMenuItem.Checked)
 			{
 				file.Write("\n");
 			}
@@ -2241,7 +2243,10 @@ namespace SpintronicsGUI
 											"two normal sensors to acquire data for");
 								return null;
 							}
-							selectedReferenceSensors[selectedReferenceSensorsCount] = number;
+							if (number > 16)
+								selectedReferenceSensors[selectedReferenceSensorsCount] = this.configFile.sensorMultiplexerValues[number - 1];
+							else
+								selectedReferenceSensors[selectedReferenceSensorsCount] = this.configFile.sensorMultiplexerValues[number - 2];
 							selectedReferenceSensorsCount++;
 							used = true;
 							break;
@@ -2255,7 +2260,10 @@ namespace SpintronicsGUI
 					}
 					else if (!used)
 					{
-						selectedNormalSensors[selectedNormalSensorsCount] = number;
+						if (number > 16)
+							selectedNormalSensors[selectedNormalSensorsCount] = this.configFile.sensorMultiplexerValues[number - 1];
+						else
+							selectedNormalSensors[selectedNormalSensorsCount] = this.configFile.sensorMultiplexerValues[number - 1];
 						selectedNormalSensorsCount++;
 					}
 				}
@@ -2269,15 +2277,15 @@ namespace SpintronicsGUI
 			}
 
 			/* Create a config packet for the microcontroller */
-			byte[] payload = new byte[this.configFile.sensorMultiplexerValues.Length - 1];
-			for (int i = 0; i < selectedReferenceSensorsCount; i++)
-			{
-				payload[i] = this.configFile.sensorMultiplexerValues[selectedReferenceSensors[i] - 1];
-			}
-			for (int i = selectedReferenceSensorsCount; i < payload.Length; i++)
-			{
-				payload[i] = this.configFile.sensorMultiplexerValues[selectedNormalSensors[i % selectedNormalSensorsCount] - 1];
-			}
+			byte[] payload = new byte[selectedReferenceSensorsCount + selectedNormalSensorsCount];
+			payload[0] = (byte)selectedReferenceSensors[0];
+			if (selectedReferenceSensorsCount > 1)
+				payload[1] = (byte)selectedReferenceSensors[1];
+			payload[selectedReferenceSensorsCount] = (byte)selectedNormalSensors[0];
+			if (selectedNormalSensorsCount > 1)
+				payload[selectedReferenceSensorsCount + 1] = (byte)selectedNormalSensors[1];
+
+			this.demoModeSensorsCount = selectedNormalSensorsCount + selectedReferenceSensorsCount;
 
 			return payload;
 		}

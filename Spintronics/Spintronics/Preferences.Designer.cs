@@ -38,6 +38,8 @@ namespace SpintronicsGUI
 			this.tempFoldersToKeepTextBox = new System.Windows.Forms.TextBox();
 			this.revertGeneralButton = new System.Windows.Forms.Button();
 			this.measurementParametersTabPage = new System.Windows.Forms.TabPage();
+			this.digitalGainFactorLabel = new System.Windows.Forms.Label();
+			this.digitalGainFactorComboBox = new System.Windows.Forms.ComboBox();
 			this.coilDcOffsetUnitComboBox = new System.Windows.Forms.ComboBox();
 			this.coilAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
 			this.wheatstoneAmplitudeUnitComboBox = new System.Windows.Forms.ComboBox();
@@ -143,8 +145,6 @@ namespace SpintronicsGUI
 			this.revertPostProcessingButton = new System.Windows.Forms.Button();
 			this.sampleAverageCountTextBox = new System.Windows.Forms.TextBox();
 			this.sampleAverageCountLabel = new System.Windows.Forms.Label();
-			this.digitalGainFactorComboBox = new System.Windows.Forms.ComboBox();
-			this.digitalGainFactorLabel = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
 			this.measurementParametersTabPage.SuspendLayout();
@@ -255,6 +255,31 @@ namespace SpintronicsGUI
 			this.measurementParametersTabPage.TabIndex = 3;
 			this.measurementParametersTabPage.Text = "Measurement Parameters";
 			this.measurementParametersTabPage.UseVisualStyleBackColor = true;
+			// 
+			// digitalGainFactorLabel
+			// 
+			this.digitalGainFactorLabel.AutoSize = true;
+			this.digitalGainFactorLabel.Location = new System.Drawing.Point(170, 141);
+			this.digitalGainFactorLabel.Name = "digitalGainFactorLabel";
+			this.digitalGainFactorLabel.Size = new System.Drawing.Size(61, 13);
+			this.digitalGainFactorLabel.TabIndex = 38;
+			this.digitalGainFactorLabel.Text = "Digital Gain";
+			// 
+			// digitalGainFactorComboBox
+			// 
+			this.digitalGainFactorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.digitalGainFactorComboBox.FormattingEnabled = true;
+			this.digitalGainFactorComboBox.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "4",
+            "8",
+            "16"});
+			this.digitalGainFactorComboBox.Location = new System.Drawing.Point(173, 157);
+			this.digitalGainFactorComboBox.Name = "digitalGainFactorComboBox";
+			this.digitalGainFactorComboBox.Size = new System.Drawing.Size(58, 21);
+			this.digitalGainFactorComboBox.TabIndex = 37;
 			// 
 			// coilDcOffsetUnitComboBox
 			// 
@@ -1240,30 +1265,6 @@ namespace SpintronicsGUI
 			this.sampleAverageCountLabel.Size = new System.Drawing.Size(191, 13);
 			this.sampleAverageCountLabel.TabIndex = 0;
 			this.sampleAverageCountLabel.Text = "Number of Samples to Use for Average";
-			// 
-			// digitalGainFactorComboBox
-			// 
-			this.digitalGainFactorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.digitalGainFactorComboBox.FormattingEnabled = true;
-			this.digitalGainFactorComboBox.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "4",
-            "8",
-            "16"});
-			this.digitalGainFactorComboBox.Location = new System.Drawing.Point(173, 157);
-			this.digitalGainFactorComboBox.Name = "digitalGainFactorComboBox";
-			this.digitalGainFactorComboBox.Size = new System.Drawing.Size(58, 21);
-			this.digitalGainFactorComboBox.TabIndex = 37;
-			// 
-			// digitalGainFactorLabel
-			// 
-			this.digitalGainFactorLabel.AutoSize = true;
-			this.digitalGainFactorLabel.Location = new System.Drawing.Point(170, 141);
-			this.digitalGainFactorLabel.Name = "digitalGainFactorLabel";
-			this.digitalGainFactorLabel.Size = new System.Drawing.Size(61, 13);
-			this.digitalGainFactorLabel.TabIndex = 38;
-			this.digitalGainFactorLabel.Text = "Digital Gain";
 			// 
 			// Preferences
 			// 

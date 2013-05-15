@@ -25,7 +25,7 @@ namespace SpintronicsGUI
 		byte sensor = 0x00;
 		byte startError = 0x01;
 		byte dataError = 0x08;
-		byte[] sensorMultiplexerAddresses = new byte[29];
+		byte[] sensorMultiplexerAddresses;
 		int dataSpeed, sensorCount;
 		double[] baseData = { 0.0, 0.4, 0.8, 1.2, 1.6, 2.0 };
 		Timer timer;
@@ -75,8 +75,8 @@ namespace SpintronicsGUI
 				case MicrocontrollerState.Idle:
 					if (packet.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
 					{
-						if (packet.payloadLength == 29)
-							this.sensorMultiplexerAddresses = packet.payload;
+						this.sensorMultiplexerAddresses = packet.payload;
+						this.sensorCount = packet.payloadLength;
 						Packet configReplyPacket = new Packet(((byte)PacketType.Config | (byte)PacketSender.Microcontroller));
 						writePacket(configReplyPacket);
 					}
