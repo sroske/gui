@@ -134,7 +134,7 @@ namespace SpintronicsGUI
 		{
 			try {																				// (For all locations/specifications of data packets, see Coomunications document)
 				int sensorId = 0;
-				int sensorMultiplexerAddress = packet.payload[0];											// Get the sensor multiplexer address
+				int sensorMultiplexerAddress = packet.Payload[0];											// Get the sensor multiplexer address
 				for (int i = 0; i < configFile.sensorMultiplexerValues.Length; i++)								// For each sensor multiplexer value in our array,
 				{
 					if (sensorMultiplexerAddress == configFile.sensorMultiplexerValues[i])							// if the member at i in the array matches our received address from the microcontroller,
@@ -166,16 +166,16 @@ namespace SpintronicsGUI
 					}
 				}
 
-				float wheatstonef1A = System.BitConverter.ToSingle(packet.payload, 1);								// Get float #1
-				float wheatstonef1P = System.BitConverter.ToSingle(packet.payload, 5);								// Get float #2
-				float wheatstonef2A = System.BitConverter.ToSingle(packet.payload, 9);								// Get float #3
-				float wheatstonef2P = System.BitConverter.ToSingle(packet.payload, 13);								// Get float #4
-				float wheatstonef1Mf2A = System.BitConverter.ToSingle(packet.payload, 17);							// Get float #5
-				float wheatstonef1Mf2P = System.BitConverter.ToSingle(packet.payload, 21);							// Get float #6
-				float wheatstonef1Pf2A = System.BitConverter.ToSingle(packet.payload, 25);							// Get float #7
-				float wheatstonef1Pf2P = System.BitConverter.ToSingle(packet.payload, 29);							// Get float #8
-				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.payload, 33);							// Get float #9
-				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.payload, 37);							// Get float #10
+				float wheatstonef1A = System.BitConverter.ToSingle(packet.Payload, 1);								// Get float #1
+				float wheatstonef1P = System.BitConverter.ToSingle(packet.Payload, 5);								// Get float #2
+				float wheatstonef2A = System.BitConverter.ToSingle(packet.Payload, 9);								// Get float #3
+				float wheatstonef2P = System.BitConverter.ToSingle(packet.Payload, 13);								// Get float #4
+				float wheatstonef1Mf2A = System.BitConverter.ToSingle(packet.Payload, 17);							// Get float #5
+				float wheatstonef1Mf2P = System.BitConverter.ToSingle(packet.Payload, 21);							// Get float #6
+				float wheatstonef1Pf2A = System.BitConverter.ToSingle(packet.Payload, 25);							// Get float #7
+				float wheatstonef1Pf2P = System.BitConverter.ToSingle(packet.Payload, 29);							// Get float #8
+				float wheatstoneCoilf2A = System.BitConverter.ToSingle(packet.Payload, 33);							// Get float #9
+				float wheatstoneCoilf2P = System.BitConverter.ToSingle(packet.Payload, 37);							// Get float #10
 
 				// Add the data to the hidden charts and write them to the files
 				rawChart1.Series[sensorId - 1].Points.AddXY(globalCycle + getAddTime(sensorId), wheatstonef1Mf2A);			// Add data to raw chart #1
@@ -553,7 +553,7 @@ namespace SpintronicsGUI
 				Packet packet;
 				byte command = (byte)serialPort.ReadByte();                                         // Read the command byte
 				byte payloadLength = (byte)serialPort.ReadByte();                                   // Read the payload length byte
-				Thread.Sleep(100);                                                                  // The GUI seems to hanve trouble going right into the serialPort.Read(...), so I put in a delay
+				Thread.Sleep(100);                                                                  // The GUI seems to have trouble going right into the serialPort.Read(...), so I put in a delay
 				byte[] payload = new byte[payloadLength];                                           // Make the payload buffer
 				if (serialPort.Read(payload, 0, payloadLength) < payloadLength)                     // Read in the whole payload
 				{
@@ -562,33 +562,33 @@ namespace SpintronicsGUI
 					return;
 				}
 				byte Xor = (byte)serialPort.ReadByte();
-				packet = new Packet(command, payloadLength, payload);
-				printPacket(packet, PacketCommDirection.In);
+				packet = new Packet(command, payload);
+				printPacket<Packet>(packet, PacketCommDirection.In);
 				if (packet.Xor != Xor)
 				{
 					Console.WriteLine("<-<-<- XOR did not match. Received 0x{0:X}, should have been 0x{0:X}", Xor, packet.Xor);
 					return;
 				}
 
-				switch (packet.command)
+				switch (packet.Command)
 				{
-					case (byte)((byte)PacketType.Start | (byte)PacketSender.Microcontroller):
+					case (byte)PacketType.StartReply:
 						Console.WriteLine("Received a start acknowledge packet");
 						break;
-					case (byte)((byte)PacketType.Stop | (byte)PacketSender.Microcontroller):
+					case (byte)PacketType.StopReply:
 						Console.WriteLine("Received a stop acknowledge packet");
 						break;
-					case (byte)((byte)PacketType.Report | (byte)PacketSender.Microcontroller):
+					case (byte)PacketType.Report:
 						Console.WriteLine("Received a report packet");
 						break;
-					case (byte)((byte)PacketType.Config | (byte)PacketSender.Microcontroller):
+					case (byte)PacketType.ConfigReply:
 						Console.WriteLine("Received a config acknowledge packet");
 						break;
-					case (byte)((byte)PacketType.Error | (byte)PacketSender.Microcontroller):
+					case (byte)PacketType.Error:
 						Console.WriteLine("Received an error packet");
 						break;
 					default:
-						Console.WriteLine("Received an unknown packet of type 0x{0:X}", packet.command);
+						Console.WriteLine("Received an unknown packet of type 0x{0:X}", packet.Command);
                         return;
 				}
 
@@ -1041,8 +1041,8 @@ namespace SpintronicsGUI
 					Array.Copy(this.configFile.sensorMultiplexerValues, payload, 15);
 					Array.Copy(this.configFile.sensorMultiplexerValues, 16, payload, 15, this.configFile.sensorMultiplexerValues.Length - 15 - 1);
 				}
-				Packet configPacket = new Packet((byte)PacketType.Config | (byte)PacketSender.GUI, (byte)payload.Length, payload);
-				printPacket(configPacket, PacketCommDirection.Out);
+				ConfigPacket configPacket = new ConfigPacket(payload);
+				printPacket<ConfigPacket>(configPacket, PacketCommDirection.Out);
 				// Create start packet
 				float[] data = new float[5];
 				payload = new byte[21];
@@ -1068,8 +1068,8 @@ namespace SpintronicsGUI
 
 				Buffer.BlockCopy(data, 0, payload, 0, payload.Length - 1);
 				payload[20] = (byte)configFile.digitalGainFactor;
-				Packet startPacket = new Packet((byte)PacketType.Start | (byte)PacketSender.GUI, (byte)payload.Length, payload);
-				printPacket(startPacket, PacketCommDirection.Out);
+				StartPacket startPacket = new StartPacket(payload);
+				printPacket<StartPacket>(startPacket, PacketCommDirection.Out);
 				if (protocolHandler.StartRun(configPacket, startPacket) == true)
 					this.running = true;
 				else
@@ -1093,6 +1093,7 @@ namespace SpintronicsGUI
 			this.tareIndex = 0;
 			this.tareIndexTextbox.Text = "0";
 			this.mostRecentAddMpsCycle = 0;
+			this.latestSensorId = 0;
 			this.initialSignalProgressBar.Value = 0;
 			this.signalChangeProgressBar.Value = 0;
 			this.finalSignalProgressBar.Value = 0;
@@ -1136,8 +1137,8 @@ namespace SpintronicsGUI
 			}
 
 			byte[] payload = new byte[20];
-			Packet stopPacket = new Packet((byte)PacketType.Stop | (byte)PacketSender.GUI);
-			printPacket(stopPacket, PacketCommDirection.Out);
+			StopPacket stopPacket = new StopPacket();
+			printPacket<StopPacket>(stopPacket, PacketCommDirection.Out);
 			if (protocolHandler.StopRun(stopPacket) != true)
 			{
 				MessageBox.Show("Failed to stop: Error code " + protocolHandler.errorCode +
@@ -1358,7 +1359,7 @@ namespace SpintronicsGUI
 		/*
 		 * This prints out GUI-microcontroller packets
 		 */
-		private void printPacket(Packet packet, PacketCommDirection direction)
+		private void printPacket<T>(T packet, PacketCommDirection direction) where T : GenericPacket
 		{
 			string directionString;
 			if (direction == PacketCommDirection.In)
@@ -1366,12 +1367,12 @@ namespace SpintronicsGUI
 			else
 				directionString = "->->-> ";
 
-			Console.Write(directionString + "CMD:0x{0:X2}", packet.command);
-			Console.Write(" PL:" + packet.payloadLength);
+			Console.Write(directionString + "CMD:0x{0:X2}", packet.Command);
+			Console.Write(" PL:" + packet.PayloadLength);
 			Console.Write(" P:0x");
-			for (int i = 0; i < packet.payloadLength; i++)
+			for (int i = 0; i < packet.PayloadLength; i++)
 			{
-				Console.Write("{0:X2}", packet.payload[i]);
+				Console.Write("{0:X2}", packet.Payload[i]);
 			}
 			Console.Write(" XOR:0x{0:X2}\n", packet.Xor);
 		}
@@ -2243,10 +2244,7 @@ namespace SpintronicsGUI
 											"two normal sensors to acquire data for");
 								return null;
 							}
-							if (number > 16)
-								selectedReferenceSensors[selectedReferenceSensorsCount] = this.configFile.sensorMultiplexerValues[number - 1];
-							else
-								selectedReferenceSensors[selectedReferenceSensorsCount] = this.configFile.sensorMultiplexerValues[number - 2];
+							selectedReferenceSensors[selectedReferenceSensorsCount] = this.configFile.sensorMultiplexerValues[number - 1];
 							selectedReferenceSensorsCount++;
 							used = true;
 							break;

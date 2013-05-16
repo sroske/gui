@@ -28,18 +28,18 @@ namespace SpintronicsGUI
 
 	enum ErrorCode : byte
 	{
-		TimeOut,
-		BadPacketXor,
-		A1OoR,
-		F1OoR,
-		A2OoR,
-		F2OoR,
-		F1F2OoR,
-		TOoR,
-		InvalidDigitalGain,
-		SignalClipBridgeAtoD,
-		SignalClipCoilAtoD,
-		SignalClipBridgeDigitalGain,
+		TimeOut				= 0x00,
+		BadPacketXor			= 0x01,
+		A1OoR					= 0x02,
+		F1OoR					= 0x03,
+		A2OoR					= 0x04,
+		F2OoR					= 0x05,
+		F1F2OoR				= 0x06,
+		TOoR					= 0x07,
+		InvalidDigitalGain		= 0x08,
+		SignalClipBridgeAtoD		= 0x09,
+		SignalClipCoilAtoD		= 0x0A,
+		SignalClipBridgeDigitalGain	= 0x0B,
 	}
 
 	class ProtocolHandler
@@ -61,46 +61,46 @@ namespace SpintronicsGUI
 			switch (state)
 			{
 				case ProtocolState.ConfigSent:
-					if (packetIn.command == ((byte)PacketType.Config | (byte)PacketSender.Microcontroller))
+					if (packetIn.Command == (byte)PacketType.ConfigReply)
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
 						state = ProtocolState.Idle;
 					}
-					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					else if (packetIn.Command == (byte)PacketType.Error)
 					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
-						this.errorCode = packetIn.payload[0];
+						this.errorCode = packetIn.Payload[0];
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
 				case ProtocolState.StartSent:
-					if (packetIn.command == ((byte)PacketType.Start | (byte)PacketSender.Microcontroller))
+					if (packetIn.Command == (byte)PacketType.StartReply)
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
 						state = ProtocolState.WaitForData;
 					}
-					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					else if (packetIn.Command == (byte)PacketType.Error)
 					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
-						this.errorCode = packetIn.payload[0];
+						this.errorCode = packetIn.Payload[0];
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
 				case ProtocolState.StopSent:
-					if (packetIn.command == ((byte)PacketType.Stop | (byte)PacketSender.Microcontroller))
+					if (packetIn.Command == (byte)PacketType.StopReply)
 					{// If we're waiting for an acknowledge and we receive one from the microcontroller
 						state = ProtocolState.Idle;
 					}
-					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					else if (packetIn.Command == (byte)PacketType.Error)
 					{// If we're waiting for an acknowledge and we receive an error packet from the microcontroller
-						this.errorCode = packetIn.payload[0];
+						this.errorCode = packetIn.Payload[0];
 						state = ProtocolState.ErrorReceived;
 					}
 					break;
 				case ProtocolState.WaitForData:
-					if (packetIn.command == ((byte)PacketType.Report | (byte)PacketSender.Microcontroller))
+					if (packetIn.Command == (byte)PacketType.Report)
 					{// If we're waiting for data packets and we receive one from the microcontroller
 						return ProtocolDirective.AddData;
 					}
-					else if (packetIn.command == ((byte)PacketType.Error | (byte)PacketSender.Microcontroller))
+					else if (packetIn.Command == (byte)PacketType.Error)
 					{
-						this.errorCode = packetIn.payload[0];
+						this.errorCode = packetIn.Payload[0];
 						return ProtocolDirective.ErrorReceived;	// This is the only case where we don't want to immediately set our state to something else; Instead, notify the GUI of the error
 					}
 					break;
@@ -123,18 +123,18 @@ namespace SpintronicsGUI
 			timer.Change(milliseconds, Timeout.Infinite);
 		}
 
-		public bool StartRun(Packet configPacket, Packet startPacket)
+		public bool StartRun(ConfigPacket configPacket, StartPacket startPacket)
 		{
 			if (configPacket != null)									// If we need to send a configuration packet (by default, we always will),
 			{
 				try {
-					writePacket(configPacket, serialPort);					// try writing the packet
+					writePacket<ConfigPacket>(configPacket, serialPort);					// try writing the packet
 				} catch (Exception) {									// If something bad happens,
 					this.errorCode = (byte)ErrorCode.TimeOut;					// set the error code to the ProtocolHandler-specific code,
 					return false;									// and return false
 				}
 				this.state = ProtocolState.ConfigSent;						// Otherwise, set the state,
-				oneshotTimer(1000);									// start the timer,
+				oneshotTimer(2000);									// start the timer,
 				while (!this.timerDone && this.state == ProtocolState.ConfigSent) ;	// and wait for either the timer to stop or the microcontroller to respond (state changes in HandlePacket)
 				if (this.state == ProtocolState.ConfigSent)					// If we haven't changed states, that means we timed out,
 				{
@@ -150,7 +150,7 @@ namespace SpintronicsGUI
 			}
 
 			try {													// If we made it to here, that means we successfully sent the configuration packet
-				writePacket(startPacket, serialPort);						// Try writing the packet
+				writePacket<StartPacket>(startPacket, serialPort);						// Try writing the packet
 			} catch (Exception) {										// If something bad happens,
 				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHandler-specific code,
 				return false;										// and return false
@@ -173,10 +173,10 @@ namespace SpintronicsGUI
 			return true;											// If we made it this far, that means we successfully sent both packets, so return true!
 		}
 
-		public bool StopRun(Packet stopPacket)
+		public bool StopRun(StopPacket stopPacket)
 		{
 			try {
-				writePacket(stopPacket, serialPort);						// Try to send the packet
+				writePacket<StopPacket>(stopPacket, serialPort);						// Try to send the packet
 			} catch (Exception) {										// If something bad happens,
 				this.errorCode = (byte)ErrorCode.TimeOut;						// set the error code to the ProtocolHandler-specific code,
 				return false;										// and return false
@@ -231,15 +231,15 @@ namespace SpintronicsGUI
 			return "Unknown error of type " + errorCode;
 		}
 
-		private void writePacket(Packet packetToWrite, SerialPort port)
+		private void writePacket<T>(T packetToWrite, SerialPort port) where T : GenericPacket
 		{
-			byte[] buf = new byte[4 + packetToWrite.payloadLength];
-			buf[0] = packetToWrite.SOF;
-			buf[1] = packetToWrite.command;
-			buf[2] = packetToWrite.payloadLength;
-			if(packetToWrite.payloadLength != 0)
-				Array.Copy(packetToWrite.payload, 0, buf, 3, packetToWrite.payloadLength);
-			buf[3 + packetToWrite.payloadLength] = packetToWrite.Xor;
+			byte[] buf = new byte[4 + packetToWrite.PayloadLength];
+			buf[0] = Packet.SOF;
+			buf[1] = packetToWrite.Command;
+			buf[2] = packetToWrite.PayloadLength;
+			if(packetToWrite.PayloadLength != 0)
+				Array.Copy(packetToWrite.Payload, 0, buf, 3, packetToWrite.PayloadLength);
+			buf[3 + packetToWrite.PayloadLength] = packetToWrite.Xor;
 			try {
 				port.Write(buf, 0, buf.Length);
 			} catch (ArgumentNullException) {

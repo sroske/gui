@@ -5,22 +5,31 @@ using System.Text;
 
 namespace SpintronicsGUI
 {
-	enum PacketSender : byte
+	public enum PacketType : byte
 	{
-		GUI = 0x00,
-		Microcontroller = 0x80
+		Start = 0x00,
+		StartReply = 0x80,
+		Stop = 0x01,
+		StopReply = 0x81,
+		Report = 0x82,
+		Error = 0x83,
+		Config = 0x04,
+		ConfigReply = 0x84,
 	}
 
-	enum PacketType : byte
+	public enum PacketLength
 	{
-		Start,
-		Stop,
-		Report,
-		Error,
-		Config
+		Start = 21,
+		StartReply = 21,
+		Stop = 0,
+		StopReply = 0,
+		Report = 41,
+		Error = 1,
+		// Config = 0xXX -> Config packet is the only one that is allowed to have a variable length
+		ConfigReply = 0,
 	}
 
-	enum ErrorTypes : byte
+	public enum ErrorTypes : byte
 	{
 		StartA1OutOfRange,
 		StartF1OutOfRange,
@@ -33,35 +42,69 @@ namespace SpintronicsGUI
 		CoilDigitalClip
 	}
 
-	public class Packet
+	public class InvalidPacketFormatException : Exception
 	{
-		public byte SOF = 0xFE;
-		public byte command;
-		public byte payloadLength;
-		public byte[] payload;
-		public byte Xor;
-
-		public Packet(byte cmd, byte length = 0, byte[] pay = null)
+		string GetMessage()
 		{
-			if (pay == null)
-			{
-				if (length != 0)
-					throw new System.ArgumentException("Payload length parameter does not match actual payload length");
-			}
-			else if (length != pay.Length)
-			{
-				throw new System.ArgumentException("Payload length parameter does not match actual payload length");
-			}
+			return "Packet was created with invalid parameters";
+		}
+	}
 
-			command = cmd;
-			payloadLength = length;
-			payload = pay;
-			Xor = 0x00;
-			Xor ^= command;
-			Xor ^= payloadLength;
-			for (int i = 0; i < payloadLength; i++)
+	public class Packet : GenericPacket
+	{
+		public const byte SOF = 0xFE;
+		public byte Command
+		{
+			get;
+			set;
+		}
+		public byte PayloadLength
+		{
+			get;
+			set;
+		}
+		public byte[] Payload
+		{
+			get;
+			set;
+		}
+		public byte Xor
+		{
+			get;
+			set;
+		}
+
+		public Packet(byte Command, byte[] Payload)
+		{
+			this.Command = (byte)Command;
+			this.PayloadLength = (byte)Payload.Length;
+			this.Payload = Payload;
+			ComputeXor();
+		}
+
+		public Packet(PacketType Command, byte[] Payload = null)
+		{
+			this.Command = (byte)Command;
+			if (Payload != null)
 			{
-				Xor ^= payload[i];
+				this.PayloadLength = (byte)Payload.Length;
+				this.Payload = Payload;
+			}
+			else
+			{
+				this.PayloadLength = 0;
+			}
+			ComputeXor();
+		}
+
+		public void ComputeXor()
+		{
+			this.Xor = 0x00;
+			this.Xor ^= this.Command;
+			this.Xor ^= this.PayloadLength;
+			for (int i = 0; i < this.PayloadLength; i++)
+			{
+				Xor ^= this.Payload[i];
 			}
 		}
 	}

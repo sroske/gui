@@ -58,7 +58,7 @@ namespace SpintronicsGUI
 					return;
 				}
 				byte Xor = (byte)serialPort.ReadByte();
-				packet = new Packet(command, payloadLength, payload);
+				packet = new Packet(command, payload);
 				if (packet.Xor != Xor)
 				{
 					return;
@@ -73,14 +73,14 @@ namespace SpintronicsGUI
 			switch (state)
 			{
 				case MicrocontrollerState.Idle:
-					if (packet.command == ((byte)PacketType.Config | (byte)PacketSender.GUI))
+					if (packet.Command == (byte)PacketType.Config)
 					{
-						this.sensorMultiplexerAddresses = packet.payload;
-						this.sensorCount = packet.payloadLength;
-						Packet configReplyPacket = new Packet(((byte)PacketType.Config | (byte)PacketSender.Microcontroller));
-						writePacket(configReplyPacket);
+						this.sensorMultiplexerAddresses = packet.Payload;
+						this.sensorCount = packet.PayloadLength;
+						ConfigReplyPacket configReplyPacket = new ConfigReplyPacket();
+						writePacket<ConfigReplyPacket>(configReplyPacket);
 					}
-					if (packet.command == ((byte)PacketType.Start | (byte)PacketSender.GUI))
+					if (packet.Command == (byte)PacketType.Start)
 					{// If we're idle and waiting to be told to do something and we receive a start packet from the GUI
 					#if INCLUDE_ERRORS
 						if (this.starts % 5 == 0)
@@ -89,8 +89,8 @@ namespace SpintronicsGUI
 							dontStart = true;
 						}
 					#endif
-						Packet startReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Start), (byte)packet.payload.Length, packet.payload);
-						writePacket(startReplyPacket);
+						StartReplyPacket startReplyPacket = new StartReplyPacket(packet.Payload);
+						writePacket<StartReplyPacket>(startReplyPacket);
 						if (!dontStart)
 						{
 							timer = new Timer(new TimerCallback(timerEvent));
@@ -101,10 +101,10 @@ namespace SpintronicsGUI
 					break;
 
 				case MicrocontrollerState.SendingData:
-					if (packet.command == ((byte)PacketType.Stop | (byte)PacketSender.GUI))
+					if (packet.Command == (byte)PacketType.Stop)
 					{// If we're sending data packets and we receive a stop packet from the GUI
-						Packet stopReplyPacket = new Packet(((byte)PacketSender.Microcontroller | (byte)PacketType.Stop));
-						writePacket(stopReplyPacket);
+						StopReplyPacket stopReplyPacket = new StopReplyPacket();
+						writePacket<StopReplyPacket>(stopReplyPacket);
 						state = MicrocontrollerState.Idle;
 						sensor = 0x00;
 					}
@@ -127,7 +127,7 @@ namespace SpintronicsGUI
 		{
 			if (this.state == MicrocontrollerState.SendingData)
 			{
-				writePacket(createDataPacket());
+				writePacket<ReportPacket>(createDataPacket());
 			#if INCLUDE_ERRORS
 				if (this.sensor % 6 == 0)
 				{
@@ -139,21 +139,19 @@ namespace SpintronicsGUI
 			timer.Change(this.dataSpeed, 0);
 		}
 
-		private void writePacket(Packet packetToWrite)
-		{
-			byte[] buf = new byte[4 + packetToWrite.payloadLength];
-			buf[0] = packetToWrite.SOF;
-			buf[1] = packetToWrite.command;
-			buf[2] = packetToWrite.payloadLength;
-			//if(packetToWrite.payloadLength != 0)
-			//	Array.Copy(packetToWrite.payload, 0, buf, 3, packetToWrite.payloadLength);
-			for (int i = 0; i < packetToWrite.payloadLength; i++)
+		private void writePacket<T>(T packetToWrite) where T : GenericPacket
+		{	
+			byte[] buf = new byte[4 + packetToWrite.PayloadLength];
+			buf[0] = Packet.SOF;
+			buf[1] = packetToWrite.Command;
+			buf[2] = packetToWrite.PayloadLength;
+			for (int i = 0; i < packetToWrite.PayloadLength; i++)
 			{
-				buf[i + 3] = packetToWrite.payload[i];
+				buf[i + 3] = packetToWrite.Payload[i];
 			}
 			try
 			{
-				buf[3 + packetToWrite.payloadLength] = packetToWrite.Xor;
+				buf[3 + packetToWrite.PayloadLength] = packetToWrite.Xor;
 				if (serialPort != null)
 					serialPort.Write(buf, 0, buf.Length);
 			} catch (ArgumentNullException) {
@@ -171,13 +169,11 @@ namespace SpintronicsGUI
 			}
 		}
 
-		private Packet createDataPacket()
+		private ReportPacket createDataPacket()
 		{
 			sensor++;
 			if (sensor > sensorCount)
 				sensor = 1;
-			if (sensor == 16)
-				sensor++;
 
 			int baseSensor;						// This is just to group sensors by number so it looks less random on the GUI charts
 			if (sensor <= 5)
@@ -217,12 +213,9 @@ namespace SpintronicsGUI
 				data[i] += (float)(random.NextDouble() % 0.2);
 			}
 			byte[] payload = new byte[41];
-			if (sensor < 16)
-				payload[0] = sensorMultiplexerAddresses[sensor - 1];
-			else
-				payload[0] = sensorMultiplexerAddresses[sensor - 2];
+			payload[0] = sensorMultiplexerAddresses[sensor - 1];
 			Buffer.BlockCopy(data, 0, payload, 1, payload.Length - 1);
-			Packet dataPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Report, (byte)payload.Length, payload);
+			ReportPacket dataPacket = new ReportPacket(payload);
 			return dataPacket;
 		}
 
@@ -232,7 +225,7 @@ namespace SpintronicsGUI
 			if (this.startError > 0x08)
 				this.startError = 0x02;
 			byte[] payload = { this.startError };
-			Packet errorPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Error, (byte)payload.Length, payload);
+			Packet errorPacket = new Packet(PacketType.Error, payload);
 			return errorPacket;
 		}
 
@@ -242,7 +235,7 @@ namespace SpintronicsGUI
 			if (dataError > 0x0B)
 				dataError = 0x09;
 			byte[] payload = { this.dataError };
-			Packet errorPacket = new Packet((byte)PacketSender.Microcontroller | (byte)PacketType.Error, (byte)payload.Length, payload);
+			Packet errorPacket = new Packet(PacketType.Error, payload);
 			return errorPacket;
 		}
 	}

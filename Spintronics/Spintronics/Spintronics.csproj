@@ -71,7 +71,11 @@
     <Compile Include="ComSelector.Designer.cs">
       <DependentUpon>ComSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigPacket.cs" />
+    <Compile Include="ConfigReplyPacket.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="ErrorPacket.cs" />
+    <Compile Include="GenericPacket.cs" />
     <Compile Include="InputTextForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,7 +105,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolHandler.cs" />
+    <Compile Include="ReportPacket.cs" />
     <Compile Include="SensorAssignment.cs" />
+    <Compile Include="StartPacket.cs" />
+    <Compile Include="StartReplyPacket.cs" />
+    <Compile Include="StopPacket.cs" />
+    <Compile Include="StopReplyPacket.cs" />
     <EmbeddedResource Include="ComSelector.resx">
       <DependentUpon>ComSelector.cs</DependentUpon>
     </EmbeddedResource>
