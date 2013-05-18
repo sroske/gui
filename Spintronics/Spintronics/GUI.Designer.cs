@@ -229,6 +229,7 @@ namespace SpintronicsGUI
 			System.Windows.Forms.DataVisualization.Charting.Series series179 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataVisualization.Charting.Series series180 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.startRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -240,6 +241,7 @@ namespace SpintronicsGUI
 			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.postProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.demoModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -325,7 +327,6 @@ namespace SpintronicsGUI
 			this.dataErrorLabel = new System.Windows.Forms.Label();
 			this.userNameTextBox = new System.Windows.Forms.TextBox();
 			this.userNameLabel = new System.Windows.Forms.Label();
-			this.demoModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adjustedChart1)).BeginInit();
@@ -434,6 +435,13 @@ namespace SpintronicsGUI
 			this.postProcessingToolStripMenuItem.ToolTipText = "Please start or open a run before doing any post-processing";
 			this.postProcessingToolStripMenuItem.Click += new System.EventHandler(this.postProcessingToolStripMenuItem_Click);
 			// 
+			// demoModeToolStripMenuItem
+			// 
+			this.demoModeToolStripMenuItem.CheckOnClick = true;
+			this.demoModeToolStripMenuItem.Name = "demoModeToolStripMenuItem";
+			this.demoModeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.demoModeToolStripMenuItem.Text = "Demo Mode";
+			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -446,7 +454,7 @@ namespace SpintronicsGUI
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
@@ -2341,13 +2349,6 @@ namespace SpintronicsGUI
 			this.userNameLabel.TabIndex = 72;
 			this.userNameLabel.Text = "User Name";
 			// 
-			// demoModeToolStripMenuItem
-			// 
-			this.demoModeToolStripMenuItem.CheckOnClick = true;
-			this.demoModeToolStripMenuItem.Name = "demoModeToolStripMenuItem";
-			this.demoModeToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-			this.demoModeToolStripMenuItem.Text = "Demo Mode";
-			// 
 			// GUI
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2385,6 +2386,7 @@ namespace SpintronicsGUI
 			this.Controls.Add(this.stopRunButton);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.menuStrip1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "GUI";
