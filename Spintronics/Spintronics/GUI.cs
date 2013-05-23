@@ -1,4 +1,4 @@
-﻿//#define _DEBUG
+﻿#define _DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -87,6 +87,8 @@ namespace SpintronicsGUI
 			// (this is because of threading rules)
 			addNewDataPointDelegate = new addNewDataPoint(addNewDataPointMethod);
 			addNewDataErrorDelegate = new addDataErrorToTextBox(addDataErrorMethod);
+
+            Logger.Debug("Starting up...");
 
 			// Initialize COM ports
 			this.comPortName = comPort;
@@ -1367,14 +1369,17 @@ namespace SpintronicsGUI
 			else
 				directionString = "->->-> ";
 
-			Console.Write(directionString + "CMD:0x{0:X2}", packet.Command);
-			Console.Write(" PL:" + packet.PayloadLength);
-			Console.Write(" P:0x");
+            StringBuilder b = new StringBuilder();
+            b.Append(string.Format("{0}CMD:0x{1:X2}", directionString, packet.Command));
+			b.Append(" PL:" + packet.PayloadLength);
+			b.Append(" P:0x");
 			for (int i = 0; i < packet.PayloadLength; i++)
 			{
-				Console.Write("{0:X2}", packet.Payload[i]);
+				b.Append(string.Format("{0:X2}", packet.Payload[i]));
 			}
-			Console.Write(" XOR:0x{0:X2}\n", packet.Xor);
+			b.Append(string.Format(" XOR:0x{0:X2}", packet.Xor));
+
+            Logger.Debug( b.ToString() );
 		}
 
 		/*

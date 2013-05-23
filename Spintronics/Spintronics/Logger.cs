@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Diagnostics;
 
@@ -15,17 +16,28 @@ namespace SpintronicsGUI
             Error
         };
 
-        private const string EventSourceName = "Spintronics";
-        private const string EventLogName = "GUI";
+        private const string EventSourceName = "Application";
+        private const string EventLogName = "Spintronics";
 
         public static void Log( string message, LogLevel level = LogLevel.Debug )
         {
-            if (!EventLog.SourceExists(EventSourceName))
+            bool sourceExists = false;
+            try
+            {
+                sourceExists = EventLog.SourceExists(EventSourceName);
+            }
+            catch (SecurityException e)
+            {
+                sourceExists = false;
+            }
+            if (!sourceExists)
+            {
                 EventLog.CreateEventSource(EventSourceName, EventLogName);
+            }
 
             string formattedMessage = string.Format( "{0}: '{1}'", GetStringForLogLevel(level), message );
             
-            Logger.Debug( formattedMessage );
+            //Console.WriteLine( formattedMessage );
             
             System.Diagnostics.Debug.WriteLine( formattedMessage );
 
