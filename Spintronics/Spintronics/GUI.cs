@@ -1,4 +1,4 @@
-﻿#define _DEBUG
+﻿//#define _DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -545,7 +545,7 @@ namespace SpintronicsGUI
 						if ((startOfFrame = (byte)serialPort.ReadByte()) == 0xFE)                   // hit a start of frame,
 							break;
 						else
-							Console.WriteLine("<-<-<- Malformed packet received. Started with 0x{0:X}", startOfFrame);
+							Logger.Debug(string.Format("<-<-<- Malformed packet received. Started with 0x{0:X}", startOfFrame));
 					} catch (TimeoutException) {                                                    // or we run out of bytes to read (this will clear out the buffer in the event we don't get a valid SOF)
 						return;
 					}
@@ -557,8 +557,8 @@ namespace SpintronicsGUI
 				byte[] payload = new byte[payloadLength];                                           // Make the payload buffer
 				if (serialPort.Read(payload, 0, payloadLength) < payloadLength)                     // Read in the whole payload
 				{
-					Console.WriteLine("<-<-<- Payload length did not match. Was 0x{0:X2}, got 0x{0:X}", payloadLength, payload);
-					Console.WriteLine("<-<-<- (cont) Command was 0x{0:X2}", command);
+					Logger.Debug(string.Format("<-<-<- Payload length did not match. Was 0x{0:X2}, got 0x{0:X}", payloadLength, payload));
+					Logger.Debug(string.Format("<-<-<- (cont) Command was 0x{0:X2}", command));
 					return;
 				}
 				byte Xor = (byte)serialPort.ReadByte();
@@ -566,29 +566,29 @@ namespace SpintronicsGUI
 				printPacket<Packet>(packet, PacketCommDirection.In);
 				if (packet.Xor != Xor)
 				{
-					Console.WriteLine("<-<-<- XOR did not match. Received 0x{0:X}, should have been 0x{0:X}", Xor, packet.Xor);
+					Logger.Debug(string.Format("<-<-<- XOR did not match. Received 0x{0:X}, should have been 0x{0:X}", Xor, packet.Xor));
 					return;
 				}
 
 				switch (packet.Command)
 				{
 					case (byte)PacketType.StartReply:
-						Console.WriteLine("Received a start acknowledge packet");
+						Logger.Debug("Received a start acknowledge packet");
 						break;
 					case (byte)PacketType.StopReply:
-						Console.WriteLine("Received a stop acknowledge packet");
+						Logger.Debug("Received a stop acknowledge packet");
 						break;
 					case (byte)PacketType.Report:
-						Console.WriteLine("Received a report packet");
+						Logger.Debug("Received a report packet");
 						break;
 					case (byte)PacketType.ConfigReply:
-						Console.WriteLine("Received a config acknowledge packet");
+						Logger.Debug("Received a config acknowledge packet");
 						break;
 					case (byte)PacketType.Error:
-						Console.WriteLine("Received an error packet");
+						Logger.Debug("Received an error packet");
 						break;
 					default:
-						Console.WriteLine("Received an unknown packet of type 0x{0:X}", packet.Command);
+						Logger.Debug(string.Format("Received an unknown packet of type 0x{0:X}", packet.Command));
                         return;
 				}
 
@@ -615,7 +615,7 @@ namespace SpintronicsGUI
 			} catch (ArgumentException) {
 				MessageBox.Show("Argument Exception in GUI, most likely thrown by ProtocolHandler");
 			} catch (TimeoutException) {
-				Console.WriteLine("<-<-<- Timeout Exception");
+				Logger.Debug("<-<-<- Timeout Exception");
 			} catch (Exception) {
 				MessageBox.Show("Exception in GUI, most likely thrown by ProtocolHandler");
 			}

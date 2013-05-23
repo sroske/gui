@@ -82,6 +82,7 @@
     <Compile Include="InputTextForm.Designer.cs">
       <DependentUpon>InputTextForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logger.cs" />
     <Compile Include="Microcontroller.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="GUI.cs">
